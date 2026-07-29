@@ -14,3 +14,7 @@ This folder contains system architecture and design artifacts for the Bench Pres
 - `network-architecture.md`: VPC, private connectivity, egress/ingress controls, and segmentation.
 - `observability-architecture.md`: Logging, tracing, metrics, alerting, and operational dashboards.
 - `disaster-recovery-architecture.md`: Backup, disaster recovery objectives (RPO/RTO), and failover design.
+
+## Assets
+
+- `assets/agentic-workflow.jpg`: Supporting workflow diagram used by `system-architecture.md`.
