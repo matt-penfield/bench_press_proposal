@@ -246,6 +246,61 @@
       color: #9ca3af;
       font-size: 15px;
     }
+
+    /* Model status */
+    .model-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    .model-status.ready { color: #059669; }
+    .model-status.error { color: #dc2626; }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #5e6ad2;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    .model-status.ready .spinner,
+    .model-status.error .spinner { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-bar {
+      width: 200px;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      background: #5e6ad2;
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    .searching-msg {
+      text-align: center;
+      padding: 40px 24px;
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .searching-msg .spinner {
+      width: 20px;
+      height: 20px;
+      margin: 0 auto 12px;
+    }
   </style>
 </head>
 <body>
@@ -253,6 +308,11 @@
     <div class="inner">
       <h1><span>Bench Press</span> — Proposal Matcher</h1>
       <p>Find similar past proposals by describing the client's problem.</p>
+      <div class="model-status" id="model-status">
+        <div class="spinner"></div>
+        <span id="status-text">Initializing…</span>
+        <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+      </div>
     </div>
   </header>
 
@@ -274,7 +334,6 @@
         <h2>Results</h2>
         <span class="count" id="results-count"></span>
       </div>
-      <div class="keywords-bar" id="keywords-bar"></div>
       <div id="results-list"></div>
     </div>
 
@@ -285,175 +344,159 @@
   </main>
 
   <script src="proposals.js"></script>
-  <script>
-    // ── Stop-words list ──────────────────────────────────────────────
-    const STOP_WORDS = new Set([
-      "a","an","the","and","or","but","is","are","was","were","be","been",
-      "being","have","has","had","do","does","did","will","would","shall",
-      "should","may","might","must","can","could","of","in","to","for",
-      "with","on","at","from","by","about","as","into","through","during",
-      "before","after","above","below","between","out","off","over","under",
-      "again","further","then","once","here","there","when","where","why",
-      "how","all","each","every","both","few","more","most","other","some",
-      "such","no","nor","not","only","own","same","so","than","too","very",
-      "just","because","if","while","that","this","these","those","it","its",
-      "we","our","they","their","them","he","she","his","her","you","your",
-      "i","me","my","up","also","which","what","who","whom","need","needs",
-      "want","wants","looking","including","include","across","along","well",
-      "new","also","using","used","use","based","like","get","make","take"
-    ]);
+  <script type="module">
+    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3';
 
-    // ── Tokeniser ────────────────────────────────────────────────────
-    function tokenize(text) {
-      return text
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, " ")
-        .split(/\s+/)
-        .filter(w => w.length > 2 && !STOP_WORDS.has(w));
-    }
+    // ── State ────────────────────────────────────────────────────────
+    let embedder = null;
+    const corpus = [];  // { proposal, embedding, sentences: [{ text, embedding }] }
 
-    // ── TF (term frequency) ─────────────────────────────────────────
-    function termFrequency(tokens) {
-      const tf = {};
-      for (const t of tokens) {
-        tf[t] = (tf[t] || 0) + 1;
+    // ── DOM refs ─────────────────────────────────────────────────────
+    const btnSearch     = document.getElementById('search-btn');
+    const elStatus      = document.getElementById('model-status');
+    const elStatusText  = document.getElementById('status-text');
+    const elProgressBar = document.getElementById('progress-bar');
+    const elProgressFill= document.getElementById('progress-fill');
+    const elResults     = document.getElementById('results-section');
+    const elResultsList = document.getElementById('results-list');
+    const elResultsCount= document.getElementById('results-count');
+    const elEmpty       = document.getElementById('empty-state');
+
+    btnSearch.disabled = true;
+
+    // ── Cosine similarity ───────────────────────────────────────────
+    function cosineSim(a, b) {
+      let dot = 0, nA = 0, nB = 0;
+      for (let i = 0; i < a.length; i++) {
+        dot += a[i] * b[i];
+        nA  += a[i] * a[i];
+        nB  += b[i] * b[i];
       }
-      // normalise by max frequency
-      const max = Math.max(...Object.values(tf), 1);
-      for (const t in tf) tf[t] /= max;
-      return tf;
+      return dot / (Math.sqrt(nA) * Math.sqrt(nB));
     }
 
-    // ── IDF across corpus ───────────────────────────────────────────
-    function buildIDF(corpus) {
-      const df = {};
-      const N = corpus.length;
-      for (const doc of corpus) {
-        const seen = new Set(tokenize(doc));
-        for (const t of seen) {
-          df[t] = (df[t] || 0) + 1;
+    // ── Split content into sentences ────────────────────────────────
+    function splitSentences(text) {
+      return text.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
+    }
+
+    // ── Embed one or more texts, return array of Float32Arrays ──────
+    async function embedTexts(texts) {
+      const out = await embedder(texts, { pooling: 'mean', normalize: true });
+      const dim = out.dims[out.dims.length - 1];
+      const results = [];
+      for (let i = 0; i < texts.length; i++) {
+        results.push(out.data.slice(i * dim, (i + 1) * dim));
+      }
+      return results;
+    }
+
+    // ── Initialise model & pre-compute embeddings ───────────────────
+    async function init() {
+      try {
+        setStatus('Loading semantic model (~30 MB, cached after first load)…');
+        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+          dtype: 'fp32'
+        });
+
+        elProgressBar.style.display = 'block';
+
+        for (let i = 0; i < PROPOSALS.length; i++) {
+          const p = PROPOSALS[i];
+          const pct = Math.round(((i + 1) / PROPOSALS.length) * 100);
+          setStatus(`Embedding proposals… ${i + 1}/${PROPOSALS.length}`);
+          elProgressFill.style.width = pct + '%';
+
+          // batch: full content + individual sentences in one call
+          const sentences = splitSentences(p.content);
+          const textsToEmbed = [p.content, ...sentences];
+          const embeddings = await embedTexts(textsToEmbed);
+
+          corpus.push({
+            proposal: p,
+            embedding: embeddings[0],
+            sentences: sentences.map((text, j) => ({ text, embedding: embeddings[j + 1] }))
+          });
         }
+
+        elProgressBar.style.display = 'none';
+        setStatus('Ready — semantic matching active', 'ready');
+        btnSearch.disabled = false;
+      } catch (err) {
+        console.error(err);
+        setStatus('Model failed to load: ' + err.message, 'error');
       }
-      const idf = {};
-      for (const t in df) {
-        idf[t] = Math.log((N + 1) / (df[t] + 1)) + 1; // smoothed IDF
-      }
-      return idf;
     }
 
-    // ── Similarity score between query and a document ───────────────
-    function score(queryTokens, docContent, idf) {
-      const docTokens = tokenize(docContent);
-      const docTF = termFrequency(docTokens);
-      const docSet = new Set(docTokens);
-
-      let total = 0;
-      let maxPossible = 0;
-      const matched = [];
-
-      for (const qt of new Set(queryTokens)) {
-        const weight = idf[qt] || 1;
-        maxPossible += weight;
-        if (docSet.has(qt)) {
-          total += weight * (docTF[qt] || 0);
-          matched.push(qt);
-        }
-      }
-
-      const raw = maxPossible > 0 ? (total / maxPossible) * 100 : 0;
-      return { score: Math.round(raw), matched };
+    function setStatus(msg, cls) {
+      elStatusText.textContent = msg;
+      elStatus.className = 'model-status' + (cls ? ' ' + cls : '');
     }
 
-    // ── Extract best excerpt with matched terms ─────────────────────
-    function extractExcerpt(content, matchedTerms, windowSize) {
-      if (matchedTerms.length === 0) return "";
-      const sentences = content.split(/(?<=[.!?])\s+/);
-      const matchSet = new Set(matchedTerms);
-      let best = "";
-      let bestCount = 0;
-
-      for (let i = 0; i < sentences.length; i++) {
-        const chunk = sentences.slice(i, i + windowSize).join(" ");
-        const words = tokenize(chunk);
-        const count = words.filter(w => matchSet.has(w)).length;
-        if (count > bestCount) {
-          bestCount = count;
-          best = chunk;
-        }
-      }
-
-      return best;
-    }
-
-    function highlightExcerpt(excerpt, matchedTerms) {
-      const matchSet = new Set(matchedTerms);
-      return excerpt.replace(/\b([a-zA-Z0-9-]+)\b/g, (word) => {
-        return matchSet.has(word.toLowerCase()) ? `<mark>${word}</mark>` : word;
-      });
+    // ── Find best excerpt sentences ─────────────────────────────────
+    function bestExcerpts(queryEmb, entry, count) {
+      return entry.sentences
+        .map(s => ({ text: s.text, sim: cosineSim(queryEmb, s.embedding) }))
+        .sort((a, b) => b.sim - a.sim)
+        .slice(0, count)
+        .map(s => s.text);
     }
 
     // ── Score class ─────────────────────────────────────────────────
     function scoreClass(s) {
-      if (s >= 50) return "score-high";
-      if (s >= 25) return "score-medium";
-      return "score-low";
+      if (s >= 55) return 'score-high';
+      if (s >= 35) return 'score-medium';
+      return 'score-low';
     }
 
     // ── Main search ─────────────────────────────────────────────────
-    function search() {
-      const problem = document.getElementById("problem").value.trim();
-      const supplemental = document.getElementById("supplemental").value.trim();
-
+    async function search() {
+      const problem = document.getElementById('problem').value.trim();
+      const supplemental = document.getElementById('supplemental').value.trim();
       if (!problem && !supplemental) return;
 
-      const queryText = problem + " " + supplemental;
-      const queryTokens = tokenize(queryText);
+      const queryText = problem + (supplemental ? '\n' + supplemental : '');
 
-      if (queryTokens.length === 0) return;
+      // show searching state
+      elEmpty.style.display = 'none';
+      elResults.style.display = 'block';
+      elResultsCount.textContent = '';
+      elResultsList.innerHTML = '<div class="searching-msg"><div class="spinner"></div>Finding similar proposals…</div>';
+      btnSearch.disabled = true;
 
-      // build IDF from corpus + query
-      const corpusDocs = PROPOSALS.map(p => p.content);
-      corpusDocs.push(queryText);
-      const idf = buildIDF(corpusDocs);
+      // embed query
+      const [queryEmb] = await embedTexts([queryText]);
 
-      // score each proposal
-      const results = PROPOSALS.map(p => {
-        const { score: s, matched } = score(queryTokens, p.content, idf);
-        const excerpt = extractExcerpt(p.content, matched, 2);
-        return { ...p, score: s, matched, excerpt };
-      })
-        .filter(r => r.score > 0)
-        .sort((a, b) => b.score - a.score);
+      // score each proposal by cosine similarity
+      const results = corpus
+        .map(entry => {
+          const sim = cosineSim(queryEmb, entry.embedding);
+          const score = Math.max(0, Math.round(sim * 100));
+          const excerpts = bestExcerpts(queryEmb, entry, 2);
+          return { ...entry.proposal, score, excerpts };
+        })
+        .filter(r => r.score > 10)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10);
 
-      render(queryTokens, results);
+      render(results);
+      btnSearch.disabled = false;
     }
 
     // ── Render results ──────────────────────────────────────────────
-    function render(queryTokens, results) {
-      const section = document.getElementById("results-section");
-      const list = document.getElementById("results-list");
-      const count = document.getElementById("results-count");
-      const kwBar = document.getElementById("keywords-bar");
-      const empty = document.getElementById("empty-state");
-
-      empty.style.display = "none";
-      section.style.display = "block";
-
-      // show extracted keywords
-      const uniqueKeywords = [...new Set(queryTokens)].slice(0, 20);
-      kwBar.innerHTML = uniqueKeywords
-        .map(k => `<span class="keyword-tag">${k}</span>`)
-        .join("");
+    function render(results) {
+      elEmpty.style.display = 'none';
+      elResults.style.display = 'block';
 
       if (results.length === 0) {
-        count.textContent = "";
-        list.innerHTML = `<div class="no-results">No matching proposals found. Try broadening your description.</div>`;
+        elResultsCount.textContent = '';
+        elResultsList.innerHTML = '<div class="no-results">No similar proposals found. Try a different description.</div>';
         return;
       }
 
-      count.textContent = `${results.length} match${results.length === 1 ? "" : "es"}`;
+      elResultsCount.textContent = `${results.length} match${results.length === 1 ? '' : 'es'}`;
 
-      list.innerHTML = results.map(r => `
+      elResultsList.innerHTML = results.map(r => `
         <div class="result-card">
           <div class="result-top">
             <div>
@@ -462,30 +505,32 @@
             </div>
             <div class="score-badge ${scoreClass(r.score)}">${r.score}</div>
           </div>
-          ${r.excerpt ? `<div class="result-excerpt">${highlightExcerpt(esc(r.excerpt), r.matched)}</div>` : ""}
+          ${r.excerpts.length ? `<div class="result-excerpt">${r.excerpts.map(e => esc(e)).join(' … ')}</div>` : ''}
         </div>
-      `).join("");
+      `).join('');
     }
 
     // ── Escape HTML ─────────────────────────────────────────────────
     function esc(str) {
-      const el = document.createElement("span");
+      const el = document.createElement('span');
       el.textContent = str;
       return el.innerHTML;
     }
 
     // ── Wire up ─────────────────────────────────────────────────────
-    document.getElementById("search-btn").addEventListener("click", search);
+    btnSearch.addEventListener('click', search);
 
-    // allow Ctrl+Enter from either textarea
-    document.querySelectorAll("textarea").forEach(ta => {
-      ta.addEventListener("keydown", e => {
-        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+    document.querySelectorAll('textarea').forEach(ta => {
+      ta.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
           search();
         }
       });
     });
+
+    // ── Boot ─────────────────────────────────────────────────────────
+    init();
   </script>
 </body>
 </html>
