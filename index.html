@@ -688,22 +688,22 @@
 
         elProgressBar.style.display = 'block';
 
-        for (let i = 0; i < PROPOSALS.length; i++) {
-          const p = PROPOSALS[i];
-          const pct = Math.round(((i + 1) / PROPOSALS.length) * 100);
-          setStatus(`Embedding proposals… ${i + 1}/${PROPOSALS.length}`);
+        // Only embed full proposal content at startup (batch in groups of 10)
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < PROPOSALS.length; i += BATCH_SIZE) {
+          const batch = PROPOSALS.slice(i, i + BATCH_SIZE);
+          const pct = Math.round(((i + batch.length) / PROPOSALS.length) * 100);
+          setStatus(`Embedding proposals… ${Math.min(i + BATCH_SIZE, PROPOSALS.length)}/${PROPOSALS.length}`);
           elProgressFill.style.width = pct + '%';
 
-          // batch: full content + individual sentences in one call
-          const sentences = splitSentences(p.content);
-          const textsToEmbed = [p.content, ...sentences];
-          const embeddings = await embedTexts(textsToEmbed);
-
-          corpus.push({
-            proposal: p,
-            embedding: embeddings[0],
-            sentences: sentences.map((text, j) => ({ text, embedding: embeddings[j + 1] }))
-          });
+          const embeddings = await embedTexts(batch.map(p => p.content));
+          for (let j = 0; j < batch.length; j++) {
+            corpus.push({
+              proposal: batch[j],
+              embedding: embeddings[j],
+              sentences: null  // computed on-demand at search time for top results
+            });
+          }
         }
 
         elProgressBar.style.display = 'none';
@@ -720,8 +720,17 @@
       elStatus.className = 'model-status' + (cls ? ' ' + cls : '');
     }
 
+    // ── Embed sentences for an entry on demand ─────────────────────
+    async function ensureSentenceEmbeddings(entry) {
+      if (entry.sentences) return;
+      const texts = splitSentences(entry.proposal.content);
+      const embeddings = await embedTexts(texts);
+      entry.sentences = texts.map((text, i) => ({ text, embedding: embeddings[i] }));
+    }
+
     // ── Find best excerpt sentences with scores ────────────────────
-    function bestExcerpts(queryEmb, entry, count) {
+    async function bestExcerpts(queryEmb, entry, count) {
+      await ensureSentenceEmbeddings(entry);
       const ranked = entry.sentences
         .map(s => ({ text: s.text, sim: cosineSim(queryEmb, s.embedding) }))
         .sort((a, b) => b.sim - a.sim);
@@ -761,17 +770,23 @@
       // embed query
       const [queryEmb] = await embedTexts([queryText]);
 
-      // score each proposal by cosine similarity
-      const results = corpus
-        .map(entry => {
-          const sim = cosineSim(queryEmb, entry.embedding);
-          const score = Math.max(0, Math.round(sim * 100));
-          const { texts: excerpts, reasons } = bestExcerpts(queryEmb, entry, 2);
-          return { ...entry.proposal, score, excerpts, reasons };
-        })
+      // score each proposal by cosine similarity (fast — uses pre-computed embeddings)
+      const scored = corpus
+        .map(entry => ({
+          entry,
+          sim: cosineSim(queryEmb, entry.embedding),
+          score: Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100))
+        }))
         .filter(r => r.score > 10)
         .sort((a, b) => b.score - a.score)
         .slice(0, 10);
+
+      // Only embed sentences for top results (on-demand, much faster)
+      const results = [];
+      for (const { entry, score } of scored) {
+        const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
+        results.push({ ...entry.proposal, score, excerpts, reasons });
+      }
 
       currentResults = results;
       selected = new Set();
