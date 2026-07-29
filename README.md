@@ -11,7 +11,7 @@ Solutioning Workflow and Proposal Tool is a client-side prototype for finding si
 
 ## What This Prototype Does
 
-Based on the PRD in `docs/requirments/PRD.md` and the current implementation:
+Based on the product requirements in `docs/requirements/product-requirements.md` and the current implementation:
 
 - Accepts two inputs:
   - Problem Statement
@@ -81,7 +81,7 @@ npx serve .
 
 - `index.html` - UI, styling, client logic, semantic search, and draft generation
 - `proposals.js` - local proposal corpus (dummy/sample data)
-- `docs/requirments/PRD.md` - product requirements document
+- `docs/requirements/product-requirements.md` - product requirements document
 
 ## Notes
 
