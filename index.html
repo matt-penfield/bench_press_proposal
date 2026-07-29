@@ -301,6 +301,185 @@
       height: 20px;
       margin: 0 auto 12px;
     }
+
+    /* Selection */
+    .result-card {
+      cursor: pointer;
+      position: relative;
+    }
+
+    .result-card.selected {
+      border-color: #5e6ad2;
+      box-shadow: 0 0 0 2px rgba(94, 106, 210, 0.15);
+      background: #fafaff;
+    }
+
+    .select-check {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid #d1d5db;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .result-card.selected .select-check {
+      border-color: #5e6ad2;
+      background: #5e6ad2;
+    }
+
+    .select-check svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .result-card.selected .select-check svg {
+      opacity: 1;
+    }
+
+    .result-card .result-top {
+      padding-left: 32px;
+    }
+
+    .selection-hint {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .selection-hint strong {
+      color: #5e6ad2;
+    }
+
+    /* Draft button */
+    #draft-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px 24px;
+      background: #059669;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    #draft-btn:hover { background: #047857; }
+    #draft-btn:active { background: #065f46; }
+    #draft-btn:disabled { background: #c4c9d4; cursor: not-allowed; }
+
+    /* Draft output */
+    .draft-section {
+      margin-top: 32px;
+    }
+
+    .draft-section h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+    }
+
+    .draft-output {
+      background: #fff;
+      border: 1px solid #e8eaed;
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .draft-output h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #5e6ad2;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+
+    .draft-output h3:first-child { margin-top: 0; }
+
+    .draft-output p {
+      font-size: 15px;
+      color: #374151;
+      line-height: 1.8;
+      margin-bottom: 8px;
+    }
+
+    .draft-output ul {
+      padding-left: 20px;
+      margin-bottom: 8px;
+    }
+
+    .draft-output li {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.7;
+      margin-bottom: 4px;
+    }
+
+    .draft-output .ref-tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: 2px 8px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      border-radius: 4px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    /* Score explanation */
+    .score-why {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: #f8f9fb;
+      border-radius: 8px;
+      border: 1px solid #eef0fb;
+    }
+
+    .score-why-header {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .score-why-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .score-why-item:last-child { margin-bottom: 0; }
+
+    .score-why-sim {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      margin-top: 1px;
+    }
   </style>
 </head>
 <body>
@@ -334,7 +513,14 @@
         <h2>Results</h2>
         <span class="count" id="results-count"></span>
       </div>
+      <div class="selection-hint" id="selection-hint" style="display:none;">Select up to <strong>3</strong> proposals to use as reference for your draft.</div>
       <div id="results-list"></div>
+      <button id="draft-btn" style="display:none;" disabled>Draft Proposal from Selected</button>
+    </div>
+
+    <div class="draft-section" id="draft-section" style="display:none;">
+      <h2>Drafted Proposal</h2>
+      <div class="draft-output" id="draft-output"></div>
     </div>
 
     <div class="empty-state" id="empty-state">
@@ -350,6 +536,8 @@
     // ── State ────────────────────────────────────────────────────────
     let embedder = null;
     const corpus = [];  // { proposal, embedding, sentences: [{ text, embedding }] }
+    let currentResults = [];  // last search results
+    let selected = new Set(); // selected proposal IDs (max 3)
 
     // ── DOM refs ─────────────────────────────────────────────────────
     const btnSearch     = document.getElementById('search-btn');
@@ -361,6 +549,10 @@
     const elResultsList = document.getElementById('results-list');
     const elResultsCount= document.getElementById('results-count');
     const elEmpty       = document.getElementById('empty-state');
+    const elDraftBtn    = document.getElementById('draft-btn');
+    const elDraftSection= document.getElementById('draft-section');
+    const elDraftOutput = document.getElementById('draft-output');
+    const elSelectionHint = document.getElementById('selection-hint');
 
     btnSearch.disabled = true;
 
@@ -433,13 +625,18 @@
       elStatus.className = 'model-status' + (cls ? ' ' + cls : '');
     }
 
-    // ── Find best excerpt sentences ─────────────────────────────────
+    // ── Find best excerpt sentences with scores ────────────────────
     function bestExcerpts(queryEmb, entry, count) {
-      return entry.sentences
+      const ranked = entry.sentences
         .map(s => ({ text: s.text, sim: cosineSim(queryEmb, s.embedding) }))
-        .sort((a, b) => b.sim - a.sim)
-        .slice(0, count)
-        .map(s => s.text);
+        .sort((a, b) => b.sim - a.sim);
+      return {
+        texts: ranked.slice(0, count).map(s => s.text),
+        reasons: ranked.slice(0, 3).map(s => ({
+          text: s.text.length > 140 ? s.text.slice(0, 137) + '…' : s.text,
+          sim: Math.round(s.sim * 100)
+        }))
+      };
     }
 
     // ── Score class ─────────────────────────────────────────────────
@@ -472,32 +669,66 @@
         .map(entry => {
           const sim = cosineSim(queryEmb, entry.embedding);
           const score = Math.max(0, Math.round(sim * 100));
-          const excerpts = bestExcerpts(queryEmb, entry, 2);
-          return { ...entry.proposal, score, excerpts };
+          const { texts: excerpts, reasons } = bestExcerpts(queryEmb, entry, 2);
+          return { ...entry.proposal, score, excerpts, reasons };
         })
         .filter(r => r.score > 10)
         .sort((a, b) => b.score - a.score)
         .slice(0, 10);
 
+      currentResults = results;
+      selected = new Set();
+
+      // auto-select results scoring above 70 (max 3)
+      results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
+
       render(results);
       btnSearch.disabled = false;
+    }
+
+    // ── Toggle selection ─────────────────────────────────────────────
+    function toggleSelect(id) {
+      if (selected.has(id)) {
+        selected.delete(id);
+      } else {
+        if (selected.size >= 3) return; // max 3
+        selected.add(id);
+      }
+      render(currentResults);
     }
 
     // ── Render results ──────────────────────────────────────────────
     function render(results) {
       elEmpty.style.display = 'none';
       elResults.style.display = 'block';
+      elDraftSection.style.display = 'none';
 
       if (results.length === 0) {
         elResultsCount.textContent = '';
+        elSelectionHint.style.display = 'none';
+        elDraftBtn.style.display = 'none';
         elResultsList.innerHTML = '<div class="no-results">No similar proposals found. Try a different description.</div>';
         return;
       }
 
       elResultsCount.textContent = `${results.length} match${results.length === 1 ? '' : 'es'}`;
+      elSelectionHint.style.display = 'block';
+      elDraftBtn.style.display = 'block';
+      elDraftBtn.disabled = selected.size === 0;
+      elDraftBtn.textContent = selected.size > 0
+        ? `Draft Proposal from ${selected.size} Selected`
+        : 'Draft Proposal from Selected';
 
-      elResultsList.innerHTML = results.map(r => `
-        <div class="result-card">
+      const checkSvg = `<svg viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 5.5 10.5 11.5 4"/></svg>`;
+
+      elResultsList.innerHTML = results.map(r => {
+        const sel = selected.has(r.id);
+        const whyHtml = (r.reasons || []).map(reason =>
+          `<div class="score-why-item"><span class="score-why-sim">${reason.sim}</span><span>${esc(reason.text)}</span></div>`
+        ).join('');
+        return `
+        <div class="result-card${sel ? ' selected' : ''}" data-id="${esc(r.id)}">
+          <div class="select-check">${checkSvg}</div>
           <div class="result-top">
             <div>
               <div class="result-title">${esc(r.title)}</div>
@@ -506,8 +737,86 @@
             <div class="score-badge ${scoreClass(r.score)}">${r.score}</div>
           </div>
           ${r.excerpts.length ? `<div class="result-excerpt">${r.excerpts.map(e => esc(e)).join(' … ')}</div>` : ''}
-        </div>
-      `).join('');
+          ${whyHtml ? `<div class="score-why"><div class="score-why-header">Why it matched</div>${whyHtml}</div>` : ''}
+        </div>`;
+      }).join('');
+
+      // bind click handlers
+      elResultsList.querySelectorAll('.result-card').forEach(card => {
+        card.addEventListener('click', () => toggleSelect(card.dataset.id));
+      });
+    }
+
+    // ── Draft proposal from selections ──────────────────────────────
+    function draftProposal() {
+      const problem = document.getElementById('problem').value.trim();
+      const supplemental = document.getElementById('supplemental').value.trim();
+      const selectedProposals = currentResults.filter(r => selected.has(r.id));
+
+      if (selectedProposals.length === 0) return;
+
+      // Build a structured draft from selected proposals
+      let html = '';
+
+      // Section 1: Problem Statement
+      html += `<h3>Problem Statement</h3>`;
+      html += `<p>${esc(problem)}</p>`;
+      if (supplemental) {
+        html += `<p>${esc(supplemental)}</p>`;
+      }
+
+      // Section 2: Recommended Approach (synthesized from excerpts)
+      html += `<h3>Recommended Approach</h3>`;
+      html += `<p>Based on similar engagements, we recommend the following approach:</p><ul>`;
+      for (const sp of selectedProposals) {
+        // Pull the most relevant sentences as approach bullets
+        const sentences = sp.excerpts || [];
+        for (const s of sentences) {
+          html += `<li>${esc(s)}</li>`;
+        }
+      }
+      html += `</ul>`;
+
+      // Section 3: Key Components (from full proposal content)
+      html += `<h3>Key Components</h3><ul>`;
+      for (const sp of selectedProposals) {
+        // Extract sentences that describe deliverables/components
+        const content = sp.content || '';
+        const allSentences = content.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
+        // Pick sentences with action words indicating deliverables
+        const deliverables = allSentences.filter(s =>
+          /\b(include|deliver|implement|build|establish|deploy|provide|recommend|propose|create|design)s?\b/i.test(s)
+        ).slice(0, 3);
+        for (const d of deliverables) {
+          html += `<li>${esc(d)}</li>`;
+        }
+      }
+      html += `</ul>`;
+
+      // Section 4: Expected Outcomes
+      html += `<h3>Expected Outcomes</h3><ul>`;
+      for (const sp of selectedProposals) {
+        const content = sp.content || '';
+        const allSentences = content.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
+        const outcomes = allSentences.filter(s =>
+          /\b(target|expect|reduce|improve|increase|enable|outcome|result|achieve|save|ROI)\b/i.test(s)
+        ).slice(0, 2);
+        for (const o of outcomes) {
+          html += `<li>${esc(o)}</li>`;
+        }
+      }
+      html += `</ul>`;
+
+      // Section 5: Reference proposals
+      html += `<h3>Based On</h3><div>`;
+      for (const sp of selectedProposals) {
+        html += `<span class="ref-tag">${esc(sp.title)} (score: ${sp.score})</span>`;
+      }
+      html += `</div>`;
+
+      elDraftOutput.innerHTML = html;
+      elDraftSection.style.display = 'block';
+      elDraftSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // ── Escape HTML ─────────────────────────────────────────────────
@@ -519,6 +828,7 @@
 
     // ── Wire up ─────────────────────────────────────────────────────
     btnSearch.addEventListener('click', search);
+    elDraftBtn.addEventListener('click', draftProposal);
 
     document.querySelectorAll('textarea').forEach(ta => {
       ta.addEventListener('keydown', e => {
