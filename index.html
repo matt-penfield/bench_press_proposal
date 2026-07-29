@@ -480,13 +480,74 @@
       color: #5e6ad2;
       margin-top: 1px;
     }
+
+    /* File upload */
+    .file-upload-area {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .file-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: #f3f4f6;
+      border: 1.5px dashed #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .file-upload-btn:hover {
+      border-color: #5e6ad2;
+      background: #eef0fb;
+      color: #5e6ad2;
+    }
+
+    .file-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 100px;
+    }
+
+    .file-chip button {
+      background: none;
+      border: none;
+      color: #5e6ad2;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.6;
+    }
+
+    .file-chip button:hover { opacity: 1; }
   </style>
 </head>
 <body>
   <header>
     <div class="inner">
-      <h1><span>Bench Press</span> — Proposal Matcher</h1>
-      <p>Find similar past proposals by describing the client's problem.</p>
+      <h1><span>Proposal Accelerator</span></h1>
+      <p>Find similar past proposals and use them to guide the development of new ones</p>
       <div class="model-status" id="model-status">
         <div class="spinner"></div>
         <span id="status-text">Initializing…</span>
@@ -504,6 +565,14 @@
       <div class="field">
         <label for="supplemental">Supplemental Info <span class="hint">— industry, constraints, technologies, timeline, etc.</span></label>
         <textarea id="supplemental" rows="3" placeholder="Any additional context that might help find similar work…"></textarea>
+        <div class="file-upload-area">
+          <label class="file-upload-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9M4 4l3-3 3 3"/><path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9"/></svg>
+            Upload files
+            <input type="file" id="file-input" multiple accept=".txt,.md,.pdf,.doc,.docx,.rtf,.csv,.json" hidden>
+          </label>
+          <div class="file-chips" id="file-chips"></div>
+        </div>
       </div>
       <button id="search-btn">Find Similar Proposals</button>
     </div>
@@ -524,7 +593,6 @@
     </div>
 
     <div class="empty-state" id="empty-state">
-      <div class="icon">🏋️</div>
       <p>Enter a problem statement above and hit <strong>Find Similar</strong> to search the proposal corpus.</p>
     </div>
   </main>
@@ -538,6 +606,7 @@
     const corpus = [];  // { proposal, embedding, sentences: [{ text, embedding }] }
     let currentResults = [];  // last search results
     let selected = new Set(); // selected proposal IDs (max 3)
+    let uploadedFiles = [];   // { name, content }
 
     // ── DOM refs ─────────────────────────────────────────────────────
     const btnSearch     = document.getElementById('search-btn');
@@ -553,8 +622,34 @@
     const elDraftSection= document.getElementById('draft-section');
     const elDraftOutput = document.getElementById('draft-output');
     const elSelectionHint = document.getElementById('selection-hint');
+    const elFileInput   = document.getElementById('file-input');
+    const elFileChips   = document.getElementById('file-chips');
 
     btnSearch.disabled = true;
+
+    // ── File upload handling ─────────────────────────────────────────
+    elFileInput.addEventListener('change', async () => {
+      const files = Array.from(elFileInput.files);
+      for (const file of files) {
+        const text = await file.text();
+        uploadedFiles.push({ name: file.name, content: text });
+      }
+      elFileInput.value = '';
+      renderFileChips();
+    });
+
+    function renderFileChips() {
+      elFileChips.innerHTML = uploadedFiles.map((f, i) =>
+        `<span class="file-chip">${esc(f.name)}<button data-idx="${i}">&times;</button></span>`
+      ).join('');
+      elFileChips.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          uploadedFiles.splice(parseInt(btn.dataset.idx), 1);
+          renderFileChips();
+        });
+      });
+    }
 
     // ── Cosine similarity ───────────────────────────────────────────
     function cosineSim(a, b) {
@@ -650,9 +745,11 @@
     async function search() {
       const problem = document.getElementById('problem').value.trim();
       const supplemental = document.getElementById('supplemental').value.trim();
-      if (!problem && !supplemental) return;
+      if (!problem && !supplemental && uploadedFiles.length === 0) return;
 
-      const queryText = problem + (supplemental ? '\n' + supplemental : '');
+      // combine typed supplemental + uploaded file contents
+      const fileParts = uploadedFiles.map(f => f.content).join('\n');
+      const queryText = [problem, supplemental, fileParts].filter(Boolean).join('\n');
 
       // show searching state
       elEmpty.style.display = 'none';
@@ -751,64 +848,124 @@
     function draftProposal() {
       const problem = document.getElementById('problem').value.trim();
       const supplemental = document.getElementById('supplemental').value.trim();
+      const fileContext = uploadedFiles.map(f => f.content).join('\n');
       const selectedProposals = currentResults.filter(r => selected.has(r.id));
 
       if (selectedProposals.length === 0) return;
 
-      // Build a structured draft from selected proposals
+      // Helper: extract sentences matching a pattern from selected proposals
+      function gatherSentences(pattern, max) {
+        const results = [];
+        for (const sp of selectedProposals) {
+          const sentences = (sp.content || '').split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
+          const matches = sentences.filter(s => pattern.test(s));
+          results.push(...matches.slice(0, max));
+        }
+        return results;
+      }
+
       let html = '';
 
-      // Section 1: Problem Statement
-      html += `<h3>Problem Statement</h3>`;
+      // ── PURPOSE ──
+      html += `<h3>Purpose</h3>`;
+      html += `<p>This document outlines Slalom's proposed approach, team structure, and engagement model to address the following client need:</p>`;
       html += `<p>${esc(problem)}</p>`;
-      if (supplemental) {
-        html += `<p>${esc(supplemental)}</p>`;
+
+      // ── OUR UNDERSTANDING ──
+      html += `<h3>Our Understanding</h3>`;
+      if (supplemental || fileContext) {
+        html += `<p>${esc(supplemental || fileContext)}</p>`;
+      }
+      // Pull challenge/context sentences from reference proposals
+      const challenges = gatherSentences(
+        /\b(challenge|problem|issue|gap|risk|struggle|pain|lack|limit|fragment|siloed|decline|unable|cannot)\b/i, 3
+      );
+      if (challenges.length) {
+        html += `<p>Based on similar engagements, key challenges in this space typically include:</p><ul>`;
+        for (const c of challenges) html += `<li>${esc(c)}</li>`;
+        html += `</ul>`;
       }
 
-      // Section 2: Recommended Approach (synthesized from excerpts)
-      html += `<h3>Recommended Approach</h3>`;
-      html += `<p>Based on similar engagements, we recommend the following approach:</p><ul>`;
-      for (const sp of selectedProposals) {
-        // Pull the most relevant sentences as approach bullets
-        const sentences = sp.excerpts || [];
-        for (const s of sentences) {
-          html += `<li>${esc(s)}</li>`;
+      // ── SLALOM PROPOSED DELIVERY APPROACH ──
+      html += `<h3>Slalom Proposed Delivery Approach</h3>`;
+      html += `<p>From our experience in similar engagements, we have found the fastest way to drive value is to ramp quickly and continually refine our engagement model through joint delivery. Slalom proposes the following approach:</p>`;
+      const approachSentences = gatherSentences(
+        /\b(propos|approach|recommend|deliver|phase|build|implement|establish|develop|design|iterati|agile|sprint)\b/i, 4
+      );
+      if (approachSentences.length) {
+        html += `<ul>`;
+        for (const a of approachSentences) html += `<li>${esc(a)}</li>`;
+        html += `</ul>`;
+      } else {
+        html += `<p><em>[To be defined based on scoping conversations]</em></p>`;
+      }
+
+      // ── SLALOM ROLES & RESPONSIBILITIES ──
+      html += `<h3>Slalom Roles &amp; Responsibilities</h3>`;
+      const roleSentences = gatherSentences(
+        /\b(responsible|role|lead|manager|engineer|architect|designer|analyst|consultant|SME|executive)\b/i, 5
+      );
+      if (roleSentences.length) {
+        html += `<table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:8px;">`;
+        html += `<thead><tr style="border-bottom:2px solid #e8eaed;text-align:left;"><th style="padding:8px 12px;">Role</th><th style="padding:8px 12px;">Responsibility</th></tr></thead><tbody>`;
+        for (const rs of roleSentences) {
+          // Try to extract a role name from the sentence
+          const roleMatch = rs.match(/\b((?:Engagement|Program|Engineering|Product|Technical|Principal|Quality|UX|Data|Software|Delivery|Accountable)\s*(?:Lead|Manager|Engineer|Architect|Designer|Executive|SME)?)\b/i);
+          const roleName = roleMatch ? roleMatch[1] : 'TBD';
+          html += `<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:8px 12px;font-weight:600;white-space:nowrap;vertical-align:top;">${esc(roleName)}</td><td style="padding:8px 12px;">${esc(rs)}</td></tr>`;
         }
+        html += `</tbody></table>`;
+      } else {
+        html += `<p><em>[Roles to be determined based on engagement scope]</em></p>`;
+      }
+
+      // ── TIMELINE ──
+      html += `<h3>Timeline</h3>`;
+      const timelineSentences = gatherSentences(
+        /\b(week|month|phase|timeline|duration|sprint|quarter|kickoff|onboard|ramp|milestone)\b/i, 3
+      );
+      if (timelineSentences.length) {
+        html += `<ul>`;
+        for (const t of timelineSentences) html += `<li>${esc(t)}</li>`;
+        html += `</ul>`;
+      } else {
+        html += `<p><em>[Timeline to be determined during scoping]</em></p>`;
+      }
+
+      // ── TOTAL ESTIMATED COST ──
+      html += `<h3>Total Estimated Cost</h3>`;
+      html += `<p>This engagement is structured as a fixed-capacity model. Total cost will be determined based on finalized team structure and duration.</p>`;
+      html += `<p><em>[Cost estimate to be developed once scope and team are confirmed]</em></p>`;
+
+      // ── ASSUMPTIONS ──
+      html += `<h3>Assumptions</h3>`;
+      html += `<ul>`;
+      html += `<li>Client stakeholders and business users will be available for interviews and feedback cycles and will respond to Slalom requests for information in a timely manner (within 1-2 business days).</li>`;
+      html += `<li>Client will review Deliverables and respond with comments or acceptance in an agreed-upon timeframe.</li>`;
+      html += `<li>Client will provide access to, and all necessary permissions to use agreed upon project tooling.</li>`;
+      html += `<li>The timeline for this project assumes use of existing internally approved tools and access to information necessary to complete the deliverables.</li>`;
+      // Add domain-specific assumptions from reference proposals
+      const assumptionSentences = gatherSentences(
+        /\b(assum|provid|access|responsible|dependent|require|timely|necessary|approval)\b/i, 3
+      );
+      for (const a of assumptionSentences) {
+        html += `<li>${esc(a)}</li>`;
       }
       html += `</ul>`;
 
-      // Section 3: Key Components (from full proposal content)
-      html += `<h3>Key Components</h3><ul>`;
-      for (const sp of selectedProposals) {
-        // Extract sentences that describe deliverables/components
-        const content = sp.content || '';
-        const allSentences = content.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
-        // Pick sentences with action words indicating deliverables
-        const deliverables = allSentences.filter(s =>
-          /\b(include|deliver|implement|build|establish|deploy|provide|recommend|propose|create|design)s?\b/i.test(s)
-        ).slice(0, 3);
-        for (const d of deliverables) {
-          html += `<li>${esc(d)}</li>`;
-        }
-      }
-      html += `</ul>`;
+      // ── NEXT STEPS ──
+      html += `<h3>Next Steps</h3>`;
+      html += `<ol>`;
+      html += `<li>Incorporate client feedback on this proposal.</li>`;
+      html += `<li>Conduct final review of proposal with client sponsors and stakeholders.</li>`;
+      html += `<li>Upon alignment, Slalom will generate a formal Work Order.</li>`;
+      html += `<li>Client will initiate Legal, Tax and Finance approval processes. (Typically, a two-week process)</li>`;
+      html += `<li>Slalom to identify the team and begin the onboarding process. (Typically, a two-week process)</li>`;
+      html += `<li>Upon approval of Work Order, conduct project kickoff and commence engagement.</li>`;
+      html += `</ol>`;
 
-      // Section 4: Expected Outcomes
-      html += `<h3>Expected Outcomes</h3><ul>`;
-      for (const sp of selectedProposals) {
-        const content = sp.content || '';
-        const allSentences = content.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
-        const outcomes = allSentences.filter(s =>
-          /\b(target|expect|reduce|improve|increase|enable|outcome|result|achieve|save|ROI)\b/i.test(s)
-        ).slice(0, 2);
-        for (const o of outcomes) {
-          html += `<li>${esc(o)}</li>`;
-        }
-      }
-      html += `</ul>`;
-
-      // Section 5: Reference proposals
-      html += `<h3>Based On</h3><div>`;
+      // ── Reference ──
+      html += `<h3 style="margin-top:32px;font-size:12px;color:#9ca3af;">Reference Proposals Used</h3><div>`;
       for (const sp of selectedProposals) {
         html += `<span class="ref-tag">${esc(sp.title)} (score: ${sp.score})</span>`;
       }
