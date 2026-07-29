@@ -848,64 +848,124 @@
     function draftProposal() {
       const problem = document.getElementById('problem').value.trim();
       const supplemental = document.getElementById('supplemental').value.trim();
+      const fileContext = uploadedFiles.map(f => f.content).join('\n');
       const selectedProposals = currentResults.filter(r => selected.has(r.id));
 
       if (selectedProposals.length === 0) return;
 
-      // Build a structured draft from selected proposals
+      // Helper: extract sentences matching a pattern from selected proposals
+      function gatherSentences(pattern, max) {
+        const results = [];
+        for (const sp of selectedProposals) {
+          const sentences = (sp.content || '').split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
+          const matches = sentences.filter(s => pattern.test(s));
+          results.push(...matches.slice(0, max));
+        }
+        return results;
+      }
+
       let html = '';
 
-      // Section 1: Problem Statement
-      html += `<h3>Problem Statement</h3>`;
+      // ── PURPOSE ──
+      html += `<h3>Purpose</h3>`;
+      html += `<p>This document outlines Slalom's proposed approach, team structure, and engagement model to address the following client need:</p>`;
       html += `<p>${esc(problem)}</p>`;
-      if (supplemental) {
-        html += `<p>${esc(supplemental)}</p>`;
+
+      // ── OUR UNDERSTANDING ──
+      html += `<h3>Our Understanding</h3>`;
+      if (supplemental || fileContext) {
+        html += `<p>${esc(supplemental || fileContext)}</p>`;
+      }
+      // Pull challenge/context sentences from reference proposals
+      const challenges = gatherSentences(
+        /\b(challenge|problem|issue|gap|risk|struggle|pain|lack|limit|fragment|siloed|decline|unable|cannot)\b/i, 3
+      );
+      if (challenges.length) {
+        html += `<p>Based on similar engagements, key challenges in this space typically include:</p><ul>`;
+        for (const c of challenges) html += `<li>${esc(c)}</li>`;
+        html += `</ul>`;
       }
 
-      // Section 2: Recommended Approach (synthesized from excerpts)
-      html += `<h3>Recommended Approach</h3>`;
-      html += `<p>Based on similar engagements, we recommend the following approach:</p><ul>`;
-      for (const sp of selectedProposals) {
-        // Pull the most relevant sentences as approach bullets
-        const sentences = sp.excerpts || [];
-        for (const s of sentences) {
-          html += `<li>${esc(s)}</li>`;
+      // ── SLALOM PROPOSED DELIVERY APPROACH ──
+      html += `<h3>Slalom Proposed Delivery Approach</h3>`;
+      html += `<p>From our experience in similar engagements, we have found the fastest way to drive value is to ramp quickly and continually refine our engagement model through joint delivery. Slalom proposes the following approach:</p>`;
+      const approachSentences = gatherSentences(
+        /\b(propos|approach|recommend|deliver|phase|build|implement|establish|develop|design|iterati|agile|sprint)\b/i, 4
+      );
+      if (approachSentences.length) {
+        html += `<ul>`;
+        for (const a of approachSentences) html += `<li>${esc(a)}</li>`;
+        html += `</ul>`;
+      } else {
+        html += `<p><em>[To be defined based on scoping conversations]</em></p>`;
+      }
+
+      // ── SLALOM ROLES & RESPONSIBILITIES ──
+      html += `<h3>Slalom Roles &amp; Responsibilities</h3>`;
+      const roleSentences = gatherSentences(
+        /\b(responsible|role|lead|manager|engineer|architect|designer|analyst|consultant|SME|executive)\b/i, 5
+      );
+      if (roleSentences.length) {
+        html += `<table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:8px;">`;
+        html += `<thead><tr style="border-bottom:2px solid #e8eaed;text-align:left;"><th style="padding:8px 12px;">Role</th><th style="padding:8px 12px;">Responsibility</th></tr></thead><tbody>`;
+        for (const rs of roleSentences) {
+          // Try to extract a role name from the sentence
+          const roleMatch = rs.match(/\b((?:Engagement|Program|Engineering|Product|Technical|Principal|Quality|UX|Data|Software|Delivery|Accountable)\s*(?:Lead|Manager|Engineer|Architect|Designer|Executive|SME)?)\b/i);
+          const roleName = roleMatch ? roleMatch[1] : 'TBD';
+          html += `<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:8px 12px;font-weight:600;white-space:nowrap;vertical-align:top;">${esc(roleName)}</td><td style="padding:8px 12px;">${esc(rs)}</td></tr>`;
         }
+        html += `</tbody></table>`;
+      } else {
+        html += `<p><em>[Roles to be determined based on engagement scope]</em></p>`;
+      }
+
+      // ── TIMELINE ──
+      html += `<h3>Timeline</h3>`;
+      const timelineSentences = gatherSentences(
+        /\b(week|month|phase|timeline|duration|sprint|quarter|kickoff|onboard|ramp|milestone)\b/i, 3
+      );
+      if (timelineSentences.length) {
+        html += `<ul>`;
+        for (const t of timelineSentences) html += `<li>${esc(t)}</li>`;
+        html += `</ul>`;
+      } else {
+        html += `<p><em>[Timeline to be determined during scoping]</em></p>`;
+      }
+
+      // ── TOTAL ESTIMATED COST ──
+      html += `<h3>Total Estimated Cost</h3>`;
+      html += `<p>This engagement is structured as a fixed-capacity model. Total cost will be determined based on finalized team structure and duration.</p>`;
+      html += `<p><em>[Cost estimate to be developed once scope and team are confirmed]</em></p>`;
+
+      // ── ASSUMPTIONS ──
+      html += `<h3>Assumptions</h3>`;
+      html += `<ul>`;
+      html += `<li>Client stakeholders and business users will be available for interviews and feedback cycles and will respond to Slalom requests for information in a timely manner (within 1-2 business days).</li>`;
+      html += `<li>Client will review Deliverables and respond with comments or acceptance in an agreed-upon timeframe.</li>`;
+      html += `<li>Client will provide access to, and all necessary permissions to use agreed upon project tooling.</li>`;
+      html += `<li>The timeline for this project assumes use of existing internally approved tools and access to information necessary to complete the deliverables.</li>`;
+      // Add domain-specific assumptions from reference proposals
+      const assumptionSentences = gatherSentences(
+        /\b(assum|provid|access|responsible|dependent|require|timely|necessary|approval)\b/i, 3
+      );
+      for (const a of assumptionSentences) {
+        html += `<li>${esc(a)}</li>`;
       }
       html += `</ul>`;
 
-      // Section 3: Key Components (from full proposal content)
-      html += `<h3>Key Components</h3><ul>`;
-      for (const sp of selectedProposals) {
-        // Extract sentences that describe deliverables/components
-        const content = sp.content || '';
-        const allSentences = content.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
-        // Pick sentences with action words indicating deliverables
-        const deliverables = allSentences.filter(s =>
-          /\b(include|deliver|implement|build|establish|deploy|provide|recommend|propose|create|design)s?\b/i.test(s)
-        ).slice(0, 3);
-        for (const d of deliverables) {
-          html += `<li>${esc(d)}</li>`;
-        }
-      }
-      html += `</ul>`;
+      // ── NEXT STEPS ──
+      html += `<h3>Next Steps</h3>`;
+      html += `<ol>`;
+      html += `<li>Incorporate client feedback on this proposal.</li>`;
+      html += `<li>Conduct final review of proposal with client sponsors and stakeholders.</li>`;
+      html += `<li>Upon alignment, Slalom will generate a formal Work Order.</li>`;
+      html += `<li>Client will initiate Legal, Tax and Finance approval processes. (Typically, a two-week process)</li>`;
+      html += `<li>Slalom to identify the team and begin the onboarding process. (Typically, a two-week process)</li>`;
+      html += `<li>Upon approval of Work Order, conduct project kickoff and commence engagement.</li>`;
+      html += `</ol>`;
 
-      // Section 4: Expected Outcomes
-      html += `<h3>Expected Outcomes</h3><ul>`;
-      for (const sp of selectedProposals) {
-        const content = sp.content || '';
-        const allSentences = content.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
-        const outcomes = allSentences.filter(s =>
-          /\b(target|expect|reduce|improve|increase|enable|outcome|result|achieve|save|ROI)\b/i.test(s)
-        ).slice(0, 2);
-        for (const o of outcomes) {
-          html += `<li>${esc(o)}</li>`;
-        }
-      }
-      html += `</ul>`;
-
-      // Section 5: Reference proposals
-      html += `<h3>Based On</h3><div>`;
+      // ── Reference ──
+      html += `<h3 style="margin-top:32px;font-size:12px;color:#9ca3af;">Reference Proposals Used</h3><div>`;
       for (const sp of selectedProposals) {
         html += `<span class="ref-tag">${esc(sp.title)} (score: ${sp.score})</span>`;
       }
