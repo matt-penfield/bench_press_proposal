@@ -480,13 +480,74 @@
       color: #5e6ad2;
       margin-top: 1px;
     }
+
+    /* File upload */
+    .file-upload-area {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .file-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: #f3f4f6;
+      border: 1.5px dashed #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .file-upload-btn:hover {
+      border-color: #5e6ad2;
+      background: #eef0fb;
+      color: #5e6ad2;
+    }
+
+    .file-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 100px;
+    }
+
+    .file-chip button {
+      background: none;
+      border: none;
+      color: #5e6ad2;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.6;
+    }
+
+    .file-chip button:hover { opacity: 1; }
   </style>
 </head>
 <body>
   <header>
     <div class="inner">
-      <h1><span>Bench Press</span> — Proposal Matcher</h1>
-      <p>Find similar past proposals by describing the client's problem.</p>
+      <h1><span>Proposal Accelerator</span></h1>
+      <p>Find similar past proposals and use them to guide the development of new ones</p>
       <div class="model-status" id="model-status">
         <div class="spinner"></div>
         <span id="status-text">Initializing…</span>
@@ -504,6 +565,14 @@
       <div class="field">
         <label for="supplemental">Supplemental Info <span class="hint">— industry, constraints, technologies, timeline, etc.</span></label>
         <textarea id="supplemental" rows="3" placeholder="Any additional context that might help find similar work…"></textarea>
+        <div class="file-upload-area">
+          <label class="file-upload-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9M4 4l3-3 3 3"/><path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9"/></svg>
+            Upload files
+            <input type="file" id="file-input" multiple accept=".txt,.md,.pdf,.doc,.docx,.rtf,.csv,.json" hidden>
+          </label>
+          <div class="file-chips" id="file-chips"></div>
+        </div>
       </div>
       <button id="search-btn">Find Similar Proposals</button>
     </div>
@@ -524,7 +593,6 @@
     </div>
 
     <div class="empty-state" id="empty-state">
-      <div class="icon">🏋️</div>
       <p>Enter a problem statement above and hit <strong>Find Similar</strong> to search the proposal corpus.</p>
     </div>
   </main>
@@ -538,6 +606,7 @@
     const corpus = [];  // { proposal, embedding, sentences: [{ text, embedding }] }
     let currentResults = [];  // last search results
     let selected = new Set(); // selected proposal IDs (max 3)
+    let uploadedFiles = [];   // { name, content }
 
     // ── DOM refs ─────────────────────────────────────────────────────
     const btnSearch     = document.getElementById('search-btn');
@@ -553,8 +622,34 @@
     const elDraftSection= document.getElementById('draft-section');
     const elDraftOutput = document.getElementById('draft-output');
     const elSelectionHint = document.getElementById('selection-hint');
+    const elFileInput   = document.getElementById('file-input');
+    const elFileChips   = document.getElementById('file-chips');
 
     btnSearch.disabled = true;
+
+    // ── File upload handling ─────────────────────────────────────────
+    elFileInput.addEventListener('change', async () => {
+      const files = Array.from(elFileInput.files);
+      for (const file of files) {
+        const text = await file.text();
+        uploadedFiles.push({ name: file.name, content: text });
+      }
+      elFileInput.value = '';
+      renderFileChips();
+    });
+
+    function renderFileChips() {
+      elFileChips.innerHTML = uploadedFiles.map((f, i) =>
+        `<span class="file-chip">${esc(f.name)}<button data-idx="${i}">&times;</button></span>`
+      ).join('');
+      elFileChips.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          uploadedFiles.splice(parseInt(btn.dataset.idx), 1);
+          renderFileChips();
+        });
+      });
+    }
 
     // ── Cosine similarity ───────────────────────────────────────────
     function cosineSim(a, b) {
@@ -650,9 +745,11 @@
     async function search() {
       const problem = document.getElementById('problem').value.trim();
       const supplemental = document.getElementById('supplemental').value.trim();
-      if (!problem && !supplemental) return;
+      if (!problem && !supplemental && uploadedFiles.length === 0) return;
 
-      const queryText = problem + (supplemental ? '\n' + supplemental : '');
+      // combine typed supplemental + uploaded file contents
+      const fileParts = uploadedFiles.map(f => f.content).join('\n');
+      const queryText = [problem, supplemental, fileParts].filter(Boolean).join('\n');
 
       // show searching state
       elEmpty.style.display = 'none';
