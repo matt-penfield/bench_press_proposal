@@ -1,102 +1,82 @@
 # Bench Press Proposal Tool - High-Level AWS System Architecture
 
-## 0) 2026 Recommendation (Executive Summary)
-
-For new builds, use **Amazon Bedrock AgentCore** as the primary agent platform.
-
-Recommended 2026 target stack:
-- **Agent runtime**: AgentCore Runtime (session-isolated, serverless scaling)
-- **Orchestration**: Supervisor + specialist collaborator agents
-- **Tooling and governance**: AgentCore Gateway + AgentCore Policy (Cedar)
-- **Retrieval default**: Bedrock Managed Knowledge Base (agentic retrieval, managed reranking, connectors, ACL-aware retrieval)
-- **Memory**: AgentCore Memory (short-term and long-term)
-- **Safety**: Bedrock Guardrails + deterministic policy boundaries
-- **Quality loop**: AgentCore Evaluations + Optimization (recommendations and A/B testing)
-- **Observability**: AgentCore Observability + CloudWatch + OTEL
-
-Use customer-managed OpenSearch retrieval only when strict custom index control or existing platform constraints require it.
-
 ## 1) Context and Problem Statement
 
 The current repository implements a browser-only prototype:
+
 - Static single-page app in `index.html`
 - Local proposal corpus in `proposals.js`
 - In-browser semantic matching using a Hugging Face model loaded from CDN
-- No backend API, no persistent storage, no auth, and no ingestion pipeline
+- No backend API, no persistent storage, no authentication, and no
+  ingestion pipeline
 
-This works for a demo, but it does not scale for enterprise proposal search because proposal content, access control, auditability, and compute all need to be centralized and secure.
+This works for a demo, but it does not scale for enterprise proposal search
+because proposal content, access control, auditability, and compute need to be
+centralized and secure.
 
 ## 2) Target Architecture Goals
 
 - Secure enterprise access with SSO
-- Centralized proposal ingestion and normalization (PDF/DOCX/TXT)
-- Fast semantic and keyword retrieval over large corpora
-- Explainable matches (scores, excerpts, source references)
-- Draft proposal generation with guardrails and citations
+- Centralized proposal ingestion and normalization (PDF, DOCX, TXT)
+- Fast similarity retrieval with source-backed evidence
+- Draft generation with safety controls and citations
 - Operational visibility, governance, and cost controls
 
 ## 3) Recommended AWS High-Level Architecture
 
 ### 3.1 Frontend and Edge
-- **Amazon S3 + CloudFront** for hosting the SPA
-- **AWS WAF + AWS Shield** in front of CloudFront
-- **Amazon Cognito** (federated with enterprise IdP via SAML/OIDC) for authentication
 
-### 3.2 API and Application Layer
-- **Amazon API Gateway** as the public API facade
-- **AWS Lambda** for core APIs (search, result explainability, draft generation orchestration)
-- **Amazon ECS Fargate** (optional) for heavier long-running services if Lambda limits are exceeded
+- Amazon S3 + CloudFront for hosting the SPA
+- AWS WAF in front of CloudFront
+- Amazon Cognito (federated with enterprise IdP via SAML or OIDC)
 
-### 3.3 Data and Knowledge Layer
-- **Amazon S3 (raw zone)** for uploaded proposal files and source artifacts
-- **Amazon Textract** for OCR/text extraction from scanned PDFs
-- **AWS Step Functions** to orchestrate ingestion pipeline
-- **AWS Lambda** for text cleaning, chunking, metadata enrichment
-- **Amazon OpenSearch Service**
-  - BM25/keyword index for lexical retrieval
-  - Vector index for embedding similarity search
-- **Amazon DynamoDB** for proposal metadata, ingestion status, and user feedback
+### 3.2 Runtime and Orchestration
 
-### 3.4 AI/ML Layer
-- **Amazon Bedrock** for:
-  - Embeddings (for proposal chunks and query embeddings)
-  - LLM text generation for draft proposal output
-- Retrieval-Augmented Generation (RAG):
-  - Hybrid retrieval from OpenSearch (keyword + vector)
-  - Re-ranking and top-k chunk selection
-  - Prompt assembly with citations
+- Amazon API Gateway as the public API facade
+- Agent runtime as the orchestration layer
+- Supervisor and collaborator agents for:
+  - Similarity and evidence extraction
+  - Draft composition
+  - Quality and style checks
+
+### 3.3 Knowledge and Data Layer
+
+- Amazon S3 for uploaded proposal files and source artifacts
+- Bedrock managed knowledge base for retrieval and grounded generation context
+- Optional enterprise tools (templates, account data, external APIs)
+  accessed through a governed tool gateway
+
+### 3.4 AI Safety, Policy, and Quality
+
+- Guardrails for prompt and response safety
+- Policy enforcement for tool-call authorization
+- Memory for session and user-context continuity
+- Evaluation and optimization loop for response quality improvements
 
 ### 3.5 Security, Audit, and Operations
-- **AWS KMS** for encryption keys (S3, OpenSearch, DynamoDB)
-- **IAM + least privilege** for service roles
-- **CloudTrail** for API and control-plane audit logs
-- **CloudWatch** for metrics, logs, alarms, dashboards
-- **AWS X-Ray** for distributed tracing
-- **AWS Config + Security Hub + GuardDuty** for posture management
 
-## 4) High-Level Data Flow
+- KMS for encryption keys
+- IAM least-privilege service roles
+- CloudTrail for control-plane audit logs
+- CloudWatch for logs, metrics, and alarms
 
-1. User authenticates through Cognito (federated SSO).
+## 4) High-Level Request Flow
+
+1. User authenticates through Cognito.
 2. User submits problem statement, supplemental context, and optional files.
-3. API Gateway routes request to Search API (Lambda).
-4. Search API creates query embeddings via Bedrock.
-5. Hybrid retrieval runs in OpenSearch (vector + keyword).
-6. API composes ranked results with excerpts, scores, and source references.
-7. User selects top proposals and requests draft generation.
-8. Draft API retrieves selected chunks and calls Bedrock LLM with citation-focused prompt.
-9. Draft response returns structured sections (approach, timeline, assumptions, references).
+3. API Gateway forwards requests to the agent runtime.
+4. Agent runtime retrieves grounded context from the knowledge base.
+5. Agent runtime invokes collaborator tasks for ranking, reasoning, and
+   drafting.
+6. Policy layer governs tool calls; guardrails evaluate prompts and outputs.
+7. System returns ranked matches with evidence and optional drafted response.
 
-## 5) Ingestion Pipeline (Proposal Corpus)
+## 5) Ingestion Flow
 
-1. Proposal file uploaded to S3 raw zone.
-2. S3 event triggers Step Functions workflow.
-3. Pipeline stages:
-   - Extract text (Textract where needed)
-   - Normalize and chunk content
-   - Generate embeddings (Bedrock)
-   - Index chunks into OpenSearch
-   - Persist metadata/state in DynamoDB
-4. Pipeline emits metrics and failures to CloudWatch alarms.
+1. Proposal files are uploaded to S3.
+2. Knowledge-base ingestion syncs content and metadata.
+3. Retrieval index is updated and becomes queryable by the runtime.
+4. Ingestion and query telemetry are emitted to CloudWatch.
 
 ## 6) Logical Architecture Diagram
 
@@ -107,62 +87,70 @@ flowchart TD
   FE --> AUTH[Cognito SSO]
   FE --> APIGW[API Gateway]
 
-  APIGW --> AGENT[AgentCore Runtime Supervisor Agent]
+  APIGW --> AGENT[Agent Runtime Supervisor Agent]
   AGENT --> COLLAB1[Collaborator Agent: Similarity and Evidence]
   AGENT --> COLLAB2[Collaborator Agent: Draft Composer]
   AGENT --> COLLAB3[Collaborator Agent: Quality and Style Checks]
 
-  COLLAB1 --> GW[AgentCore Gateway]
+  COLLAB1 --> GW[Tool Gateway]
   COLLAB2 --> GW
   COLLAB3 --> GW
 
-  GW --> POL[AgentCore Policy Engine]
-  GW --> KB[Bedrock Managed Knowledge Base]
+  GW --> POL[Policy Engine]
+  GW --> KB[Managed Knowledge Base]
   GW --> TOOLS[Enterprise APIs and Proposal Templates]
 
-  AGENT --> MEM[AgentCore Memory]
-  AGENT --> GR[Bedrock Guardrails]
-  AGENT --> OBS[AgentCore Observability]
+  AGENT --> MEM[Memory]
+  AGENT --> GR[Guardrails]
+  AGENT --> OBS[Observability]
 
   SUBMIT[Proposal Upload] --> S3RAW[S3 Raw Documents]
   S3RAW --> KB
 
-  KB --> BR[Bedrock Embeddings and Generation]
-
   OBS --> CW[CloudWatch Logs and Metrics]
-  CW --> EVAL[AgentCore Evaluations and Optimization]
+  CW --> EVAL[Evaluation and Optimization]
   CW --> OPS[Alarms and Ops Dashboards]
 ```
 
-## 7) Mapping from Current Prototype to AWS Target
+![Agentic workflow architecture](assets/agentic-workflow.jpg)
+
+*Figure 1. Agentic workflow and task-assessment architecture (v1).*
+
+## 7) Mapping from Current Prototype to Target Architecture
 
 - `index.html` UI -> S3 + CloudFront hosted SPA
-- In-browser model/CDN inference -> Bedrock-managed embedding and generation APIs
-- `proposals.js` local corpus -> S3 + OpenSearch indexed corpus
-- Client-only matching -> API-driven hybrid retrieval service
-- No auth -> Cognito federated SSO
-- No persistence -> DynamoDB metadata + feedback storage
+- In-browser model inference -> managed model invocation through runtime
+- `proposals.js` local corpus -> S3-backed managed knowledge base
+- Client-only matching -> API and agent-runtime orchestration
+- No authentication -> Cognito federated SSO
+- No persistence -> managed data stores and governed telemetry
 
 ## 8) Non-Functional Considerations
 
-- **Scalability**: OpenSearch shard sizing based on corpus growth and query QPS
-- **Latency**: Target p95 search response under 2s for top-k retrieval
-- **Security**: End-to-end TLS, encryption at rest with KMS, per-user authorization checks
-- **Reliability**: Multi-AZ managed services, DLQs for failed ingestion tasks
-- **Cost**: Use Lambda for bursty API demand, tune OpenSearch hot/warm tiers, monitor Bedrock token usage
+- Scalability: managed runtime and retrieval services scale by demand
+- Security: TLS in transit, encryption at rest, and policy-governed access
+- Reliability: managed services with monitoring, alarms, and retryable flows
+- Cost: monitor token usage, retrieval volume, and logging footprint
 
 ## 9) Suggested Implementation Phases
 
-1. Phase 1 (MVP on AWS)
-   - Host SPA on S3/CloudFront
-   - Add API Gateway + Lambda search endpoint
-   - Move corpus to OpenSearch vector index
-2. Phase 2 (Enterprise readiness)
-   - Add Cognito SSO, WAF, audit controls, full ingestion pipeline
-3. Phase 3 (Advanced intelligence)
-   - Hybrid reranking, feedback loop, domain prompts, success-weighted ranking
+1. Phase 1
+   - Host SPA on S3 and CloudFront
+   - Add API Gateway and runtime orchestration
+   - Move corpus from local JS file to S3-backed managed knowledge base
+2. Phase 2
+   - Add SSO, policy controls, guardrails, and ingestion governance
+3. Phase 3
+   - Add quality-evaluation loops, integration expansion, and tuning
 
-## 10) Outcome
+## 10) Revision History
 
-This architecture preserves the user workflow from the current prototype while upgrading it to an enterprise-grade AWS platform with secure access, scalable retrieval, governed AI generation, and production observability.
+- Date: 29-Jul
+  - Version: 1.0
+  - Author: Pankaj T
+  - Notes: Initial architecture draft and baseline flow.
+- Date: 29-Jul
+  - Version: 1.1
+  - Author: Pankaj T
+  - Notes: Removed year-specific references, added image asset, and cleaned structure.
 
