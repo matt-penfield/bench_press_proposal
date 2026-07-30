@@ -946,34 +946,80 @@
 
       // ── SLALOM PROPOSED DELIVERY APPROACH ──
       html += `<h3>Slalom Proposed Delivery Approach</h3>`;
-      html += `<p>From our experience in similar engagements, we have found the fastest way to drive value is to ramp quickly and continually refine our engagement model through joint delivery. Slalom proposes the following scope:</p>`;
-      // Pull sentences about what the project includes — deliverables, capabilities, components
-      const scopeSentences = gatherSentences(
-        /\b(include|deliver|build|implement|establish|develop|design|create|deploy|enable|provide|automat|integrat|platform|dashboard|pipeline|solution|capability)\b/i, 6
-      );
-      // Filter out sentences that are primarily about timing/phasing
-      const approachOnly = scopeSentences.filter(s =>
-        !/^\s*(Phase \d|Weeks? \d|Week \d)/i.test(s)
-      );
-      // Deduplicate: skip sentences that are >60% similar to one already added
-      const usedApproach = [];
-      for (const s of approachOnly) {
+      html += `<p>Based on the problem statement and reference engagements, Slalom proposes the following scope:</p>`;
+
+      // Always generate scope — derive from problem statement keywords + reference proposal deliverables
+      const scopeItems = [];
+
+      // 1. Derive scope bullets from the problem statement itself
+      const problemWords = problem.toLowerCase();
+      const scopeFromProblem = [];
+      if (/\b(latency|speed|performance|slow|fast|real.?time)\b/.test(problemWords)) {
+        scopeFromProblem.push('Performance profiling, bottleneck identification, and optimization of the end-to-end pipeline');
+      }
+      if (/\b(dashboard|report|analytics|data|insight|metric|measure)\b/.test(problemWords)) {
+        scopeFromProblem.push('Design and implementation of an analytics solution providing actionable insights and self-service reporting');
+      }
+      if (/\b(automat|manual|process|workflow|efficien)\b/.test(problemWords)) {
+        scopeFromProblem.push('Process automation to eliminate manual effort and reduce cycle time');
+      }
+      if (/\b(experience|ux|design|user|customer|patient|portal|app)\b/.test(problemWords)) {
+        scopeFromProblem.push('User experience research, design, and validated prototyping');
+      }
+      if (/\b(migrat|modern|legacy|upgrad|transform)\b/.test(problemWords)) {
+        scopeFromProblem.push('Architecture modernization with phased migration strategy');
+      }
+      if (/\b(security|fraud|risk|compliance|protect|detect)\b/.test(problemWords)) {
+        scopeFromProblem.push('Security assessment and implementation of detection and prevention controls');
+      }
+      if (/\b(ml|ai|model|predict|intelligen|learn)\b/.test(problemWords)) {
+        scopeFromProblem.push('Machine learning model development, training, and production deployment');
+      }
+      if (/\b(integrat|connect|api|pipeline|ingest)\b/.test(problemWords)) {
+        scopeFromProblem.push('System integration and data pipeline development');
+      }
+      if (/\b(scale|grow|expand|volume|capacity)\b/.test(problemWords)) {
+        scopeFromProblem.push('Scalability engineering to support growth and increased volume');
+      }
+      if (/\b(interactive|engage|feature|build|launch|product)\b/.test(problemWords)) {
+        scopeFromProblem.push('Feature development and iterative delivery through rapid prototyping and testing');
+      }
+      // Always include discovery and knowledge transfer
+      scopeFromProblem.unshift('Discovery and requirements gathering with key stakeholders');
+      scopeFromProblem.push('Knowledge transfer, documentation, and transition to client operations');
+
+      // 2. Pull specific deliverable language from selected reference proposals
+      const refDeliverables = [];
+      for (const sp of selectedProposals) {
+        const content = sp.content || '';
+        const approachMatch = content.match(/Slalom Proposed Delivery Approach[:\s]*([\s\S]*?)(?=Slalom Roles|Timeline|Total Estimated|Assumptions|Next Steps|$)/i);
+        const approachText = approachMatch ? approachMatch[1] : '';
+        if (!approachText) continue;
+        const sentences = approachText.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
+        const scopeOnly = sentences.filter(s =>
+          /\b(build|implement|deliver|develop|design|create|deploy|automat|integrat|conduct|establish)\b/i.test(s) &&
+          !/^\s*(Phase \d|Weeks? \d)/i.test(s) &&
+          !/\b(this document outlines|purpose|will be available|will provide access|will review)\b/i.test(s)
+        );
+        refDeliverables.push(...scopeOnly.slice(0, 2));
+      }
+
+      // 3. Combine: problem-derived scope + reference deliverables, deduplicated
+      const combined = [...scopeFromProblem, ...refDeliverables];
+      const usedScope = [];
+      for (const s of combined) {
         const words = new Set(s.toLowerCase().split(/\s+/));
-        const isDuplicate = usedApproach.some(used => {
+        const isDuplicate = usedScope.some(used => {
           const usedWords = new Set(used.toLowerCase().split(/\s+/));
           const overlap = [...words].filter(w => usedWords.has(w)).length;
-          return overlap / Math.max(words.size, usedWords.size) > 0.6;
+          return overlap / Math.max(words.size, usedWords.size) > 0.5;
         });
-        if (!isDuplicate) usedApproach.push(s);
-        if (usedApproach.length >= 4) break;
+        if (!isDuplicate) usedScope.push(s);
+        if (usedScope.length >= 7) break;
       }
-      if (usedApproach.length) {
-        html += `<ul>`;
-        for (const a of usedApproach) html += `<li>${esc(a)}</li>`;
-        html += `</ul>`;
-      } else {
-        html += `<p><em>[To be defined based on scoping conversations]</em></p>`;
-      }
+      html += `<ul>`;
+      for (const s of usedScope) html += `<li>${esc(s)}</li>`;
+      html += `</ul>`;
 
       // ── SLALOM ROLES & RESPONSIBILITIES ──
       html += `<h3>Slalom Roles &amp; Responsibilities</h3>`;
