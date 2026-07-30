@@ -470,6 +470,25 @@
       margin-bottom: 4px;
     }
 
+    /* Export button */
+    #export-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px 24px;
+      background: #1a1a2e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    #export-btn:hover { background: #2d2d44; }
+    #export-btn:active { background: #0f0f1a; }
+
     /* Score explanation */
     .score-why {
       margin-top: 12px;
@@ -620,6 +639,7 @@
     <div class="draft-section" id="draft-section" style="display:none;">
       <h2>Drafted Proposal</h2>
       <div class="draft-output" id="draft-output"></div>
+      <button id="export-btn">Export to Word (.docx)</button>
     </div>
 
     <div class="empty-state" id="empty-state">
@@ -628,6 +648,8 @@
   </main>
 
   <script src="proposals.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8/build/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2/dist/FileSaver.min.js"></script>
   <script type="module">
     import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3';
 
@@ -1122,11 +1144,82 @@
       return el.innerHTML;
     }
 
+    // ── Export to Word ───────────────────────────────────────────────
+    async function exportToWord() {
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } = window.docx;
+
+      const children = [];
+
+      // Parse the draft HTML into docx elements
+      const sections = elDraftOutput.querySelectorAll('h3, p, ul, ol, table');
+      for (const el of sections) {
+        if (el.tagName === 'H3') {
+          children.push(new Paragraph({
+            text: el.textContent,
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 400, after: 100 }
+          }));
+        } else if (el.tagName === 'P') {
+          children.push(new Paragraph({
+            children: [new TextRun({ text: el.textContent, size: 22 })],
+            spacing: { after: 120 }
+          }));
+        } else if (el.tagName === 'UL' || el.tagName === 'OL') {
+          const items = el.querySelectorAll('li');
+          items.forEach((li, idx) => {
+            children.push(new Paragraph({
+              children: [new TextRun({ text: el.tagName === 'OL' ? `${idx + 1}. ${li.textContent}` : `\u2022 ${li.textContent}`, size: 22 })],
+              spacing: { after: 60 },
+              indent: { left: 360 }
+            }));
+          });
+        } else if (el.tagName === 'TABLE') {
+          const rows = el.querySelectorAll('tr');
+          const tableRows = [];
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('th, td');
+            const tableCells = [];
+            cells.forEach(cell => {
+              tableCells.push(new TableCell({
+                children: [new Paragraph({
+                  children: [new TextRun({ text: cell.textContent, bold: cell.tagName === 'TH', size: 22 })]
+                })],
+                width: { size: 50, type: WidthType.PERCENTAGE }
+              }));
+            });
+            if (tableCells.length > 0) tableRows.push(new TableRow({ children: tableCells }));
+          });
+          if (tableRows.length > 0) {
+            children.push(new Table({ rows: tableRows }));
+            children.push(new Paragraph({ text: '', spacing: { after: 120 } }));
+          }
+        }
+      }
+
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: [
+            new Paragraph({
+              children: [new TextRun({ text: 'Proposal Draft', bold: true, size: 36 })],
+              heading: HeadingLevel.HEADING_1,
+              spacing: { after: 300 }
+            }),
+            ...children
+          ]
+        }]
+      });
+
+      const blob = await Packer.toBlob(doc);
+      window.saveAs(blob, 'proposal-draft.docx');
+    }
+
     // ── Wire up ─────────────────────────────────────────────────────
     btnSearch.addEventListener('click', search);
     elDraftBtn.addEventListener('click', draftProposal);
+    document.getElementById('export-btn').addEventListener('click', exportToWord);
 
-    document.querySelectorAll('textarea').forEach(ta => {
+    document.querySelectorAll('#problem, #supplemental').forEach(ta => {
       ta.addEventListener('keydown', e => {
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
