@@ -946,13 +946,30 @@
 
       // ── SLALOM PROPOSED DELIVERY APPROACH ──
       html += `<h3>Slalom Proposed Delivery Approach</h3>`;
-      html += `<p>From our experience in similar engagements, we have found the fastest way to drive value is to ramp quickly and continually refine our engagement model through joint delivery. Slalom proposes the following approach:</p>`;
-      const approachSentences = gatherSentences(
-        /\b(propos|approach|recommend|deliver|phase|build|implement|establish|develop|design|iterati|agile|sprint)\b/i, 4
+      html += `<p>From our experience in similar engagements, we have found the fastest way to drive value is to ramp quickly and continually refine our engagement model through joint delivery. Slalom proposes the following scope:</p>`;
+      // Pull sentences about what the project includes — deliverables, capabilities, components
+      const scopeSentences = gatherSentences(
+        /\b(include|deliver|build|implement|establish|develop|design|create|deploy|enable|provide|automat|integrat|platform|dashboard|pipeline|solution|capability)\b/i, 6
       );
-      if (approachSentences.length) {
+      // Filter out sentences that are primarily about timing/phasing
+      const approachOnly = scopeSentences.filter(s =>
+        !/^\s*(Phase \d|Weeks? \d|Week \d)/i.test(s)
+      );
+      // Deduplicate: skip sentences that are >60% similar to one already added
+      const usedApproach = [];
+      for (const s of approachOnly) {
+        const words = new Set(s.toLowerCase().split(/\s+/));
+        const isDuplicate = usedApproach.some(used => {
+          const usedWords = new Set(used.toLowerCase().split(/\s+/));
+          const overlap = [...words].filter(w => usedWords.has(w)).length;
+          return overlap / Math.max(words.size, usedWords.size) > 0.6;
+        });
+        if (!isDuplicate) usedApproach.push(s);
+        if (usedApproach.length >= 4) break;
+      }
+      if (usedApproach.length) {
         html += `<ul>`;
-        for (const a of approachSentences) html += `<li>${esc(a)}</li>`;
+        for (const a of usedApproach) html += `<li>${esc(a)}</li>`;
         html += `</ul>`;
       } else {
         html += `<p><em>[To be defined based on scoping conversations]</em></p>`;
@@ -979,12 +996,30 @@
 
       // ── TIMELINE ──
       html += `<h3>Timeline</h3>`;
+      // Only pull sentences that are specifically about timing, duration, and phasing
       const timelineSentences = gatherSentences(
-        /\b(week|month|phase|timeline|duration|sprint|quarter|kickoff|onboard|ramp|milestone)\b/i, 3
+        /\b(\d+[\s-]*week|\d+[\s-]*month|Phase \d|timeline|duration|kickoff|onboard)\b/i, 6
       );
-      if (timelineSentences.length) {
+      // Filter to only sentences with actual time references, exclude generic scope sentences
+      const timeOnly = timelineSentences.filter(s =>
+        /\d+[\s-]*(week|month)|Phase \d/i.test(s)
+      );
+      if (timeOnly.length) {
         html += `<ul>`;
-        for (const t of timelineSentences) html += `<li>${esc(t)}</li>`;
+        const usedTime = [];
+        for (const t of timeOnly) {
+          const words = new Set(t.toLowerCase().split(/\s+/));
+          const isDuplicate = usedTime.some(used => {
+            const usedWords = new Set(used.toLowerCase().split(/\s+/));
+            const overlap = [...words].filter(w => usedWords.has(w)).length;
+            return overlap / Math.max(words.size, usedWords.size) > 0.6;
+          });
+          if (!isDuplicate) {
+            usedTime.push(t);
+            html += `<li>${esc(t)}</li>`;
+          }
+          if (usedTime.length >= 3) break;
+        }
         html += `</ul>`;
       } else {
         html += `<p><em>[Timeline to be determined during scoping]</em></p>`;
