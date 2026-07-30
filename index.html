@@ -25,7 +25,35 @@
       max-width: 860px;
       margin: 0 auto;
       padding: 0 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
     }
+
+    header .header-left { flex: 1; }
+
+    .wo-check-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #5e6ad2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 4px;
+      transition: background 0.15s;
+    }
+
+    .wo-check-btn:hover { background: #4f5bc0; }
 
     header h1 {
       font-size: 22px;
@@ -546,13 +574,19 @@
 <body>
   <header>
     <div class="inner">
-      <h1><span>Proposal Accelerator</span></h1>
-      <p>Find similar past proposals and use them to guide the development of new ones</p>
-      <div class="model-status" id="model-status">
+      <div class="header-left">
+        <h1><span>Proposal Accelerator</span></h1>
+        <p>Find similar past proposals and use them to guide the development of new ones</p>
+        <div class="model-status" id="model-status">
         <div class="spinner"></div>
         <span id="status-text">Initializing…</span>
-        <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+          <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+        </div>
       </div>
+      <a href="src/frontend/work-order-check.html" class="wo-check-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h10M2 7h7M2 10h5"/><path d="M10 8l1.5 1.5L14 7"/></svg>
+        Work Order Check
+      </a>
     </div>
   </header>
 
