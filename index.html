@@ -648,8 +648,6 @@
   </main>
 
   <script src="proposals.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docx@8/build/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/file-saver@2/dist/FileSaver.min.js"></script>
   <script type="module">
     import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3';
 
@@ -1144,66 +1142,96 @@
       return el.innerHTML;
     }
 
-    // ── Export to Word ───────────────────────────────────────────────
+    // ── Export to Word (.docx) ─────────────────────────────────────
     async function exportToWord() {
-      const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } = window.docx;
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType, AlignmentType, convertInchesToTwip } = await import('https://cdn.jsdelivr.net/npm/docx@9.0.2/+esm');
 
       const children = [];
 
-      // Parse the draft HTML into docx elements
-      const sections = elDraftOutput.querySelectorAll('h3, p, ul, ol, table');
+      const sections = elDraftOutput.querySelectorAll('h3, p, ul, ol, table, div');
       for (const el of sections) {
         if (el.tagName === 'H3') {
           children.push(new Paragraph({
-            text: el.textContent,
-            heading: HeadingLevel.HEADING_2,
-            spacing: { before: 400, after: 100 }
+            children: [new TextRun({ text: el.textContent, font: 'Calibri Light', size: 32, bold: true, color: '000000' })],
+            spacing: { before: 480, after: 120 }
           }));
         } else if (el.tagName === 'P') {
           children.push(new Paragraph({
-            children: [new TextRun({ text: el.textContent, size: 22 })],
-            spacing: { after: 120 }
+            children: [new TextRun({ text: el.textContent, font: 'Calibri', size: 22, color: '000000' })],
+            spacing: { after: 120, line: 360 }
           }));
-        } else if (el.tagName === 'UL' || el.tagName === 'OL') {
+        } else if (el.tagName === 'UL') {
+          const items = el.querySelectorAll('li');
+          items.forEach(li => {
+            children.push(new Paragraph({
+              children: [new TextRun({ text: li.textContent, font: 'Calibri', size: 22, color: '000000' })],
+              bullet: { level: 0 },
+              spacing: { after: 60, line: 360 }
+            }));
+          });
+        } else if (el.tagName === 'OL') {
           const items = el.querySelectorAll('li');
           items.forEach((li, idx) => {
             children.push(new Paragraph({
-              children: [new TextRun({ text: el.tagName === 'OL' ? `${idx + 1}. ${li.textContent}` : `\u2022 ${li.textContent}`, size: 22 })],
-              spacing: { after: 60 },
-              indent: { left: 360 }
+              children: [new TextRun({ text: `${idx + 1}. ${li.textContent}`, font: 'Calibri', size: 22, color: '000000' })],
+              spacing: { after: 60, line: 360 },
+              indent: { left: convertInchesToTwip(0.25) }
             }));
           });
         } else if (el.tagName === 'TABLE') {
           const rows = el.querySelectorAll('tr');
           const tableRows = [];
-          rows.forEach(row => {
+          rows.forEach((row, rowIdx) => {
             const cells = row.querySelectorAll('th, td');
             const tableCells = [];
             cells.forEach(cell => {
+              const isHeader = cell.tagName === 'TH';
               tableCells.push(new TableCell({
                 children: [new Paragraph({
-                  children: [new TextRun({ text: cell.textContent, bold: cell.tagName === 'TH', size: 22 })]
+                  children: [new TextRun({
+                    text: cell.textContent,
+                    font: 'Calibri',
+                    size: 20,
+                    bold: isHeader,
+                    color: isHeader ? 'FFFFFF' : '000000'
+                  })]
                 })],
+                shading: isHeader
+                  ? { type: ShadingType.SOLID, color: '4472C4', fill: '4472C4' }
+                  : rowIdx % 2 === 1
+                    ? { type: ShadingType.SOLID, color: 'D9E2F3', fill: 'D9E2F3' }
+                    : undefined,
                 width: { size: 50, type: WidthType.PERCENTAGE }
               }));
             });
             if (tableCells.length > 0) tableRows.push(new TableRow({ children: tableCells }));
           });
           if (tableRows.length > 0) {
-            children.push(new Table({ rows: tableRows }));
+            children.push(new Table({ rows: tableRows, width: { size: 100, type: WidthType.PERCENTAGE } }));
             children.push(new Paragraph({ text: '', spacing: { after: 120 } }));
           }
+        } else if (el.tagName === 'DIV' && el.querySelector('.ref-tag')) {
+          // Reference tags section — render as italic grey text
+          const tags = el.querySelectorAll('.ref-tag');
+          const tagTexts = Array.from(tags).map(t => t.textContent).join('  |  ');
+          children.push(new Paragraph({
+            children: [new TextRun({ text: tagTexts, font: 'Calibri', size: 18, italics: true, color: '44546A' })],
+            spacing: { before: 240, after: 120 }
+          }));
         }
       }
 
       const doc = new Document({
         sections: [{
-          properties: {},
+          properties: {
+            page: {
+              margin: { top: convertInchesToTwip(1), bottom: convertInchesToTwip(1), left: convertInchesToTwip(1), right: convertInchesToTwip(1) }
+            }
+          },
           children: [
             new Paragraph({
-              children: [new TextRun({ text: 'Proposal Draft', bold: true, size: 36 })],
-              heading: HeadingLevel.HEADING_1,
-              spacing: { after: 300 }
+              children: [new TextRun({ text: 'Proposal Draft', font: 'Calibri Light', size: 56, bold: true, color: '000000' })],
+              spacing: { after: 600 }
             }),
             ...children
           ]
@@ -1211,7 +1239,14 @@
       });
 
       const blob = await Packer.toBlob(doc);
-      window.saveAs(blob, 'proposal-draft.docx');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'proposal-draft.docx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
     // ── Wire up ─────────────────────────────────────────────────────
