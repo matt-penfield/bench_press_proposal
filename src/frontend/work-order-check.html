@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bench Press — Work Order Check</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f8f9fb;
+      color: #1a1a2e;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e8eaed;
+      padding: 20px 0;
+    }
+
+    header .inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    header .header-left { flex: 1; }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.3px;
+    }
+
+    header h1 span { color: #5e6ad2; }
+
+    header p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #6b7280;
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      background: #fff;
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .back-link:hover { border-color: #5e6ad2; color: #5e6ad2; }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* ── Shared card ─────────────────────────────────── */
+    .panel {
+      background: #fff;
+      border: 1px solid #e8eaed;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+    }
+
+    /* ── Upload area ─────────────────────────────────── */
+    .file-upload-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .file-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: #f3f4f6;
+      border: 1.5px dashed #d1d5db;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .file-upload-btn:hover {
+      border-color: #5e6ad2;
+      background: #eef0fb;
+      color: #5e6ad2;
+    }
+
+    .file-name {
+      font-size: 13px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .file-name span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .file-name span button {
+      background: none;
+      border: none;
+      color: #5e6ad2;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.6;
+    }
+
+    .file-name span button:hover { opacity: 1; }
+
+    .upload-hint {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+
+    /* ── Checklist ───────────────────────────────────── */
+    .checklist-section { display: none; }
+
+    .summary-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .summary-badge.pending { background: #f3f4f6; color: #6b7280; }
+    .summary-badge.all-pass { background: #ecfdf5; color: #059669; }
+    .summary-badge.has-fail { background: #fef2f2; color: #dc2626; }
+    .summary-badge.has-warn { background: #fef9ee; color: #d97706; }
+
+    .checklist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .recheck-btn {
+      padding: 7px 14px;
+      background: #fff;
+      border: 1.5px solid #e8eaed;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .recheck-btn:hover { border-color: #5e6ad2; color: #5e6ad2; }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: #fafbfc;
+      border: 1px solid #f0f1f3;
+      margin-bottom: 8px;
+      transition: background 0.15s;
+    }
+
+    .check-row.pass { background: #f0fdf4; border-color: #d1fae5; }
+    .check-row.fail { background: #fef2f2; border-color: #fecaca; }
+    .check-row.warn { background: #fffbeb; border-color: #fde68a; }
+
+    .check-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .check-icon .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #5e6ad2;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .check-body { flex: 1; min-width: 0; }
+
+    .check-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .check-id {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .check-detail {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    .check-row.pass .check-detail { color: #059669; }
+    .check-row.fail .check-detail { color: #dc2626; }
+    .check-row.warn .check-detail { color: #d97706; }
+
+    /* ── Section group label ─────────────────────────── */
+    .check-group-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9ca3af;
+      margin: 20px 0 8px;
+    }
+
+    .check-group-label:first-child { margin-top: 0; }
+
+    /* ── Admin panel ─────────────────────────────────── */
+    .admin-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #f3f4f6;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .admin-toggle-btn:hover { background: #eef0fb; border-color: #5e6ad2; color: #5e6ad2; }
+
+    .admin-panel {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e8eaed;
+    }
+
+    .admin-panel.open { display: block; }
+
+    .admin-description {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .section-list {
+      list-style: none;
+      margin-bottom: 16px;
+    }
+
+    .section-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #f8f9fb;
+      border: 1px solid #f0f1f3;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .section-item span { flex: 1; }
+
+    .section-item button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    .section-item button:hover { color: #dc2626; }
+
+    .add-section-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .add-section-row input {
+      flex: 1;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1a1a2e;
+      background: #fafbfc;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .add-section-row input:focus {
+      outline: none;
+      border-color: #5e6ad2;
+      box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.1);
+      background: #fff;
+    }
+
+    .add-section-row input::placeholder { color: #c4c9d4; }
+
+    .add-section-btn {
+      padding: 8px 16px;
+      background: #5e6ad2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .add-section-btn:hover { background: #4f5bc0; }
+
+    .reset-link {
+      font-size: 12px;
+      color: #9ca3af;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      text-decoration: underline;
+      margin-top: 10px;
+      display: block;
+      transition: color 0.15s;
+    }
+
+    .reset-link:hover { color: #dc2626; }
+
+    /* ── Empty state ─────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 24px;
+      color: #9ca3af;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="inner">
+      <div class="header-left">
+        <h1><span>Work Order Check</span></h1>
+        <p>Validate a proposal document against formatting and content requirements</p>
+      </div>
+      <a href="../../index.html" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2L4 7l5 5"/></svg>
+        Proposal Accelerator
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Upload Panel ───────────────────────────────── -->
+    <div class="panel">
+      <div class="panel-title">Upload Work Order Document</div>
+      <div class="file-upload-area">
+        <label class="file-upload-btn" id="upload-label">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9M4 4l3-3 3 3"/><path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9"/></svg>
+          Choose .docx / .dotx file
+          <input type="file" id="file-input" accept=".docx,.dotx" hidden>
+        </label>
+        <div class="file-name" id="file-name"></div>
+      </div>
+      <p class="upload-hint">Accepts Word documents (.docx) and Word templates (.dotx). Validation starts automatically on file selection.</p>
+    </div>
+
+    <!-- ── Checklist Panel ────────────────────────────── -->
+    <div class="panel checklist-section" id="checklist-panel">
+      <div class="checklist-header">
+        <div class="panel-title" style="margin-bottom:0">Validation Results</div>
+        <button class="recheck-btn" id="recheck-btn">Re-check</button>
+      </div>
+      <div id="summary-badge" class="summary-badge pending">Checking…</div>
+      <div id="checklist"></div>
+    </div>
+
+    <!-- ── Admin Panel ────────────────────────────────── -->
+    <div class="panel">
+      <button class="admin-toggle-btn" id="admin-toggle-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.9 2.9l1.1 1.1M10 10l1.1 1.1M2.9 11.1L4 10M10 4l1.1-1.1"/></svg>
+        Admin Settings
+        <svg id="admin-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5L6 7.5l3-3"/></svg>
+      </button>
+      <div class="admin-panel" id="admin-panel">
+        <p class="admin-description">Configure the required sections that every work order document must contain. Changes apply on the next Re-check.</p>
+        <ul class="section-list" id="section-list"></ul>
+        <div class="add-section-row">
+          <input type="text" id="new-section-input" placeholder="Add a required section name…">
+          <button class="add-section-btn" id="add-section-btn">Add</button>
+        </div>
+        <button class="reset-link" id="reset-defaults-btn">Reset to defaults</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- CDN libs loaded as classic scripts before the module -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js"></script>
+  <script>
+    // ── Constants ────────────────────────────────────────────────────
+    const STORAGE_KEY = 'wo-check-config-v1';
+
+    const DEFAULT_SECTIONS = [
+      'Executive Summary',
+      'Problem Statement',
+      'Proposed Solution',
+      'Solution Architecture',
+      'AI Benefits',
+      'Risks and Assessments',
+      'Timeline and Milestones',
+      'Pricing / Investment',
+      'Team and Qualifications',
+      'References / Appendix',
+    ];
+
+    // ── State ────────────────────────────────────────────────────────
+    let currentFile = null;
+    let docHtml = '';
+    let docText = '';
+    let docZip  = null; // JSZip instance
+
+    // ── DOM refs ─────────────────────────────────────────────────────
+    const elFileInput      = document.getElementById('file-input');
+    const elFileName       = document.getElementById('file-name');
+    const elChecklistPanel = document.getElementById('checklist-panel');
+    const elChecklist      = document.getElementById('checklist');
+    const elSummaryBadge   = document.getElementById('summary-badge');
+    const elRecheckBtn     = document.getElementById('recheck-btn');
+    const elAdminToggle    = document.getElementById('admin-toggle-btn');
+    const elAdminPanel     = document.getElementById('admin-panel');
+    const elAdminChevron   = document.getElementById('admin-chevron');
+    const elSectionList    = document.getElementById('section-list');
+    const elNewSection     = document.getElementById('new-section-input');
+    const elAddSection     = document.getElementById('add-section-btn');
+    const elResetDefaults  = document.getElementById('reset-defaults-btn');
+
+    // ── Admin config ─────────────────────────────────────────────────
+    function loadConfig() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) return JSON.parse(stored);
+      } catch (_) {}
+      return [...DEFAULT_SECTIONS];
+    }
+
+    function saveConfig(sections) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
+    }
+
+    function renderSectionList() {
+      const sections = loadConfig();
+      elSectionList.innerHTML = sections.map((s, i) => `
+        <li class="section-item">
+          <span>${esc(s)}</span>
+          <button data-idx="${i}" title="Remove">&times;</button>
+        </li>
+      `).join('');
+      elSectionList.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sections = loadConfig();
+          sections.splice(parseInt(btn.dataset.idx), 1);
+          saveConfig(sections);
+          renderSectionList();
+        });
+      });
+    }
+
+    elAddSection.addEventListener('click', () => {
+      const val = elNewSection.value.trim();
+      if (!val) return;
+      const sections = loadConfig();
+      if (!sections.includes(val)) {
+        sections.push(val);
+        saveConfig(sections);
+        renderSectionList();
+      }
+      elNewSection.value = '';
+    });
+
+    elNewSection.addEventListener('keydown', e => {
+      if (e.key === 'Enter') elAddSection.click();
+    });
+
+    elResetDefaults.addEventListener('click', () => {
+      saveConfig([...DEFAULT_SECTIONS]);
+      renderSectionList();
+    });
+
+    elAdminToggle.addEventListener('click', () => {
+      const open = elAdminPanel.classList.toggle('open');
+      elAdminChevron.style.transform = open ? 'rotate(180deg)' : '';
+    });
+
+    // ── File selection ────────────────────────────────────────────────
+    elFileInput.addEventListener('change', async () => {
+      const file = elFileInput.files[0];
+      if (!file) return;
+      currentFile = file;
+      elFileName.innerHTML = `<span>${esc(file.name)}<button id="clear-file" title="Remove">&times;</button></span>`;
+      document.getElementById('clear-file').addEventListener('click', clearFile);
+      elFileInput.value = '';
+      await parseAndValidate();
+    });
+
+    function clearFile() {
+      currentFile = null;
+      docHtml = ''; docText = ''; docZip = null;
+      elFileName.innerHTML = '';
+      elChecklistPanel.style.display = 'none';
+    }
+
+    // ── Parse .docx ───────────────────────────────────────────────────
+    async function parseAndValidate() {
+      elChecklistPanel.style.display = 'block';
+      elSummaryBadge.className = 'summary-badge pending';
+      elSummaryBadge.textContent = 'Checking…';
+      elChecklist.innerHTML = '';
+
+      const arrayBuffer = await currentFile.arrayBuffer();
+
+      // Parse with mammoth for HTML/text
+      const mammothResult = await mammoth.convertToHtml({ arrayBuffer });
+      docHtml = mammothResult.value;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = docHtml;
+      docText = tmp.innerText || tmp.textContent || '';
+
+      // Parse with JSZip for raw XML
+      try {
+        docZip = await JSZip.loadAsync(arrayBuffer);
+      } catch (_) {
+        docZip = null;
+      }
+
+      await runAllChecks();
+    }
+
+    // ── Checklist rendering ───────────────────────────────────────────
+    function addGroupLabel(text) {
+      const el = document.createElement('div');
+      el.className = 'check-group-label';
+      el.textContent = text;
+      elChecklist.appendChild(el);
+      return el;
+    }
+
+    function addPendingRow(id, label) {
+      const el = document.createElement('div');
+      el.className = 'check-row';
+      el.id = `row-${id}`;
+      el.innerHTML = `
+        <div class="check-icon"><div class="spinner"></div></div>
+        <div class="check-body">
+          <div class="check-label"><span class="check-id">${esc(id)}</span>${esc(label)}</div>
+          <div class="check-detail">Checking…</div>
+        </div>
+      `;
+      elChecklist.appendChild(el);
+      return el;
+    }
+
+    function resolveRow(id, status, detail) {
+      // status: 'pass' | 'fail' | 'warn'
+      const el = document.getElementById(`row-${id}`);
+      if (!el) return;
+      el.className = `check-row ${status}`;
+      const iconMap = {
+        pass: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#059669"/><path d="M5 9l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        fail: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#dc2626"/><path d="M6 6l6 6M12 6l-6 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        warn: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1L1 16h16L9 1z" fill="#d97706"/><path d="M9 7v4M9 13v.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+      };
+      el.querySelector('.check-icon').innerHTML = iconMap[status];
+      el.querySelector('.check-detail').textContent = detail;
+    }
+
+    // ── Individual checks ─────────────────────────────────────────────
+    async function checkFmt01() {
+      addPendingRow('FMT-01', 'Font Size');
+      await tick();
+      if (!docZip) {
+        resolveRow('FMT-01', 'warn', 'Unable to verify — check manually (raw XML not accessible).');
+        return 'warn';
+      }
+      try {
+        const xmlFile = docZip.file('word/document.xml');
+        if (!xmlFile) throw new Error('no document.xml');
+        const xml = await xmlFile.async('string');
+        // w:sz is in half-points; 10pt=20, 12pt=24
+        const sizes = [...xml.matchAll(/w:sz w:val="(\d+)"/g)].map(m => parseInt(m[1]));
+        if (sizes.length === 0) {
+          resolveRow('FMT-01', 'warn', 'Font size metadata not found — check manually.');
+          return 'warn';
+        }
+        const outOfRange = sizes.filter(s => s < 20 || s > 24);
+        const pct = Math.round((outOfRange.length / sizes.length) * 100);
+        if (pct > 20) {
+          resolveRow('FMT-01', 'fail', `${pct}% of text runs are outside the 10–12 pt range.`);
+          return 'fail';
+        }
+        resolveRow('FMT-01', 'pass', `Font sizes within 10–12 pt range (${sizes.length} runs checked).`);
+        return 'pass';
+      } catch (_) {
+        resolveRow('FMT-01', 'warn', 'Unable to verify — check manually.');
+        return 'warn';
+      }
+    }
+
+    async function checkFmt02() {
+      addPendingRow('FMT-02', 'Line Spacing');
+      await tick();
+      if (!docZip) {
+        resolveRow('FMT-02', 'warn', 'Unable to verify — check manually (raw XML not accessible).');
+        return 'warn';
+      }
+      try {
+        const xmlFile = docZip.file('word/document.xml');
+        if (!xmlFile) throw new Error('no document.xml');
+        const xml = await xmlFile.async('string');
+        // w:spacing w:line is in twentieths of a point; 240=single, 360=1.5x
+        const lines = [...xml.matchAll(/w:spacing[^/]*?w:line="(\d+)"/g)].map(m => parseInt(m[1]));
+        if (lines.length === 0) {
+          resolveRow('FMT-02', 'warn', 'Line spacing metadata not found — check manually.');
+          return 'warn';
+        }
+        const outOfRange = lines.filter(l => l < 240 || l > 360);
+        const pct = Math.round((outOfRange.length / lines.length) * 100);
+        if (pct > 20) {
+          resolveRow('FMT-02', 'fail', `${pct}% of paragraphs have spacing outside the 1.0–1.5 range.`);
+          return 'fail';
+        }
+        resolveRow('FMT-02', 'pass', `Line spacing within 1.0–1.5 range (${lines.length} paragraphs checked).`);
+        return 'pass';
+      } catch (_) {
+        resolveRow('FMT-02', 'warn', 'Unable to verify — check manually.');
+        return 'warn';
+      }
+    }
+
+    async function checkFmt03() {
+      addPendingRow('FMT-03', 'Spelling & Grammar');
+      await tick();
+      if (!docText.trim()) {
+        resolveRow('FMT-03', 'warn', 'No text content found to check.');
+        return 'warn';
+      }
+      // Sentence length heuristic: flag sentences > 60 words
+      const sentences = docText.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 0);
+      const longSentences = sentences.filter(s => s.split(/\s+/).length > 60);
+      // Double-space check
+      const doubleSpaces = (docText.match(/  +/g) || []).length;
+
+      const issues = [];
+      if (longSentences.length > 0) {
+        issues.push(`${longSentences.length} sentence(s) exceed 60 words.`);
+      }
+      if (doubleSpaces > 0) {
+        issues.push(`${doubleSpaces} double-space occurrence(s) found.`);
+      }
+
+      if (issues.length > 0) {
+        resolveRow('FMT-03', 'warn', issues.join(' ') + ' Manual spell check recommended.');
+        return 'warn';
+      }
+      resolveRow('FMT-03', 'pass', `No grammar issues detected. ${sentences.length} sentence(s) checked.`);
+      return 'pass';
+    }
+
+    async function checkSec01() {
+      const requiredSections = loadConfig();
+      addPendingRow('SEC-01', 'Required Sections Present');
+      await tick();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(docHtml, 'text/html');
+      const headings = [...doc.querySelectorAll('h1,h2,h3')].map(h => h.textContent.trim().toLowerCase());
+      const missing = requiredSections.filter(s => !headings.some(h => h.includes(s.toLowerCase())));
+      if (missing.length > 0) {
+        resolveRow('SEC-01', 'fail', `Missing section(s): ${missing.map(s => `"${s}"`).join(', ')}.`);
+        return 'fail';
+      }
+      resolveRow('SEC-01', 'pass', `All ${requiredSections.length} required sections found.`);
+      return 'pass';
+    }
+
+    async function checkCon01() {
+      addPendingRow('CON-01', 'Solution Overview / Architecture Diagram');
+      await tick();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(docHtml, 'text/html');
+      const hasImage = doc.querySelectorAll('img').length > 0;
+      const headings = [...doc.querySelectorAll('h1,h2,h3')].map(h => h.textContent.trim().toLowerCase());
+      const archKeywords = ['solution architecture', 'architecture diagram', 'solution overview'];
+      const hasArchHeading = archKeywords.some(kw => headings.some(h => h.includes(kw)));
+      if (hasImage || hasArchHeading) {
+        const detail = hasImage
+          ? 'Embedded diagram or image found.'
+          : `Architecture heading found ("${archKeywords.find(kw => headings.some(h => h.includes(kw)))}"}).`;
+        resolveRow('CON-01', 'pass', detail);
+        return 'pass';
+      }
+      resolveRow('CON-01', 'fail', 'No architecture diagram or "Solution Architecture" / "Solution Overview" heading found.');
+      return 'fail';
+    }
+
+    async function checkCon02() {
+      addPendingRow('CON-02', 'AI Benefits');
+      await tick();
+      const lower = docText.toLowerCase();
+      const aiKeywords = ['ai benefit', 'artificial intelligence benefit', 'ai advantage', 'benefits of ai', 'ai-driven benefit'];
+      const found = aiKeywords.find(kw => lower.includes(kw));
+      if (found) {
+        resolveRow('CON-02', 'pass', `AI benefits content found ("${found}").`);
+        return 'pass';
+      }
+      resolveRow('CON-02', 'fail', 'No AI benefits content found. Include a section or paragraph on AI benefits.');
+      return 'fail';
+    }
+
+    async function checkCon03() {
+      addPendingRow('CON-03', 'Risks and Assessment');
+      await tick();
+      const lower = docText.toLowerCase();
+      const hasRisk = lower.includes('risk');
+      const hasMitigation = lower.includes('assessment') || lower.includes('mitigation');
+      if (hasRisk && hasMitigation) {
+        resolveRow('CON-03', 'pass', 'Risk and assessment/mitigation content found.');
+        return 'pass';
+      }
+      const missing = !hasRisk ? '"risk"' : '"assessment" or "mitigation"';
+      resolveRow('CON-03', 'fail', `Missing content: ${missing} not found in document.`);
+      return 'fail';
+    }
+
+    // ── Orchestrator ──────────────────────────────────────────────────
+    async function runAllChecks() {
+      elChecklist.innerHTML = '';
+      elSummaryBadge.className = 'summary-badge pending';
+      elSummaryBadge.textContent = 'Checking…';
+
+      addGroupLabel('Formatting');
+      const r1 = await checkFmt01();
+      const r2 = await checkFmt02();
+      const r3 = await checkFmt03();
+
+      addGroupLabel('Content');
+      const r4 = await checkSec01();
+      const r5 = await checkCon01();
+      const r6 = await checkCon02();
+      const r7 = await checkCon03();
+
+      const results = [r1, r2, r3, r4, r5, r6, r7];
+      const passed  = results.filter(r => r === 'pass').length;
+      const failed  = results.filter(r => r === 'fail').length;
+      const warned  = results.filter(r => r === 'warn').length;
+      const total   = results.length;
+
+      if (failed > 0) {
+        elSummaryBadge.className = 'summary-badge has-fail';
+        elSummaryBadge.textContent = `${passed} of ${total} checks passed — ${failed} issue(s) found`;
+      } else if (warned > 0) {
+        elSummaryBadge.className = 'summary-badge has-warn';
+        elSummaryBadge.textContent = `${passed} of ${total} checks passed — ${warned} warning(s)`;
+      } else {
+        elSummaryBadge.className = 'summary-badge all-pass';
+        elSummaryBadge.textContent = `All ${total} checks passed`;
+      }
+    }
+
+    elRecheckBtn.addEventListener('click', async () => {
+      if (!currentFile) return;
+      await parseAndValidate();
+    });
+
+    // ── Utilities ─────────────────────────────────────────────────────
+    function tick() {
+      return new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────
+    renderSectionList();
+  </script>
+</body>
+</html>
