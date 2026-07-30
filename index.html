@@ -291,7 +291,7 @@
 
     .searching-msg {
       text-align: center;
-      padding: 40px 24px;
+      padding: 48px 24px;
       color: #6b7280;
       font-size: 15px;
     }
@@ -300,6 +300,30 @@
       width: 20px;
       height: 20px;
       margin: 0 auto 12px;
+    }
+
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .loading-dots span {
+      width: 10px;
+      height: 10px;
+      background: #5e6ad2;
+      border-radius: 50%;
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+
+    .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+    .loading-dots span:nth-child(4) { animation-delay: 0.45s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-10px); opacity: 1; }
     }
 
     /* Selection */
@@ -764,7 +788,7 @@
       elEmpty.style.display = 'none';
       elResults.style.display = 'block';
       elResultsCount.textContent = '';
-      elResultsList.innerHTML = '<div class="searching-msg"><div class="spinner"></div>Finding similar proposals…</div>';
+      elResultsList.innerHTML = '<div class="searching-msg"><div class="loading-dots"><span></span><span></span><span></span><span></span></div>Finding similar proposals…</div>';
       btnSearch.disabled = true;
 
       // embed query
@@ -888,18 +912,27 @@
 
       // ── OUR UNDERSTANDING ──
       html += `<h3>Our Understanding</h3>`;
-      if (supplemental || fileContext) {
-        html += `<p>${esc(supplemental || fileContext)}</p>`;
+      // Build a concise summary: restate the problem + high-level solution direction from top proposals
+      const understandingSentences = [];
+      // Start with 1-2 sentences restating the core problem
+      const problemSentences = problem.split(/(?<=[.!?])\s+/).filter(s => s.length > 20);
+      if (problemSentences.length > 0) {
+        understandingSentences.push(problemSentences[0]);
+        if (problemSentences.length > 1) understandingSentences.push(problemSentences[1]);
       }
-      // Pull challenge/context sentences from reference proposals
+      // Add 1-2 high-level challenge/context sentences from the best-matching proposals
       const challenges = gatherSentences(
         /\b(challenge|problem|issue|gap|risk|struggle|pain|lack|limit|fragment|siloed|decline|unable|cannot)\b/i, 3
       );
-      if (challenges.length) {
-        html += `<p>Based on similar engagements, key challenges in this space typically include:</p><ul>`;
-        for (const c of challenges) html += `<li>${esc(c)}</li>`;
-        html += `</ul>`;
-      }
+      if (challenges.length > 0) understandingSentences.push(challenges[0]);
+      // Add 1 sentence describing the high-level solution direction
+      const solutionHints = gatherSentences(
+        /\b(propos|recommend|approach|deliver|solution|enable|platform|system|tool)\b/i, 2
+      );
+      if (solutionHints.length > 0) understandingSentences.push(solutionHints[0]);
+      // Cap at 5 sentences
+      const summary = understandingSentences.slice(0, 5).join(' ');
+      html += `<p>${esc(summary)}</p>`;
 
       // ── SLALOM PROPOSED DELIVERY APPROACH ──
       html += `<h3>Slalom Proposed Delivery Approach</h3>`;
