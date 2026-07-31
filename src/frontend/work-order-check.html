@@ -15,58 +15,6 @@
       min-height: 100vh;
     }
 
-    header {
-      background: #fff;
-      border-bottom: 1px solid #e8eaed;
-      padding: 20px 0;
-    }
-
-    header .inner {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    header .header-left { flex: 1; }
-
-    header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a2e;
-      letter-spacing: -0.3px;
-    }
-
-    header h1 span { color: #5e6ad2; }
-
-    header p {
-      font-size: 14px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #6b7280;
-      text-decoration: none;
-      padding: 6px 12px;
-      border: 1px solid #e8eaed;
-      border-radius: 8px;
-      background: #fff;
-      white-space: nowrap;
-      transition: border-color 0.15s, color 0.15s;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-
-    .back-link:hover { border-color: #5e6ad2; color: #5e6ad2; }
-
     main {
       max-width: 860px;
       margin: 0 auto;
@@ -276,33 +224,6 @@
     .check-group-label:first-child { margin-top: 0; }
 
     /* ── Admin panel ─────────────────────────────────── */
-    .admin-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: #f3f4f6;
-      border: 1px solid #e8eaed;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      color: #374151;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .admin-toggle-btn:hover { background: #eef0fb; border-color: #5e6ad2; color: #5e6ad2; }
-
-    .admin-panel {
-      display: none;
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid #e8eaed;
-    }
-
-    .admin-panel.open { display: block; }
-
     .admin-description {
       font-size: 13px;
       color: #6b7280;
@@ -318,18 +239,32 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 12px;
+      padding: 7px 10px;
       border-radius: 6px;
       background: #f8f9fb;
       border: 1px solid #f0f1f3;
       margin-bottom: 6px;
+    }
+
+    .section-check-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      cursor: pointer;
       font-size: 14px;
       color: #374151;
     }
 
-    .section-item span { flex: 1; }
+    .section-checkbox {
+      width: 15px;
+      height: 15px;
+      accent-color: #5e6ad2;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
 
-    .section-item button {
+    .remove-btn {
       background: none;
       border: none;
       font-size: 16px;
@@ -340,7 +275,7 @@
       transition: color 0.15s;
     }
 
-    .section-item button:hover { color: #dc2626; }
+    .remove-btn:hover { color: #dc2626; }
 
     .add-section-row {
       display: flex;
@@ -401,6 +336,38 @@
 
     .reset-link:hover { color: #dc2626; }
 
+    /* ── Sec-01 section table ────────────────────────── */
+    .sec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .sec-table tr { border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .sec-table tr:last-child { border-bottom: none; }
+
+    .sec-table td {
+      padding: 5px 8px 5px 0;
+      vertical-align: middle;
+    }
+
+    .sec-name { color: #374151; }
+
+    .sec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .sec-badge-pass { background: #d1fae5; color: #059669; }
+    .sec-badge-fail { background: #fecaca; color: #dc2626; }
+
     /* ── Empty state ─────────────────────────────────── */
     .empty-state {
       text-align: center;
@@ -412,20 +379,19 @@
 </head>
 <body>
 
-  <header>
-    <div class="inner">
-      <div class="header-left">
-        <h1><span>Work Order Check</span></h1>
-        <p>Validate a proposal document against formatting and content requirements</p>
-      </div>
-      <a href="../../index.html" class="back-link">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2L4 7l5 5"/></svg>
-        Proposal Accelerator
-      </a>
-    </div>
-  </header>
-
   <main>
+
+    <div class="panel">
+      <div class="panel-title">Validation Settings</div>
+      <p class="admin-description">Select which sections are required in every work order document. Changes apply on the next Re-check.</p>
+      <ul class="section-list" id="section-list"></ul>
+      <div class="add-section-row">
+        <input type="text" id="new-section-input" placeholder="Add a custom required section…">
+        <button class="add-section-btn" id="add-section-btn">Add</button>
+      </div>
+      <button class="reset-link" id="reset-defaults-btn">Reset to defaults</button>
+    </div>
+
 
     <!-- ── Upload Panel ───────────────────────────────── -->
     <div class="panel">
@@ -451,24 +417,6 @@
       <div id="checklist"></div>
     </div>
 
-    <!-- ── Admin Panel ────────────────────────────────── -->
-    <div class="panel">
-      <button class="admin-toggle-btn" id="admin-toggle-btn">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.9 2.9l1.1 1.1M10 10l1.1 1.1M2.9 11.1L4 10M10 4l1.1-1.1"/></svg>
-        Admin Settings
-        <svg id="admin-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5L6 7.5l3-3"/></svg>
-      </button>
-      <div class="admin-panel" id="admin-panel">
-        <p class="admin-description">Configure the required sections that every work order document must contain. Changes apply on the next Re-check.</p>
-        <ul class="section-list" id="section-list"></ul>
-        <div class="add-section-row">
-          <input type="text" id="new-section-input" placeholder="Add a required section name…">
-          <button class="add-section-btn" id="add-section-btn">Add</button>
-        </div>
-        <button class="reset-link" id="reset-defaults-btn">Reset to defaults</button>
-      </div>
-    </div>
-
   </main>
 
   <!-- CDN libs loaded as classic scripts before the module -->
@@ -476,7 +424,7 @@
   <script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js"></script>
   <script>
     // ── Constants ────────────────────────────────────────────────────
-    const STORAGE_KEY = 'wo-check-config-v1';
+    const STORAGE_KEY = 'wo-check-config-v2';
 
     const DEFAULT_SECTIONS = [
       'Executive Summary',
@@ -504,40 +452,62 @@
     const elChecklist      = document.getElementById('checklist');
     const elSummaryBadge   = document.getElementById('summary-badge');
     const elRecheckBtn     = document.getElementById('recheck-btn');
-    const elAdminToggle    = document.getElementById('admin-toggle-btn');
-    const elAdminPanel     = document.getElementById('admin-panel');
-    const elAdminChevron   = document.getElementById('admin-chevron');
     const elSectionList    = document.getElementById('section-list');
     const elNewSection     = document.getElementById('new-section-input');
     const elAddSection     = document.getElementById('add-section-btn');
     const elResetDefaults  = document.getElementById('reset-defaults-btn');
 
     // ── Admin config ─────────────────────────────────────────────────
-    function loadConfig() {
+    function loadFullConfig() {
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) return JSON.parse(stored);
       } catch (_) {}
-      return [...DEFAULT_SECTIONS];
+      return { required: [...DEFAULT_SECTIONS], custom: [] };
     }
 
-    function saveConfig(sections) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
+    function saveFullConfig(cfg) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+    }
+
+    function loadConfig() { // used by validation checks
+      return loadFullConfig().required;
     }
 
     function renderSectionList() {
-      const sections = loadConfig();
-      elSectionList.innerHTML = sections.map((s, i) => `
-        <li class="section-item">
-          <span>${esc(s)}</span>
-          <button data-idx="${i}" title="Remove">&times;</button>
-        </li>
-      `).join('');
-      elSectionList.querySelectorAll('button').forEach(btn => {
+      const { required, custom } = loadFullConfig();
+      const reqSet = new Set(required);
+      const allSections = [...DEFAULT_SECTIONS, ...custom];
+      elSectionList.innerHTML = allSections.map(s => {
+        const isCustom = custom.includes(s);
+        return `
+          <li class="section-item${isCustom ? ' custom' : ''}">
+            <label class="section-check-label">
+              <input type="checkbox" class="section-checkbox" data-section="${esc(s)}"${reqSet.has(s) ? ' checked' : ''}>
+              <span>${esc(s)}</span>
+            </label>
+            ${isCustom ? `<button class="remove-btn" data-section="${esc(s)}" title="Remove">&times;</button>` : ''}
+          </li>`;
+      }).join('');
+      elSectionList.querySelectorAll('.section-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const cfg = loadFullConfig();
+          const section = cb.dataset.section;
+          if (cb.checked) {
+            if (!cfg.required.includes(section)) cfg.required.push(section);
+          } else {
+            cfg.required = cfg.required.filter(s => s !== section);
+          }
+          saveFullConfig(cfg);
+        });
+      });
+      elSectionList.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          const sections = loadConfig();
-          sections.splice(parseInt(btn.dataset.idx), 1);
-          saveConfig(sections);
+          const cfg = loadFullConfig();
+          const section = btn.dataset.section;
+          cfg.custom = cfg.custom.filter(s => s !== section);
+          cfg.required = cfg.required.filter(s => s !== section);
+          saveFullConfig(cfg);
           renderSectionList();
         });
       });
@@ -546,10 +516,11 @@
     elAddSection.addEventListener('click', () => {
       const val = elNewSection.value.trim();
       if (!val) return;
-      const sections = loadConfig();
-      if (!sections.includes(val)) {
-        sections.push(val);
-        saveConfig(sections);
+      const cfg = loadFullConfig();
+      if (![...DEFAULT_SECTIONS, ...cfg.custom].includes(val)) {
+        cfg.custom.push(val);
+        cfg.required.push(val); // custom sections start as required
+        saveFullConfig(cfg);
         renderSectionList();
       }
       elNewSection.value = '';
@@ -560,13 +531,8 @@
     });
 
     elResetDefaults.addEventListener('click', () => {
-      saveConfig([...DEFAULT_SECTIONS]);
+      saveFullConfig({ required: [...DEFAULT_SECTIONS], custom: [] });
       renderSectionList();
-    });
-
-    elAdminToggle.addEventListener('click', () => {
-      const open = elAdminPanel.classList.toggle('open');
-      elAdminChevron.style.transform = open ? 'rotate(180deg)' : '';
     });
 
     // ── File selection ────────────────────────────────────────────────
@@ -750,13 +716,40 @@
       const parser = new DOMParser();
       const doc = parser.parseFromString(docHtml, 'text/html');
       const headings = [...doc.querySelectorAll('h1,h2,h3')].map(h => h.textContent.trim().toLowerCase());
-      const missing = requiredSections.filter(s => !headings.some(h => h.includes(s.toLowerCase())));
-      if (missing.length > 0) {
-        resolveRow('SEC-01', 'fail', `Missing section(s): ${missing.map(s => `"${s}"`).join(', ')}.`);
-        return 'fail';
-      }
-      resolveRow('SEC-01', 'pass', `All ${requiredSections.length} required sections found.`);
-      return 'pass';
+
+      const results = requiredSections.map(s => ({
+        name: s,
+        found: headings.some(h => h.includes(s.toLowerCase()))
+      }));
+      const missingCount = results.filter(r => !r.found).length;
+      const overallStatus = missingCount > 0 ? 'fail' : 'pass';
+      const summary = missingCount > 0
+        ? `${missingCount} of ${requiredSections.length} section(s) missing.`
+        : `All ${requiredSections.length} required sections found.`;
+
+      const el = document.getElementById('row-SEC-01');
+      if (!el) return overallStatus;
+      el.className = `check-row ${overallStatus}`;
+      const iconMap = {
+        pass: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#059669"/><path d="M5 9l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        fail: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#dc2626"/><path d="M6 6l6 6M12 6l-6 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      };
+      el.querySelector('.check-icon').innerHTML = iconMap[overallStatus];
+
+      const tableRows = results.map(r => `
+        <tr>
+          <td class="sec-name">${esc(r.name)}</td>
+          <td style="text-align:right">
+            <span class="sec-badge ${r.found ? 'sec-badge-pass' : 'sec-badge-fail'}">
+              ${r.found ? '&#10003; Found' : '&#10007; Missing'}
+            </span>
+          </td>
+        </tr>`).join('');
+
+      el.querySelector('.check-detail').innerHTML =
+        `${esc(summary)}<table class="sec-table">${tableRows}</table>`;
+
+      return overallStatus;
     }
 
     async function checkCon01() {
@@ -863,6 +856,14 @@
 
     // ── Init ──────────────────────────────────────────────────────────
     renderSectionList();
+  </script>
+
+  <script type="module">
+    import { mountShell } from './shell.js';
+    mountShell({
+      active: 'wo-check',
+      links: { home: './home.html', proposal: '../../index.html', woCheck: './work-order-check.html' }
+    });
   </script>
 </body>
 </html>
