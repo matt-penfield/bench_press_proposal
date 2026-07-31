@@ -15,63 +15,6 @@
       min-height: 100vh;
     }
 
-    header {
-      background: #fff;
-      border-bottom: 1px solid #e8eaed;
-      padding: 20px 0;
-    }
-
-    header .inner {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    header .header-left { flex: 1; }
-
-    .wo-check-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: #5e6ad2;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      white-space: nowrap;
-      flex-shrink: 0;
-      margin-top: 4px;
-      transition: background 0.15s;
-    }
-
-    .wo-check-btn:hover { background: #4f5bc0; }
-
-    header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a2e;
-      letter-spacing: -0.3px;
-    }
-
-    header h1 span {
-      color: #5e6ad2;
-    }
-
-    header p {
-      font-size: 14px;
-      color: #6b7280;
-      margin-top: 2px;
-    }
-
     main {
       max-width: 860px;
       margin: 0 auto;
@@ -621,25 +564,12 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="inner">
-      <div class="header-left">
-        <h1><span>Proposal Accelerator</span></h1>
-        <p>Find similar past proposals and use them to guide the development of new ones</p>
-        <div class="model-status" id="model-status">
-        <div class="spinner"></div>
-        <span id="status-text">Initializing…</span>
-          <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
-        </div>
-      </div>
-      <a href="src/frontend/work-order-check.html" class="wo-check-btn">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h10M2 7h7M2 10h5"/><path d="M10 8l1.5 1.5L14 7"/></svg>
-        Work Order Check
-      </a>
-    </div>
-  </header>
-
   <main>
+    <div class="model-status" id="model-status" style="margin-bottom:20px;">
+      <div class="spinner"></div>
+      <span id="status-text">Initializing…</span>
+      <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+    </div>
     <div class="input-section">
       <div class="field">
         <label for="problem">Problem Statement</label>
@@ -683,6 +613,13 @@
 
   <script src="proposals.js"></script>
   <script type="module">
+    import { mountShell } from './src/frontend/shell.js';
+    mountShell({
+      active: 'proposal',
+      links: { home: 'src/frontend/home.html', proposal: 'index.html', woCheck: 'src/frontend/work-order-check.html' }
+    });
+  </script>
+  <script type="module">
     import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3';
 
     // ── State ────────────────────────────────────────────────────────
@@ -696,8 +633,6 @@
     const btnSearch     = document.getElementById('search-btn');
     const elStatus      = document.getElementById('model-status');
     const elStatusText  = document.getElementById('status-text');
-    const elProgressBar = document.getElementById('progress-bar');
-    const elProgressFill= document.getElementById('progress-fill');
     const elResults     = document.getElementById('results-section');
     const elResultsList = document.getElementById('results-list');
     const elResultsCount= document.getElementById('results-count');
@@ -709,7 +644,7 @@
     const elFileInput   = document.getElementById('file-input');
     const elFileChips   = document.getElementById('file-chips');
 
-    btnSearch.disabled = true;
+    btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
@@ -762,40 +697,34 @@
       return results;
     }
 
-    // ── Initialise model & pre-compute embeddings ───────────────────
-    async function init() {
+    // ── Load pre-computed corpus embeddings from static JSON ─────────
+    async function loadCorpus() {
       try {
-        setStatus('Loading semantic model (~30 MB, cached after first load)…');
-        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
-          dtype: 'fp32'
-        });
-
-        elProgressBar.style.display = 'block';
-
-        // Only embed full proposal content at startup (batch in groups of 10)
-        const BATCH_SIZE = 10;
-        for (let i = 0; i < PROPOSALS.length; i += BATCH_SIZE) {
-          const batch = PROPOSALS.slice(i, i + BATCH_SIZE);
-          const pct = Math.round(((i + batch.length) / PROPOSALS.length) * 100);
-          setStatus(`Embedding proposals… ${Math.min(i + BATCH_SIZE, PROPOSALS.length)}/${PROPOSALS.length}`);
-          elProgressFill.style.width = pct + '%';
-
-          const embeddings = await embedTexts(batch.map(p => p.content));
-          for (let j = 0; j < batch.length; j++) {
-            corpus.push({
-              proposal: batch[j],
-              embedding: embeddings[j],
-              sentences: null  // computed on-demand at search time for top results
-            });
-          }
+        setStatus('Loading proposals…');
+        const res = await fetch('./embeddings.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const { embeddings } = await res.json();
+        const embMap = Object.fromEntries(embeddings.map(e => [e.id, new Float32Array(e.embedding)]));
+        for (const p of PROPOSALS) {
+          corpus.push({ proposal: p, embedding: embMap[p.id], sentences: null });
         }
-
-        elProgressBar.style.display = 'none';
-        setStatus('Ready — semantic matching active', 'ready');
+        setStatus('Ready — enter a problem to find similar proposals', 'ready');
         btnSearch.disabled = false;
       } catch (err) {
         console.error(err);
-        setStatus('Model failed to load: ' + err.message, 'error');
+        setStatus('Failed to load proposals: ' + err.message, 'error');
+      }
+    }
+
+    // ── Lazy-load model on first search ──────────────────────────────
+    async function loadModel() {
+      if (embedder) return;
+      setStatus('Loading semantic model for first search (~30 MB)…');
+      try {
+        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', { dtype: 'fp32' });
+      } catch (err) {
+        embedder = null; // allow retry on next search
+        throw err;
       }
     }
 
@@ -856,35 +785,45 @@
       // Force browser repaint before heavy async work
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      // embed query
-      const [queryEmb] = await embedTexts([queryText]);
+      try {
+        await loadModel();
+        setStatus('Ready — semantic matching active', 'ready');
 
-      // score each proposal by cosine similarity (fast — uses pre-computed embeddings)
-      const scored = corpus
-        .map(entry => ({
-          entry,
-          sim: cosineSim(queryEmb, entry.embedding),
-          score: Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100))
-        }))
-        .filter(r => r.score > 10)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
+        // embed query
+        const [queryEmb] = await embedTexts([queryText]);
 
-      // Only embed sentences for top results (on-demand, much faster)
-      const results = [];
-      for (const { entry, score } of scored) {
-        const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
-        results.push({ ...entry.proposal, score, excerpts, reasons });
+        // score each proposal by cosine similarity (fast — uses pre-computed embeddings)
+        const scored = corpus
+          .map(entry => ({
+            entry,
+            sim: cosineSim(queryEmb, entry.embedding),
+            score: Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100))
+          }))
+          .filter(r => r.score > 10)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10);
+
+        // Only embed sentences for top results (on-demand, much faster)
+        const results = [];
+        for (const { entry, score } of scored) {
+          const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
+          results.push({ ...entry.proposal, score, excerpts, reasons });
+        }
+
+        currentResults = results;
+        selected = new Set();
+
+        // auto-select results scoring above 70 (max 3)
+        results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
+
+        render(results);
+      } catch (err) {
+        console.error(err);
+        setStatus('Search failed: ' + err.message + ' — try again', 'error');
+        elResultsList.innerHTML = '';
+      } finally {
+        btnSearch.disabled = false;
       }
-
-      currentResults = results;
-      selected = new Set();
-
-      // auto-select results scoring above 70 (max 3)
-      results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
-
-      render(results);
-      btnSearch.disabled = false;
     }
 
     // ── Toggle selection ─────────────────────────────────────────────
@@ -1298,7 +1237,7 @@
     });
 
     // ── Boot ─────────────────────────────────────────────────────────
-    init();
+    loadCorpus();
   </script>
 </body>
 </html>
