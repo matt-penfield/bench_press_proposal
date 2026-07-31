@@ -696,8 +696,6 @@
     const btnSearch     = document.getElementById('search-btn');
     const elStatus      = document.getElementById('model-status');
     const elStatusText  = document.getElementById('status-text');
-    const elProgressBar = document.getElementById('progress-bar');
-    const elProgressFill= document.getElementById('progress-fill');
     const elResults     = document.getElementById('results-section');
     const elResultsList = document.getElementById('results-list');
     const elResultsCount= document.getElementById('results-count');
@@ -709,7 +707,7 @@
     const elFileInput   = document.getElementById('file-input');
     const elFileChips   = document.getElementById('file-chips');
 
-    btnSearch.disabled = true;
+    btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
@@ -762,40 +760,34 @@
       return results;
     }
 
-    // ── Initialise model & pre-compute embeddings ───────────────────
-    async function init() {
+    // ── Load pre-computed corpus embeddings from static JSON ─────────
+    async function loadCorpus() {
       try {
-        setStatus('Loading semantic model (~30 MB, cached after first load)…');
-        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
-          dtype: 'fp32'
-        });
-
-        elProgressBar.style.display = 'block';
-
-        // Only embed full proposal content at startup (batch in groups of 10)
-        const BATCH_SIZE = 10;
-        for (let i = 0; i < PROPOSALS.length; i += BATCH_SIZE) {
-          const batch = PROPOSALS.slice(i, i + BATCH_SIZE);
-          const pct = Math.round(((i + batch.length) / PROPOSALS.length) * 100);
-          setStatus(`Embedding proposals… ${Math.min(i + BATCH_SIZE, PROPOSALS.length)}/${PROPOSALS.length}`);
-          elProgressFill.style.width = pct + '%';
-
-          const embeddings = await embedTexts(batch.map(p => p.content));
-          for (let j = 0; j < batch.length; j++) {
-            corpus.push({
-              proposal: batch[j],
-              embedding: embeddings[j],
-              sentences: null  // computed on-demand at search time for top results
-            });
-          }
+        setStatus('Loading proposals…');
+        const res = await fetch('./embeddings.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const { embeddings } = await res.json();
+        const embMap = Object.fromEntries(embeddings.map(e => [e.id, new Float32Array(e.embedding)]));
+        for (const p of PROPOSALS) {
+          corpus.push({ proposal: p, embedding: embMap[p.id], sentences: null });
         }
-
-        elProgressBar.style.display = 'none';
-        setStatus('Ready — semantic matching active', 'ready');
+        setStatus('Ready — enter a problem to find similar proposals', 'ready');
         btnSearch.disabled = false;
       } catch (err) {
         console.error(err);
-        setStatus('Model failed to load: ' + err.message, 'error');
+        setStatus('Failed to load proposals: ' + err.message, 'error');
+      }
+    }
+
+    // ── Lazy-load model on first search ──────────────────────────────
+    async function loadModel() {
+      if (embedder) return;
+      setStatus('Loading semantic model for first search (~30 MB)…');
+      try {
+        embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', { dtype: 'fp32' });
+      } catch (err) {
+        embedder = null; // allow retry on next search
+        throw err;
       }
     }
 
@@ -856,35 +848,45 @@
       // Force browser repaint before heavy async work
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      // embed query
-      const [queryEmb] = await embedTexts([queryText]);
+      try {
+        await loadModel();
+        setStatus('Ready — semantic matching active', 'ready');
 
-      // score each proposal by cosine similarity (fast — uses pre-computed embeddings)
-      const scored = corpus
-        .map(entry => ({
-          entry,
-          sim: cosineSim(queryEmb, entry.embedding),
-          score: Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100))
-        }))
-        .filter(r => r.score > 10)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
+        // embed query
+        const [queryEmb] = await embedTexts([queryText]);
 
-      // Only embed sentences for top results (on-demand, much faster)
-      const results = [];
-      for (const { entry, score } of scored) {
-        const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
-        results.push({ ...entry.proposal, score, excerpts, reasons });
+        // score each proposal by cosine similarity (fast — uses pre-computed embeddings)
+        const scored = corpus
+          .map(entry => ({
+            entry,
+            sim: cosineSim(queryEmb, entry.embedding),
+            score: Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100))
+          }))
+          .filter(r => r.score > 10)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10);
+
+        // Only embed sentences for top results (on-demand, much faster)
+        const results = [];
+        for (const { entry, score } of scored) {
+          const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
+          results.push({ ...entry.proposal, score, excerpts, reasons });
+        }
+
+        currentResults = results;
+        selected = new Set();
+
+        // auto-select results scoring above 70 (max 3)
+        results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
+
+        render(results);
+      } catch (err) {
+        console.error(err);
+        setStatus('Search failed: ' + err.message + ' — try again', 'error');
+        elResultsList.innerHTML = '';
+      } finally {
+        btnSearch.disabled = false;
       }
-
-      currentResults = results;
-      selected = new Set();
-
-      // auto-select results scoring above 70 (max 3)
-      results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
-
-      render(results);
-      btnSearch.disabled = false;
     }
 
     // ── Toggle selection ─────────────────────────────────────────────
@@ -1298,7 +1300,7 @@
     });
 
     // ── Boot ─────────────────────────────────────────────────────────
-    init();
+    loadCorpus();
   </script>
 </body>
 </html>
