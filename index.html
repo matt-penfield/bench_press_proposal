@@ -21,6 +21,14 @@
       padding: 32px 24px;
     }
 
+    .page-header { margin-bottom: 24px; }
+    .page-header h1 { font-size: 26px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.4px; }
+    .page-header p { font-size: 14px; color: #6b7280; margin-top: 4px; }
+    .page-status { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 13px; color: #9ca3af; margin-top: 16px; }
+    .page-status .status-label { font-weight: 600; color: #6b7280; }
+    .page-status.ready { color: #059669; }
+    .page-status.error { color: #dc2626; }
+
     /* Input section */
     .input-section {
       background: #fff;
@@ -219,18 +227,6 @@
     }
 
     /* Model status */
-    .model-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      font-size: 13px;
-      color: #9ca3af;
-    }
-
-    .model-status.ready { color: #059669; }
-    .model-status.error { color: #dc2626; }
-
     .spinner {
       width: 14px;
       height: 14px;
@@ -240,8 +236,8 @@
       animation: spin 0.6s linear infinite;
     }
 
-    .model-status.ready .spinner,
-    .model-status.error .spinner { display: none; }
+    .page-status.ready .spinner,
+    .page-status.error .spinner { display: none; }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -565,10 +561,9 @@
 </head>
 <body>
   <main>
-    <div class="model-status" id="model-status" style="margin-bottom:20px;">
-      <div class="spinner"></div>
-      <span id="status-text">Initializing…</span>
-      <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+    <div class="page-header">
+      <h1>Proposal Generator</h1>
+      <p>Enter a problem to find similar proposals</p>
     </div>
     <div class="input-section">
       <div class="field">
@@ -590,6 +585,13 @@
       <button id="search-btn">Find Similar Proposals</button>
     </div>
 
+    <div class="page-status" id="model-status">
+      <div class="spinner"></div>
+      <span class="status-label">Status:</span>
+      <span id="status-text">Initializing…</span>
+      <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+    </div>
+
     <div class="results-section" id="results-section" style="display:none;">
       <div class="results-header">
         <h2>Results</h2>
@@ -606,9 +608,7 @@
       <button id="export-btn">Export to Word (.docx)</button>
     </div>
 
-    <div class="empty-state" id="empty-state">
-      <p>Enter a problem statement above and hit <strong>Find Similar</strong> to search the proposal corpus.</p>
-    </div>
+    <div class="empty-state" id="empty-state"></div>
   </main>
 
   <script src="proposals.js"></script>
@@ -708,7 +708,7 @@
         for (const p of PROPOSALS) {
           corpus.push({ proposal: p, embedding: embMap[p.id], sentences: null });
         }
-        setStatus('Ready — enter a problem to find similar proposals', 'ready');
+        setStatus('Ready — proposals loaded', 'ready');
         btnSearch.disabled = false;
       } catch (err) {
         console.error(err);
@@ -730,7 +730,7 @@
 
     function setStatus(msg, cls) {
       elStatusText.textContent = msg;
-      elStatus.className = 'model-status' + (cls ? ' ' + cls : '');
+      elStatus.className = 'page-status' + (cls ? ' ' + cls : '');
     }
 
     // ── Embed sentences for an entry on demand ─────────────────────

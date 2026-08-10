@@ -198,10 +198,8 @@ function buildSidebar(active, links) {
     </a>`;
 
   return `
-    <span class="nav-section-label">Overview</span>
     ${item('home', links.home, 'Home', '<path d="M8 1L1 6v9h5v-5h4v5h5V6z"/>')}
 
-    <span class="nav-section-label">Tools</span>
     ${item('dashboard', links.home + '#dashboard', 'Dashboard',
       '<path d="M1 1h5.5v7H1zM9.5 1H15v4H9.5zM9.5 8H15v7H9.5zM1 11h5.5v5H1z"/>')}
     ${item('proposal', links.proposal, 'Proposal Generator',

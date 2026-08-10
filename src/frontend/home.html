@@ -19,6 +19,8 @@
       --text-3:        #9ca3af;
     }
 
+    html { scroll-behavior: smooth; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
@@ -30,7 +32,7 @@
     main { padding: 36px 40px 60px; }
 
     .page-title {
-      font-size: 24px;
+      font-size: 36px;
       font-weight: 700;
       letter-spacing: -0.4px;
       color: var(--text);
@@ -108,7 +110,7 @@
     }
 
     .section-title {
-      font-size: 16px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--text);
     }
@@ -286,10 +288,7 @@
       <div class="page-title">Account Team Helper</div>
       <div class="page-subtitle">A suite of tools to help Slalom account teams move faster — from first meeting to signed work order.</div>
 
-      <p style="margin-top:16px;font-size:14px;color:var(--text-2);max-width:640px;line-height:1.7;">
-        Bench Press brings together AI-powered proposal matching, compliance validation, and live pipeline visibility in one place.
-        Pick a tool below to get started, or scroll down to review your open leads.
-      </p>
+      <p style="margin-top:16px;font-size:14px;color:var(--text-2);line-height:1.7;">Bench Press brings together AI-powered proposal matching, compliance validation, and live pipeline visibility in one place. Pick a tool below to get started, or scroll down to review your open leads.</p>
 
       <!-- Tool cards -->
       <div class="section-header" style="margin-top:36px;">
@@ -298,59 +297,29 @@
 
       <div class="feature-grid" style="grid-template-columns:repeat(3,1fr);">
         <a href="#dashboard" class="feature-card">
-          <div class="feature-card-icon" style="background:#f0f4ff;">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#5e6ad2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 2h7.5v10H2zM12.5 2H20v6h-7.5zM12.5 11H20v9h-7.5zM2 15h7.5v6H2z"/>
-            </svg>
-          </div>
           <div>
             <div class="feature-card-title">Dashboard</div>
             <div class="feature-card-desc">At-a-glance view of all open leads, pipeline stages, and deal values across your account team.</div>
           </div>
-          <div class="feature-card-cta">
-            View Dashboard
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5L11.5 7 8 10.5"/></svg>
-          </div>
         </a>
 
         <a href="../../index.html" class="feature-card">
-          <div class="feature-card-icon indigo">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#5e6ad2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 5h16M3 9.5h11M3 14h7"/>
-              <circle cx="17" cy="15.5" r="3.5"/>
-              <path d="M19.5 18l2 2"/>
-            </svg>
-          </div>
           <div>
             <div class="feature-card-title">Proposal Generator</div>
             <div class="feature-card-desc">Enter a client problem statement, find the most similar past proposals, and generate a structured draft ready for review.</div>
           </div>
-          <div class="feature-card-cta">
-            Open Proposal Generator
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5L11.5 7 8 10.5"/></svg>
-          </div>
         </a>
 
         <a href="./work-order-check.html" class="feature-card">
-          <div class="feature-card-icon teal">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#059669" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 5h16M3 9h11M3 13h8"/>
-              <path d="M14 12l2 2 4-4"/>
-            </svg>
-          </div>
           <div>
             <div class="feature-card-title">Work Order Check</div>
             <div class="feature-card-desc">Upload a Work Order (.docx) and validate it against a compliance checklist. Instant pass/fail feedback on sections, formatting, and content.</div>
-          </div>
-          <div class="feature-card-cta">
-            Open Work Order Check
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5L11.5 7 8 10.5"/></svg>
           </div>
         </a>
       </div>
 
       <!-- Dashboard section -->
-      <div class="section-header" style="margin-top:52px;" id="dashboard">
+      <div class="section-header" style="margin-top:52px;scroll-margin-top:80px;" id="dashboard">
         <div class="section-title">Dashboard — Open Leads</div>
       </div>
 
