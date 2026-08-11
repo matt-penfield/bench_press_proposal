@@ -89,7 +89,6 @@
       text-transform: none;
       letter-spacing: 0;
       color: #9ca3af;
-      margin-left: 4px;
     }
 
     textarea {
@@ -670,14 +669,13 @@
     </div>
     <div class="input-section">
       <div class="field">
-        <label for="problem">Problem Statement</label>
+        <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
         <textarea id="problem" rows="4" placeholder="Describe the client's core challenge or ask…"></textarea>
       </div>
       <div class="field">
-        <label for="supplemental">Supplemental Info <span class="hint">— industry, constraints, technologies, timeline,
-            etc.</span></label>
-        <textarea id="supplemental" rows="3"
-          placeholder="Any additional context that might help find similar work…"></textarea>
+        <label for="supplemental">Improve Match Quality <div class="hint">Add context to help Bench Press find proposals with a similar approach, scope, and value story.</div></label>
+        <textarea id="supplemental" rows="3" style="height: 150px;"
+          placeholder="Example: Retail client, service design discovery, focused on improving agent productivity. Desired outputs include journey maps, service blueprint, and future-state recommendations. Timeline is 8 weeks."></textarea>
         <div class="file-upload-area">
           <label class="file-upload-btn">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
