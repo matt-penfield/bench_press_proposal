@@ -1523,11 +1523,17 @@
       }
     }
 
-    btnNext.addEventListener('click', () => {
+    btnNext.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Next clicked, currentStep:', currentStep);
       if (currentStep < 4) showStep(currentStep + 1);
     });
 
-    btnPrev.addEventListener('click', () => {
+    btnPrev.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Prev clicked, currentStep:', currentStep);
       if (currentStep > 1) showStep(currentStep - 1);
     });
 
