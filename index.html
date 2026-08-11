@@ -723,14 +723,198 @@
       }
     }
 
-    /* Results Section */
-    .results-section {
-      margin-top: 32px;
+    /* Results Page */
+    .results-page {
       display: none;
     }
 
-    .results-section.show {
+    .results-page.show {
       display: block;
+    }
+
+    .results-page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .results-main-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0;
+      margin-bottom: 6px;
+    }
+
+    .results-main-subtitle {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    .results-main-subtitle a {
+      color: #5e6ad2;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .results-selection-note {
+      margin-top: 14px;
+      padding: 22px 24px;
+      border: 1px solid #c9d2ff;
+      border-radius: 14px;
+      background: #f4f6ff;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2438;
+      line-height: 1.35;
+    }
+
+    .results-selection-counter {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #5e6ad2;
+    }
+
+    .results-selection-note strong {
+      color: #5e6ad2;
+      font-weight: 700;
+    }
+
+    .results-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 44px 24px;
+      color: #6b7280;
+      font-size: 44px;
+      font-weight: 500;
+      min-height: 140px;
+      text-align: center;
+    }
+
+    .results-loading .loading-text {
+      font-size: 22px;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    .loading-dots {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .loading-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #5e6ad2;
+      animation: loadingDot 0.6s ease-in-out infinite;
+    }
+
+    .loading-dot:nth-child(1) {
+      opacity: 0.45;
+      animation-delay: 0s;
+    }
+
+    .loading-dot:nth-child(2) {
+      opacity: 0.75;
+      animation-delay: 0.12s;
+    }
+
+    .loading-dot:nth-child(3) {
+      opacity: 1;
+      animation-delay: 0.24s;
+    }
+
+    .loading-dot:nth-child(4) {
+      opacity: 0.75;
+      animation-delay: 0.36s;
+    }
+
+    @keyframes loadingDot {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateY(-6px) scale(1.06);
+      }
+    }
+
+    .results-layout {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .results-summary-sidebar {
+      flex: 0 0 25%;
+      background: #fff;
+      border: 1px solid #e8eaed;
+      border-radius: 12px;
+      padding: 20px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .results-summary-sidebar h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 12px;
+    }
+
+    .summary-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-item-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .summary-item-value {
+      font-size: 13px;
+      color: #1a1a2e;
+      line-height: 1.4;
+    }
+
+    .summary-item-value.empty {
+      color: #d1d5db;
+      font-style: italic;
+    }
+
+    .results-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Results Section (legacy, hidden) */
+    .results-section {
+      display: none;
     }
 
     .results-header {
@@ -758,7 +942,7 @@
       padding: 22px 24px;
       margin-bottom: 12px;
       transition: box-shadow 0.15s;
-      cursor: pointer;
+      cursor: default;
     }
 
     .result-card:hover {
@@ -779,15 +963,47 @@
     }
 
     .result-title {
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 600;
       color: #1a1a2e;
+      line-height: 1.3;
+    }
+
+    .result-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .result-select-toggle {
+      width: 22px;
+      height: 22px;
+      accent-color: #5e6ad2;
+      cursor: pointer;
+      flex: 0 0 auto;
     }
 
     .result-source {
       font-size: 12px;
       color: #9ca3af;
       margin-top: 4px;
+      margin-left: 34px;
+    }
+
+    .result-body {
+      margin-left: 34px;
+    }
+
+    .result-source-label {
+      color: #98a0b2;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .result-source a {
+      color: #7a869a;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .score-badge {
@@ -797,6 +1013,32 @@
       font-weight: 700;
       text-align: center;
       min-width: 50px;
+    }
+
+    .score-group {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .score-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .score-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      white-space: nowrap;
+    }
+
+    .match-confidence {
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
     }
 
     .score-high {
@@ -812,6 +1054,126 @@
     .score-low {
       background: #fee2e2;
       color: #991b1b;
+    }
+
+    .result-summary-box {
+      margin-top: 8px;
+      margin-bottom: 12px;
+      padding: 0;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+    }
+
+    .result-section-heading {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #98a0b2;
+      margin-bottom: 8px;
+    }
+
+    .result-summary-text {
+      font-size: 15px;
+      color: #4b5563;
+      line-height: 1.55;
+    }
+
+    .result-match-box {
+      margin-top: 8px;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #f7f9ff;
+    }
+
+    .result-match-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #98a0b2;
+      margin-bottom: 12px;
+    }
+
+    .result-match-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .result-match-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .result-match-check {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .result-match-item-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #384152;
+      margin-bottom: 2px;
+    }
+
+    .result-match-text {
+      font-size: 14px;
+      line-height: 1.45;
+      color: #4b5563;
+    }
+
+    .ai-match-summary {
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid #e3e7f6;
+    }
+
+    .ai-match-summary p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: #4b5563;
+    }
+
+    .differences-box {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #d4dbf5;
+    }
+
+    .differences-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 6px;
+    }
+
+    .differences-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #5b6475;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .differences-list li {
+      margin-bottom: 4px;
     }
 
     .draft-section {
@@ -1514,15 +1876,34 @@
       </div>
     </div>
 
-    <!-- Results Section -->
-    <div class="results-section" id="results-section">
-      <div class="results-header">
-        <h2>Results</h2>
-        <span class="count" id="results-count"></span>
+    <!-- Results Page -->
+    <div class="results-page" id="results-page">
+      <div class="results-page-header">
+        <button type="button" class="btn-tertiary" id="btn-back-to-form" style="padding: 8px 0;">← Back to
+          Form</button>
       </div>
-      <div id="results-list"></div>
-      <button id="draft-btn" style="display: none;" class="btn-search">Draft Proposal from Selected</button>
+      <div class="results-layout">
+        <div class="results-summary-sidebar" id="results-summary-sidebar">
+          <h3>Your Inputs</h3>
+          <div id="summary-items"></div>
+          <div style="margin-top:16px; padding-top:16px; border-top:1px solid #e5e7eb;">
+            <button type="button" class="btn-secondary" id="btn-refine"
+              style="width:100%; justify-content:center;">Refine Search</button>
+          </div>
+        </div>
+        <div class="results-main">
+          <h2 class="results-main-title" id="results-title">Matching Proposals</h2>
+          <p class="results-main-subtitle" id="results-subtitle"></p>
+          <div id="results-list"></div>
+          <button id="draft-btn" style="display: none; margin-top:16px; float:right;" class="btn-search">Draft Proposal
+            from
+            Selected</button>
+        </div>
+      </div>
     </div>
+
+    <!-- Hidden legacy results anchor (kept for JS refs) -->
+    <div class="results-section" id="results-section" style="display:none;"></div>
 
     <!-- Draft Section -->
     <div class="draft-section" id="draft-section">
@@ -1573,7 +1954,6 @@
     const btnSearch = document.getElementById('btn-search');
     const elResults = document.getElementById('results-section');
     const elResultsList = document.getElementById('results-list');
-    const elResultsCount = document.getElementById('results-count');
     const elDraftBtn = document.getElementById('draft-btn');
     const elDraftSection = document.getElementById('draft-section');
     const elDraftOutput = document.getElementById('draft-output');
@@ -2070,6 +2450,7 @@
     }
 
     function setStatus(msg, cls) {
+      if (!elStatus) return;
       elStatus.style.display = 'flex';
       elStatusText.textContent = msg;
       elStatus.className = 'page-status' + (cls ? ' ' + cls : '');
@@ -2102,16 +2483,225 @@
       return 'score-low';
     }
 
+    function applyPrototypeDisplayScores(results) {
+      if (!results.length) return;
+      const maxRaw = Math.max(...results.map(r => r.score), 1);
+      const steps = Math.max(results.length - 1, 1);
+
+      results.forEach((r, idx) => {
+        // Prototype-only: emphasize progression from highest to lowest in the UI.
+        const rankScaled = 100 - Math.round((idx / steps) * 45); // 100 -> 55
+        const rawScaled = Math.round((r.score / maxRaw) * 100);
+        r.displayScore = Math.max(35, Math.min(100, Math.max(rankScaled, rawScaled)));
+      });
+    }
+
+    const STOPWORDS = new Set([
+      'the', 'and', 'for', 'with', 'from', 'that', 'this', 'into', 'your', 'their', 'our', 'are', 'was', 'were',
+      'will', 'can', 'not', 'but', 'you', 'all', 'any', 'has', 'have', 'had', 'about', 'within', 'across', 'using',
+      'use', 'via', 'per', 'than', 'then', 'them', 'they', 'its', 'his', 'her', 'she', 'him', 'who', 'what',
+      'when', 'where', 'why', 'how', 'a', 'an', 'to', 'of', 'in', 'on', 'at', 'by', 'or', 'as', 'is', 'be', 'it'
+    ]);
+
+    function tokenize(text) {
+      if (!text) return [];
+      return text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(t => t.length > 2 && !STOPWORDS.has(t));
+    }
+
+    function getEntryTokenSets(entry) {
+      if (entry.tokenSets) return entry.tokenSets;
+      const titleTokens = new Set(tokenize(entry.proposal.title || ''));
+      const allTokens = new Set(tokenize([
+        entry.proposal.title,
+        entry.proposal.source,
+        entry.proposal.bu,
+        entry.proposal.content
+      ].filter(Boolean).join(' ')));
+      entry.tokenSets = { titleTokens, allTokens };
+      return entry.tokenSets;
+    }
+
+    function coverageScore(tokens, allTokens, titleTokens) {
+      if (!tokens.length) return 0;
+      const uniq = Array.from(new Set(tokens));
+      let matched = 0;
+      for (const t of uniq) {
+        if (titleTokens.has(t)) matched += 1.25;
+        else if (allTokens.has(t)) matched += 1;
+      }
+      return Math.min(1, matched / uniq.length);
+    }
+
+    function computeInputMatchScore(state, entry) {
+      const { titleTokens, allTokens } = getEntryTokenSets(entry);
+      const fields = [
+        { weight: 14, text: state.problem },
+        { weight: 13, text: state.serviceArea.join(' ') },
+        { weight: 12, text: state.deliverables.join(' ') },
+        { weight: 11, text: state.outcomes.join(' ') },
+        { weight: 11, text: state.phase },
+        { weight: 10, text: state.industry },
+        { weight: 9, text: state.sponsor },
+        { weight: 9, text: state.technologies.join(' ') },
+        { weight: 6, text: state.timeline },
+        { weight: 5, text: state.constraints }
+      ];
+
+      let weightedHits = 0;
+      let availableWeight = 0;
+
+      for (const field of fields) {
+        const tokens = tokenize(field.text || '');
+        if (!tokens.length) continue;
+        availableWeight += field.weight;
+        weightedHits += field.weight * coverageScore(tokens, allTokens, titleTokens);
+      }
+
+      if (!availableWeight) return 0;
+      return Math.round((weightedHits / availableWeight) * 100);
+    }
+
+    function toSentence(text, maxLen = 160) {
+      if (!text) return '';
+      const trimmed = text.replace(/\s+/g, ' ').trim();
+      if (trimmed.length <= maxLen) return trimmed;
+      return trimmed.slice(0, maxLen - 1).trimEnd() + '…';
+    }
+
+    function phraseCoverage(phrase, tokenSet) {
+      const tokens = tokenize(phrase || '');
+      if (!tokens.length) return 0;
+      let matched = 0;
+      for (const t of tokens) {
+        if (tokenSet.has(t)) matched += 1;
+      }
+      return matched / tokens.length;
+    }
+
+    function matchedPhrases(phrases, tokenSet) {
+      return (phrases || []).filter(p => phraseCoverage(p, tokenSet) >= 0.4);
+    }
+
+    function extractTimelineFromProposal(content) {
+      const timelineLine = (content || '').match(/Timeline:\s*([^\n]+)/i);
+      if (timelineLine && timelineLine[1]) return toSentence(timelineLine[1], 90);
+      const weekMatch = (content || '').match(/\b\d{1,2}\s*weeks?\b/i);
+      return weekMatch ? weekMatch[0] : '';
+    }
+
+    function confidenceLabel(score) {
+      if (score >= 85) return 'Strong Match';
+      if (score >= 70) return 'Good Match';
+      return 'Moderate Match';
+    }
+
+    function buildBusinessMatchDetails(result, state, summaryText) {
+      const proposalText = [result.title, result.source, result.bu, result.content].filter(Boolean).join(' ').toLowerCase();
+      const proposalTokens = new Set(tokenize(proposalText));
+
+      const industryInput = state.industry ? state.industry.trim() : '';
+      const industryMatched = industryInput ? phraseCoverage(industryInput, proposalTokens) >= 0.4 : true;
+      const industryText = industryInput
+        ? (industryMatched ? industryInput : `${industryInput} (proposal focus appears closer to ${result.bu || 'a broader cross-industry pattern'})`)
+        : (result.bu || 'Cross-industry');
+
+      const matchedOutcomes = matchedPhrases(state.outcomes, proposalTokens);
+      const matchedDeliverables = matchedPhrases(state.deliverables, proposalTokens);
+      const timelineInProposal = extractTimelineFromProposal(result.content || '');
+
+      const problemDetail = summaryText
+        ? toSentence(summaryText, 170)
+        : 'Addresses a challenge pattern similar to the opportunity description.';
+
+      const outcomesText = matchedOutcomes.length
+        ? matchedOutcomes.slice(0, 3).join(', ')
+        : 'Proposal emphasizes measurable business outcomes aligned to the stated goals.';
+
+      const deliverablesText = matchedDeliverables.length
+        ? matchedDeliverables.slice(0, 3).join(', ')
+        : 'Proposal includes delivery components that align with the requested engagement approach.';
+
+      const aiSummary = [
+        `This proposal is relevant because it tackles a similar business challenge: ${problemDetail}`,
+        `It aligns with ${industryInput ? `${industryMatched ? 'the requested industry focus' : 'many of the requested business patterns'}` : 'the opportunity context'} and targets outcomes like ${toSentence(outcomesText.toLowerCase(), 120)}.`,
+        `The approach and deliverables overlap with your request, making it a strong candidate to review for proposal drafting.`
+      ].join(' ');
+
+      const differences = [];
+      if (state.timeline && timelineInProposal && phraseCoverage(state.timeline, proposalTokens) < 0.35) {
+        differences.push(`Timeline differences: opportunity indicates ${state.timeline}, while this proposal references ${timelineInProposal}.`);
+      }
+      if (industryInput && !industryMatched) {
+        differences.push(`Industry differences: opportunity targets ${industryInput}, while this proposal aligns more with ${result.bu || 'a different business area'}.`);
+      }
+      if (state.deliverables.length > 0 && matchedDeliverables.length < Math.max(1, Math.ceil(state.deliverables.length / 2))) {
+        differences.push('Scope differences: some requested deliverables are not explicitly called out in this proposal and may require adaptation.');
+      }
+
+      return {
+        industryText,
+        outcomesText,
+        deliverablesText,
+        problemDetail,
+        aiSummary,
+        differences
+      };
+    }
+
+    function showResultsPage() {
+      document.querySelector('.wizard-container').style.display = 'none';
+      document.getElementById('results-page').classList.add('show');
+      window.scrollTo(0, 0);
+
+      // Populate input summary sidebar
+      const items = [
+        { label: 'Problem Statement', value: formState.problem || null },
+        { label: 'Service Areas', value: formState.serviceArea.length ? formState.serviceArea.join(', ') : null },
+        { label: 'Deliverables', value: formState.deliverables.length ? formState.deliverables.join(', ') : null },
+        { label: 'Business Outcomes', value: formState.outcomes.length ? formState.outcomes.join(', ') : null },
+        { label: 'Industry', value: formState.industry || null },
+        { label: 'Phase', value: formState.phase || null },
+        { label: 'Buyer / Sponsor', value: formState.sponsor || null },
+        { label: 'Technologies', value: formState.technologies.length ? formState.technologies.join(', ') : null },
+        { label: 'Timeline', value: formState.timeline || null },
+        { label: 'Files', value: uploadedFiles.length ? uploadedFiles.map(f => f.name).join(', ') : null },
+      ].filter(i => i.value);
+
+      document.getElementById('summary-items').innerHTML = items.map(i => `
+        <div class="summary-item">
+          <div class="summary-item-label">${esc(i.label)}</div>
+          <div class="summary-item-value">${esc(i.value.length > 120 ? i.value.slice(0, 117) + '…' : i.value)}</div>
+        </div>`).join('');
+    }
+
+    function hideResultsPage() {
+      document.querySelector('.wizard-container').style.display = '';
+      document.getElementById('results-page').classList.remove('show');
+    }
+
     async function search() {
       if (!formState.problem.trim()) return;
 
-      elStatus.style.display = 'flex';
-      elResults.classList.remove('show');
-      elResults.querySelector('#results-list').innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;">Finding similar proposals…</div>';
+      document.getElementById('results-title').textContent = 'Matching Proposals';
+      document.getElementById('results-subtitle').textContent = '';
+      document.getElementById('results-list').innerHTML = `
+        <div class="results-loading" aria-live="polite" role="status">
+          <div class="loading-dots" aria-hidden="true">
+            <span class="loading-dot"></span>
+            <span class="loading-dot"></span>
+            <span class="loading-dot"></span>
+            <span class="loading-dot"></span>
+          </div>
+          <span class="loading-text">Finding similar proposals...</span>
+        </div>`;
+      showResultsPage();
 
       try {
         await loadModel();
-        setStatus('Ready — semantic matching active', 'ready');
 
         const queryText = [
           formState.problem,
@@ -2130,67 +2720,103 @@
         const [queryEmb] = await embedTexts([queryText]);
 
         const scored = corpus
-          .map(entry => ({
-            entry,
-            sim: cosineSim(queryEmb, entry.embedding),
-            score: Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100))
-          }))
-          .filter(r => r.score > 10)
+          .map(entry => {
+            const semanticScore = Math.max(0, Math.round(cosineSim(queryEmb, entry.embedding) * 100));
+            const inputMatchScore = computeInputMatchScore(formState, entry);
+            const score = Math.round((semanticScore * 0.78) + (inputMatchScore * 0.22));
+            return { entry, score, semanticScore, inputMatchScore };
+          })
+          .filter(r => r.score > 15)
           .sort((a, b) => b.score - a.score)
           .slice(0, 10);
 
         const results = [];
-        for (const { entry, score } of scored) {
+        for (const { entry, score, semanticScore, inputMatchScore } of scored) {
           const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
-          results.push({ ...entry.proposal, score, excerpts, reasons });
+          results.push({ ...entry.proposal, score, semanticScore, inputMatchScore, excerpts, reasons });
         }
+
+        applyPrototypeDisplayScores(results);
 
         currentResults = results;
         selected = new Set();
-        results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
 
         renderResults(results);
-        elResults.classList.add('show');
       } catch (err) {
         console.error(err);
-        setStatus('Search failed: ' + err.message, 'error');
+        document.getElementById('results-list').innerHTML = `<div style="padding: 20px; text-align: center; color: #dc2626;">Search failed: ${esc(err.message)}</div>`;
       }
     }
 
     function renderResults(results) {
+      const elResultsList = document.getElementById('results-list');
+      const elResultsSubtitle = document.getElementById('results-subtitle');
+
+      function toggleSelection(id) {
+        if (selected.has(id)) {
+          selected.delete(id);
+        } else if (selected.size < 3) {
+          selected.add(id);
+        }
+        renderResults(results);
+        elDraftBtn.disabled = selected.size === 0;
+      }
+
+      document.getElementById('results-title').textContent = 'Matching Proposals';
       if (results.length === 0) {
-        elResults.querySelector('#results-list').innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;">No similar proposals found.</div>';
+        elResultsSubtitle.innerHTML = `0 matching proposals found. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.`;
+        elResultsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;">No similar proposals found.</div>';
         return;
       }
 
-      elResultsCount.textContent = `${results.length} match${results.length === 1 ? '' : 'es'}`;
+      elResultsSubtitle.innerHTML = `${results.length} matching proposal${results.length === 1 ? '' : 's'} found. Showing best matches first. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.<div class="results-selection-note">Select up to <strong>3</strong> proposals to use as reference for your draft.<div class="results-selection-counter" id="selection-counter"></div></div>`;
 
-      elResults.querySelector('#results-list').innerHTML = results.map(r => {
+      const elSelectionCounter = document.getElementById('selection-counter');
+      if (elSelectionCounter) {
+        elSelectionCounter.textContent = `${selected.size} of 3 selected`;
+      }
+
+      elResultsList.innerHTML = results.map(r => {
         const sel = selected.has(r.id);
-        const whyHtml = (r.reasons || []).map(reason =>
-          `<div style="margin-bottom: 8px; font-size: 12px;"><span style="background: #eef0fb; color: #5e6ad2; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-right: 8px;">${reason.sim}</span>${esc(reason.text)}</div>`
-        ).join('');
+        const summaryText = (r.excerpts && r.excerpts.length)
+          ? r.excerpts[0]
+          : splitSentences(r.content || '')[0] || '';
+        const details = buildBusinessMatchDetails(r, formState, summaryText);
+        const display = r.displayScore ?? r.score;
+
         return `
           <div class="result-card${sel ? ' selected' : ''}" data-id="${esc(r.id)}">
             <div class="result-top">
               <div>
-                <div class="result-title">${esc(r.title)}</div>
-                <div class="result-source">${esc(r.source)}</div>
+                <div class="result-title-row">
+                  <input type="checkbox" class="result-select-toggle" data-id="${esc(r.id)}" aria-label="Select proposal ${esc(r.title)}" ${sel ? 'checked' : ''} />
+                  <div class="result-title">${esc(r.title)}</div>
+                </div>
+                <div class="result-source"><span class="result-source-label">View Proposal:</span><a href="#" aria-label="View proposal file ${esc(r.source)}">${esc(r.source)}</a></div>
               </div>
-              <div class="score-badge ${scoreClass(r.score)}">${r.score}</div>
+              <div class="score-group">
+                <div class="score-row"><span class="score-label">Match Score:</span>
+                <div class="score-badge ${scoreClass(display)}">${display}</div></div>
+              </div>
             </div>
-            ${r.excerpts.length ? `<div style="font-size: 13px; color: #6b7280; margin-top: 12px;">${r.excerpts.map(e => esc(e)).join(' … ')}</div>` : ''}
-            ${whyHtml ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">${whyHtml}</div>` : ''}
+            <div class="result-body">
+              <div class="result-summary-box"><div class="result-section-heading">AI Match Summary</div><div class="result-summary-text">${esc(details.aiSummary)}</div></div>
+              <div class="result-match-box">
+                <div class="result-match-title">Why This Match Was Selected</div>
+                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Business Problem</div><div class="result-match-text">${esc(details.problemDetail)}</div></div></div>
+                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Industry Match</div><div class="result-match-text">${esc(details.industryText)}</div></div></div>
+                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Business Outcomes</div><div class="result-match-text">${esc(details.outcomesText)}</div></div></div>
+                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Deliverables</div><div class="result-match-text">${esc(details.deliverablesText)}</div></div></div>
+                ${details.differences.length ? `<div class="differences-box"><div class="differences-title">Differences to Consider</div><ul class="differences-list">${details.differences.map(d => `<li>${esc(d)}</li>`).join('')}</ul></div>` : ''}
+              </div>
+            </div>
           </div>`;
       }).join('');
 
-      elResults.querySelectorAll('.result-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const id = card.dataset.id;
-          if (selected.has(id)) selected.delete(id);
-          else if (selected.size < 3) selected.add(id);
-          renderResults(results);
-          elDraftBtn.disabled = selected.size === 0;
+      elResultsList.querySelectorAll('.result-select-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleSelection(btn.dataset.id);
         });
       });
 
@@ -2207,6 +2833,15 @@
     document.getElementById('btn-find').addEventListener('click', (e) => {
       e.preventDefault();
       search();
+    });
+
+    document.getElementById('btn-back-to-form').addEventListener('click', () => hideResultsPage());
+    document.getElementById('btn-refine').addEventListener('click', () => hideResultsPage());
+    document.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'results-refine-link') {
+        e.preventDefault();
+        hideResultsPage();
+      }
     });
 
     // Load corpus on page load
