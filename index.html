@@ -896,6 +896,7 @@
                   <label>Service Area</label>
                   <span class="impact-badge high">High Impact</span>
                 </div>
+                <div style="position: relative;">
                 <div class="multi-select-container" id="service-area-container">
                   <input type="text" class="multi-select-input" placeholder="Select service areas…" id="service-area-input">
                 </div>
@@ -907,6 +908,7 @@
                   <div class="multi-select-option">Technology</div>
                   <div class="multi-select-option">Organizational Change</div>
                 </div>
+                </div>
               </div>
 
               <div class="form-field">
@@ -914,6 +916,7 @@
                   <label>Deliverables</label>
                   <span class="impact-badge high">High Impact</span>
                 </div>
+                <div style="position: relative;">
                 <div class="multi-select-container" id="deliverables-container">
                   <input type="text" class="multi-select-input" placeholder="Select deliverables…" id="deliverables-input">
                 </div>
@@ -926,6 +929,7 @@
                   <div class="multi-select-option">Implementation Plan</div>
                   <div class="multi-select-option">Training Materials</div>
                 </div>
+                </div>
               </div>
 
               <div class="form-field">
@@ -933,6 +937,7 @@
                   <label>Business Outcomes</label>
                   <span class="impact-badge high">High Impact</span>
                 </div>
+                <div style="position: relative;">
                 <div class="multi-select-container" id="outcomes-container">
                   <input type="text" class="multi-select-input" placeholder="Select business outcomes…" id="outcomes-input">
                 </div>
@@ -944,6 +949,7 @@
                   <div class="multi-select-option">Operational Efficiency</div>
                   <div class="multi-select-option">Employee Engagement</div>
                   <div class="multi-select-option">Risk Mitigation</div>
+                </div>
                 </div>
               </div>
 
@@ -1005,8 +1011,11 @@
                   <label for="technologies">Technologies</label>
                   <span class="impact-badge low">Lower Impact</span>
                 </div>
-                <div class="multi-select-container" id="technologies-container">
-                  <input type="text" class="multi-select-input" placeholder="Add technologies…" id="technologies-input">
+                <div style="position: relative;">
+                  <div class="multi-select-container" id="technologies-container">
+                    <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…" id="technologies-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="technologies-dropdown"></div>
                 </div>
               </div>
 
@@ -1362,22 +1371,35 @@
         this.input = document.getElementById(inputId);
         this.dropdown = document.getElementById(dropdownId);
         this.formStateKey = formStateKey;
-        this.options = Array.from(this.dropdown.querySelectorAll('.multi-select-option')).map(opt => opt.textContent);
+        this.options = this.dropdown
+          ? Array.from(this.dropdown.querySelectorAll('.multi-select-option')).map(opt => opt.textContent)
+          : [];
 
         this.input.addEventListener('input', () => this.filterOptions());
-        this.input.addEventListener('focus', () => this.dropdown.classList.add('open'));
-        document.addEventListener('click', (e) => {
-          if (!this.container.contains(e.target)) {
-            this.dropdown.classList.remove('open');
-          }
-        });
+        if (this.dropdown) {
+          this.input.addEventListener('focus', () => this.dropdown.classList.add('open'));
+          document.addEventListener('click', (e) => {
+            if (!this.container.contains(e.target)) {
+              this.dropdown.classList.remove('open');
+            }
+          });
+          this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
+            opt.addEventListener('click', () => this.selectOption(opt.textContent));
+          });
+        }
 
-        this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
-          opt.addEventListener('click', () => this.selectOption(opt.textContent));
+        // Free-form tag entry via Enter key
+        this.input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = this.input.value.trim();
+            if (val) this.selectOption(val);
+          }
         });
       }
 
       filterOptions() {
+        if (!this.dropdown) return;
         const searchText = this.input.value.toLowerCase();
         this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
           opt.style.display = opt.textContent.toLowerCase().includes(searchText) ? '' : 'none';
