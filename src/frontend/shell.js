@@ -198,9 +198,7 @@ function buildSidebar(active, links) {
     </a>`;
 
   return `
-    ${item('home', links.home, 'Home', '<path d="M8 1L1 6v9h5v-5h4v5h5V6z"/>')}
-
-    ${item('dashboard', links.home + '#dashboard', 'Dashboard',
+    ${item('dashboard', links.home, 'Dashboard',
       '<path d="M1 1h5.5v7H1zM9.5 1H15v4H9.5zM9.5 8H15v7H9.5zM1 11h5.5v5H1z"/>')}
     ${item('proposal', links.proposal, 'Proposal Generator',
       '<path d="M2 4h12M2 8h8M2 12h5"/><circle cx="13" cy="11" r="2.5"/><path d="M15 13.5l1.5 1.5"/>')}
@@ -234,7 +232,7 @@ export function mountShell({ active, links }) {
           <path d="M10 13h6M13 10v6"/>
         </svg>
       </div>
-      <span class="wordmark-text">Account Team <span>Helper</span></span>
+      <span class="wordmark-text">Account Team Helper</span>
     </a>
     <div class="header-right">
       <a href="#" class="profile-btn">
