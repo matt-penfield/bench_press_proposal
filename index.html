@@ -858,9 +858,6 @@
 
     btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
-    // Initialize status
-    setStatus('Loading proposals…');
-
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
       const files = Array.from(elFileInput.files);
