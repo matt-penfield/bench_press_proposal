@@ -62,6 +62,7 @@
       gap: 24px;
       position: sticky;
       top: 24px;
+      padding-top: 40px;
     }
 
     .wizard-content {
@@ -73,6 +74,7 @@
       flex: 0 0 200px;
       position: sticky;
       top: 24px;
+      padding-top: 40px;
     }
 
     /* Step Indicator */
@@ -135,16 +137,26 @@
     .step-title {
       font-size: 13px;
       font-weight: 600;
-      color: #1a1a2e;
-    }
-
-    .step-item.completed .step-title {
-      color: #059669;
+      color: #6b7280;
     }
 
     .step-description {
       font-size: 12px;
+      color: #6b7280;
+    }
+
+    .step-item.active .step-title,
+    .step-item.completed .step-title {
+      color: #1a1a2e;
+    }
+
+    .step-item.active .step-description,
+    .step-item.completed .step-description {
       color: #9ca3af;
+    }
+
+    .step-item.completed .step-title {
+      color: #059669;
     }
 
     /* Match Quality Score Sidebar */
@@ -824,8 +836,11 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
+
     .upload-zone {
       border: 2px dashed #d1d5db;
       border-radius: 12px;
@@ -887,7 +902,7 @@
     }
 
     .doc-recommendations {
-      margin-top: 24px;
+      margin-bottom: 16px;
     }
 
     .doc-rec-title {
@@ -1110,334 +1125,337 @@
       <div class="wizard-content">
         <form id="wizard-form">
 
-        <!-- Step 1: Client Challenge -->
-        <div class="form-step active" data-step="1">
-          <div class="form-group">
-            <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What problem is the
-              client trying to solve?</h3>
-            <div class="form-field">
-              <div class="field-header">
-                <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
-                <span class="impact-badge high">Highest Impact</span>
+          <!-- Step 1: Client Challenge -->
+          <div class="form-step active" data-step="1">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What problem is the
+                client trying to solve?</h3>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
+                  <span class="impact-badge high">Highest Impact</span>
+                </div>
+                <textarea id="problem" name="problem" rows="6"
+                  placeholder="Describe the client's core challenge, business issue, or strategic goal…"
+                  required></textarea>
+                <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;" id="problem-help">Example: A mid-sized
+                  retailer is struggling with declining foot traffic due to poor in-store customer experience and needs
+                  to modernize their engagement approach.</div>
               </div>
-              <textarea id="problem" name="problem" rows="6"
-                placeholder="Describe the client's core challenge, business issue, or strategic goal…"
-                required></textarea>
-              <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;" id="problem-help">Example: A mid-sized
-                retailer is struggling with declining foot traffic due to poor in-store customer experience and needs
-                to modernize their engagement approach.</div>
             </div>
           </div>
-        </div>
 
-        <!-- Step 2: Match Context -->
-        <div class="form-step" data-step="2">
-          <div class="form-group">
-            <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What's the engagement
-              about?</h3>
+          <!-- Step 2: Match Context -->
+          <div class="form-step" data-step="2">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What's the engagement
+                about?</h3>
 
-            <div class="form-field">
-              <div class="field-header">
-                <label>Service Area</label>
-                <span class="impact-badge high">High Impact</span>
-              </div>
-              <div style="position: relative;">
-                <div class="multi-select-container" id="service-area-container">
-                  <input type="text" class="multi-select-input" placeholder="Select service areas…"
-                    id="service-area-input">
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Service Area</label>
+                  <span class="impact-badge high">High Impact</span>
                 </div>
-                <div class="multi-select-dropdown" id="service-area-dropdown">
-                  <div class="multi-select-option">Strategy</div>
-                  <div class="multi-select-option">Customer Experience</div>
-                  <div class="multi-select-option">Digital Transformation</div>
-                  <div class="multi-select-option">Operations</div>
-                  <div class="multi-select-option">Technology</div>
-                  <div class="multi-select-option">Organizational Change</div>
+                <div style="position: relative;">
+                  <div class="multi-select-container" id="service-area-container">
+                    <input type="text" class="multi-select-input" placeholder="Select service areas…"
+                      id="service-area-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="service-area-dropdown">
+                    <div class="multi-select-option">Strategy</div>
+                    <div class="multi-select-option">Customer Experience</div>
+                    <div class="multi-select-option">Digital Transformation</div>
+                    <div class="multi-select-option">Operations</div>
+                    <div class="multi-select-option">Technology</div>
+                    <div class="multi-select-option">Organizational Change</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="form-field">
-              <div class="field-header">
-                <label>Deliverables</label>
-                <span class="impact-badge high">High Impact</span>
-              </div>
-              <div style="position: relative;">
-                <div class="multi-select-container" id="deliverables-container">
-                  <input type="text" class="multi-select-input" placeholder="Select deliverables…"
-                    id="deliverables-input">
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Deliverables</label>
+                  <span class="impact-badge high">High Impact</span>
                 </div>
-                <div class="multi-select-dropdown" id="deliverables-dropdown">
-                  <div class="multi-select-option">Roadmap</div>
-                  <div class="multi-select-option">Strategy Document</div>
-                  <div class="multi-select-option">Business Case</div>
-                  <div class="multi-select-option">Journey Map</div>
-                  <div class="multi-select-option">Service Blueprint</div>
-                  <div class="multi-select-option">Implementation Plan</div>
-                  <div class="multi-select-option">Training Materials</div>
+                <div style="position: relative;">
+                  <div class="multi-select-container" id="deliverables-container">
+                    <input type="text" class="multi-select-input" placeholder="Select deliverables…"
+                      id="deliverables-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="deliverables-dropdown">
+                    <div class="multi-select-option">Roadmap</div>
+                    <div class="multi-select-option">Strategy Document</div>
+                    <div class="multi-select-option">Business Case</div>
+                    <div class="multi-select-option">Journey Map</div>
+                    <div class="multi-select-option">Service Blueprint</div>
+                    <div class="multi-select-option">Implementation Plan</div>
+                    <div class="multi-select-option">Training Materials</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="form-field">
-              <div class="field-header">
-                <label>Business Outcomes</label>
-                <span class="impact-badge high">High Impact</span>
-              </div>
-              <div style="position: relative;">
-                <div class="multi-select-container" id="outcomes-container">
-                  <input type="text" class="multi-select-input" placeholder="Select business outcomes…"
-                    id="outcomes-input">
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Business Outcomes</label>
+                  <span class="impact-badge high">High Impact</span>
                 </div>
-                <div class="multi-select-dropdown" id="outcomes-dropdown">
-                  <div class="multi-select-option">Revenue Growth</div>
-                  <div class="multi-select-option">Cost Reduction</div>
-                  <div class="multi-select-option">Customer Satisfaction</div>
-                  <div class="multi-select-option">Market Share</div>
-                  <div class="multi-select-option">Operational Efficiency</div>
-                  <div class="multi-select-option">Employee Engagement</div>
-                  <div class="multi-select-option">Risk Mitigation</div>
+                <div style="position: relative;">
+                  <div class="multi-select-container" id="outcomes-container">
+                    <input type="text" class="multi-select-input" placeholder="Select business outcomes…"
+                      id="outcomes-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="outcomes-dropdown">
+                    <div class="multi-select-option">Revenue Growth</div>
+                    <div class="multi-select-option">Cost Reduction</div>
+                    <div class="multi-select-option">Customer Satisfaction</div>
+                    <div class="multi-select-option">Market Share</div>
+                    <div class="multi-select-option">Operational Efficiency</div>
+                    <div class="multi-select-option">Employee Engagement</div>
+                    <div class="multi-select-option">Risk Mitigation</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="form-field">
-              <div class="field-header">
-                <label for="industry">Industry</label>
-                <span class="impact-badge medium">Medium Impact</span>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="industry">Industry</label>
+                  <span class="impact-badge medium">Medium Impact</span>
+                </div>
+                <select id="industry" name="industry">
+                  <option value="">Select industry…</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Finance">Finance & Banking</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Energy">Energy & Utilities</option>
+                  <option value="Automotive">Automotive</option>
+                  <option value="Telecommunications">Telecommunications</option>
+                  <option value="Government">Government</option>
+                  <option value="Education">Education</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
-              <select id="industry" name="industry">
-                <option value="">Select industry…</option>
-                <option value="Technology">Technology</option>
-                <option value="Finance">Finance & Banking</option>
-                <option value="Retail">Retail</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Manufacturing">Manufacturing</option>
-                <option value="Energy">Energy & Utilities</option>
-                <option value="Automotive">Automotive</option>
-                <option value="Telecommunications">Telecommunications</option>
-                <option value="Government">Government</option>
-                <option value="Education">Education</option>
-                <option value="Other">Other</option>
-              </select>
             </div>
           </div>
-        </div>
 
-        <!-- Step 3: Refinement Details -->
-        <div class="form-step" data-step="3">
-          <div class="form-group">
-            <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">Additional details
-            </h3>
-
-            <div class="form-field">
-              <div class="field-header">
-                <label for="phase">Engagement Phase</label>
-                <span class="impact-badge medium">Medium Impact</span>
-              </div>
-              <select id="phase" name="phase">
-                <option value="">Select phase…</option>
-                <option value="Discovery">Discovery</option>
-                <option value="Assessment">Assessment</option>
-                <option value="Design">Design</option>
-                <option value="Implementation">Implementation</option>
-                <option value="Optimization">Optimization</option>
-                <option value="Ongoing">Ongoing Support</option>
-              </select>
-            </div>
-
-            <div class="form-field">
-              <div class="field-header">
-                <label for="sponsor">Buyer or Sponsor</label>
-                <span class="impact-badge medium">Medium Impact</span>
-              </div>
-              <input type="text" id="sponsor" name="sponsor" placeholder="e.g., VP of Product, CTO, CFO">
-            </div>
-
-            <div class="form-field">
-              <div class="field-header">
-                <label for="technologies">Technologies</label>
-                <span class="impact-badge low">Lower Impact</span>
-              </div>
-              <div style="position: relative;">
-                <div class="multi-select-container" id="technologies-container">
-                  <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…"
-                    id="technologies-input">
-                </div>
-                <div class="multi-select-dropdown" id="technologies-dropdown"></div>
-              </div>
-            </div>
-
-            <div class="form-field">
-              <div class="field-header">
-                <label for="timeline">Timeline</label>
-                <span class="impact-badge low">Lower Impact</span>
-              </div>
-              <select id="timeline" name="timeline">
-                <option value="">Select timeline…</option>
-                <option value="4 weeks">4 weeks or less</option>
-                <option value="8 weeks">8 weeks</option>
-                <option value="12 weeks">12 weeks</option>
-                <option value="16 weeks">16 weeks</option>
-                <option value="20+ weeks">20+ weeks</option>
-              </select>
-            </div>
-
-            <div class="form-field">
-              <div class="field-header">
-                <label for="constraints">Constraints & Considerations</label>
-                <span class="impact-badge low">Lower Impact</span>
-              </div>
-              <textarea id="constraints" name="constraints" rows="3"
-                placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Step 4: Supporting Documents -->
-        <div class="form-step" data-step="4">
-          <div class="form-group">
-            <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Supporting documents</h3>
-            <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Upload any files that give context — RFPs,
-              briefs, journey maps, or data. All optional.</p>
-
-            <div class="upload-zone" id="upload-zone">
-              <div class="upload-zone-icon">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6b7280" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 2v11M6 6l4-4 4 4" />
-                  <path d="M2 14v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-                </svg>
-              </div>
-              <div class="upload-zone-title">Drag and drop files here</div>
-              <div class="upload-zone-hint">PDF, Word, Excel, PowerPoint, or plain text (max 10 MB)</div>
-              <label class="upload-browse-btn">
-                Browse Files
-                <input type="file" id="file-input" multiple
-                  accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json,.ppt,.pptx,.xls,.xlsx" hidden>
-              </label>
-            </div>
-
-            <div class="doc-recommendations" id="doc-recommendations" style="display:none;">
-              <div class="doc-rec-title">Recommended based on your selections</div>
-              <div class="doc-rec-chips" id="doc-rec-chips"></div>
-            </div>
-
-            <div class="uploaded-files" id="uploaded-files"></div>
-          </div>
-        </div>
-
-        <!-- Step 5: Review -->
-        <div class="form-step" data-step="5">
-          <div class="review-section">
-            <div>
-              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px;">Your input summary
+          <!-- Step 3: Refinement Details -->
+          <div class="form-step" data-step="3">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">Additional details
               </h3>
-              <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before searching
-                for similar proposals. Make any final adjustments if needed.</p>
-            </div>
 
-            <div class="review-block">
-              <div class="review-block-title">Client Challenge<button class="review-edit-btn"
-                  data-go-step="1">Edit</button></div>
-              <div class="review-item">
-                <div class="review-label">Problem Statement</div>
-                <div class="review-value" id="review-problem">Not provided</div>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="phase">Engagement Phase</label>
+                  <span class="impact-badge high">High Impact</span>
+                </div>
+                <select id="phase" name="phase">
+                  <option value="">Select phase…</option>
+                  <option value="Discovery">Discovery</option>
+                  <option value="Assessment">Assessment</option>
+                  <option value="Design">Design</option>
+                  <option value="Implementation">Implementation</option>
+                  <option value="Optimization">Optimization</option>
+                  <option value="Ongoing">Ongoing Support</option>
+                </select>
               </div>
-            </div>
 
-            <div class="review-block">
-              <div class="review-block-title">Match Context<button class="review-edit-btn"
-                  data-go-step="2">Edit</button></div>
-              <div class="review-item">
-                <div class="review-label">Service Areas</div>
-                <div class="review-value" id="review-services">None selected</div>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="sponsor">Buyer or Sponsor</label>
+                  <span class="impact-badge medium">Medium Impact</span>
+                </div>
+                <input type="text" id="sponsor" name="sponsor" placeholder="e.g., VP of Product, CTO, CFO">
               </div>
-              <div class="review-item">
-                <div class="review-label">Deliverables</div>
-                <div class="review-value" id="review-deliverables">None selected</div>
-              </div>
-              <div class="review-item">
-                <div class="review-label">Business Outcomes</div>
-                <div class="review-value" id="review-outcomes">None selected</div>
-              </div>
-              <div class="review-item">
-                <div class="review-label">Industry</div>
-                <div class="review-value" id="review-industry">Not selected</div>
-              </div>
-            </div>
 
-            <div class="review-block">
-              <div class="review-block-title">Refinement Details<button class="review-edit-btn"
-                  data-go-step="3">Edit</button></div>
-              <div class="review-item">
-                <div class="review-label">Phase</div>
-                <div class="review-value" id="review-phase">Not selected</div>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="technologies">Technologies</label>
+                  <span class="impact-badge medium">Medium Impact</span>
+                </div>
+                <div style="position: relative;">
+                  <div class="multi-select-container" id="technologies-container">
+                    <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…"
+                      id="technologies-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="technologies-dropdown"></div>
+                </div>
               </div>
-              <div class="review-item">
-                <div class="review-label">Sponsor</div>
-                <div class="review-value" id="review-sponsor">Not provided</div>
-              </div>
-              <div class="review-item">
-                <div class="review-label">Technologies</div>
-                <div class="review-value" id="review-technologies">None added</div>
-              </div>
-              <div class="review-item">
-                <div class="review-label">Timeline</div>
-                <div class="review-value" id="review-timeline">Not selected</div>
-              </div>
-            </div>
 
-            <div class="review-block">
-              <div class="review-block-title">Supporting Documents<button class="review-edit-btn"
-                  data-go-step="4">Edit</button></div>
-              <div class="review-item">
-                <div class="review-label">Files uploaded</div>
-                <div class="review-value" id="review-files">None</div>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="timeline">Timeline</label>
+                  <span class="impact-badge low">Lower Impact</span>
+                </div>
+                <select id="timeline" name="timeline">
+                  <option value="">Select timeline…</option>
+                  <option value="4 weeks">4 weeks or less</option>
+                  <option value="8 weeks">8 weeks</option>
+                  <option value="12 weeks">12 weeks</option>
+                  <option value="16 weeks">16 weeks</option>
+                  <option value="20+ weeks">20+ weeks</option>
+                </select>
               </div>
-            </div>
 
-            <div id="review-missing" style="display: none;">
-              <div class="review-missing">
-                <strong>Recommended fields to add for better results:</strong><br>
-                <span id="missing-list"></span>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="constraints">Constraints & Considerations</label>
+                  <span class="impact-badge low">Lower Impact</span>
+                </div>
+                <textarea id="constraints" name="constraints" rows="3"
+                  placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Step 4: Supporting Documents -->
+          <div class="form-step" data-step="4">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Supporting documents
+              </h3>
+              <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Upload any files that give context —
+                RFPs,
+                briefs, journey maps, or data. All optional.</p>
+
+              <div class="doc-recommendations" id="doc-recommendations" style="display:none;">
+                <div class="doc-rec-title">Recommended Documents To Upload Based On Your Selections</div>
+                <div class="doc-rec-chips" id="doc-rec-chips"></div>
+              </div>
+
+              <div class="upload-zone" id="upload-zone">
+                <div class="upload-zone-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6b7280" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 2v11M6 6l4-4 4 4" />
+                    <path d="M2 14v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                  </svg>
+                </div>
+                <div class="upload-zone-title">Drag and drop files here</div>
+                <div class="upload-zone-hint">PDF, Word, Excel, PowerPoint, or plain text (max 10 MB)</div>
+                <label class="upload-browse-btn">
+                  Browse Files
+                  <input type="file" id="file-input" multiple
+                    accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json,.ppt,.pptx,.xls,.xlsx" hidden>
+                </label>
+              </div>
+
+              <div class="uploaded-files" id="uploaded-files"></div>
+            </div>
+          </div>
+
+          <!-- Step 5: Review -->
+          <div class="form-step" data-step="5">
+            <div class="review-section">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px;">Your input summary
+                </h3>
+                <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before
+                  searching
+                  for similar proposals. Make any final adjustments if needed.</p>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Client Challenge<button class="review-edit-btn"
+                    data-go-step="1">Edit</button></div>
+                <div class="review-item">
+                  <div class="review-label">Problem Statement</div>
+                  <div class="review-value" id="review-problem">Not provided</div>
+                </div>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Match Context<button class="review-edit-btn"
+                    data-go-step="2">Edit</button></div>
+                <div class="review-item">
+                  <div class="review-label">Service Areas</div>
+                  <div class="review-value" id="review-services">None selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Deliverables</div>
+                  <div class="review-value" id="review-deliverables">None selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Business Outcomes</div>
+                  <div class="review-value" id="review-outcomes">None selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Industry</div>
+                  <div class="review-value" id="review-industry">Not selected</div>
+                </div>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Refinement Details<button class="review-edit-btn"
+                    data-go-step="3">Edit</button></div>
+                <div class="review-item">
+                  <div class="review-label">Phase</div>
+                  <div class="review-value" id="review-phase">Not selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Sponsor</div>
+                  <div class="review-value" id="review-sponsor">Not provided</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Technologies</div>
+                  <div class="review-value" id="review-technologies">None added</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Timeline</div>
+                  <div class="review-value" id="review-timeline">Not selected</div>
+                </div>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Supporting Documents<button class="review-edit-btn"
+                    data-go-step="4">Edit</button></div>
+                <div class="review-item">
+                  <div class="review-label">Files uploaded</div>
+                  <div class="review-value" id="review-files">None</div>
+                </div>
+              </div>
+
+              <div id="review-missing" style="display: none;">
+                <div class="review-missing">
+                  <strong>Recommended fields to add for better results:</strong><br>
+                  <span id="missing-list"></span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Footer -->
-        <div class="wizard-footer">
-          <button type="button" class="btn-secondary" id="btn-prev" style="display: none;">Previous</button>
-          <button type="button" class="btn-primary" id="btn-next">Next</button>
-          <button type="button" class="btn-search" id="btn-search" style="display: none;">Find Similar Proposals
-          </button>
-        </div>
-      </form>
-    </div>
+          <!-- Footer -->
+          <div class="wizard-footer">
+            <button type="button" class="btn-secondary" id="btn-prev" style="display: none;">Previous</button>
+            <button type="button" class="btn-primary" id="btn-next">Next</button>
+            <button type="button" class="btn-search" id="btn-search" style="display: none;">Find Similar Proposals
+            </button>
+          </div>
+        </form>
+      </div>
 
-    <!-- Right column: Match Quality card -->
-    <div class="wizard-quality">
-      <div class="quality-sidebar">
-        <div class="quality-header">Match Quality</div>
-        <div class="quality-score-display">
-          <div class="quality-score-number" id="quality-score">0</div>
-          <div class="quality-score-label">/100</div>
-        </div>
-        <div class="quality-bar">
-          <div class="quality-fill basic" id="quality-fill" style="width: 0%;"></div>
-        </div>
-        <div id="quality-label" class="quality-score-label" style="text-align: center; margin-top: 8px;">Basic</div>
-        <div class="quality-recommendation" id="quality-recommendation" style="display: none;"></div>
+      <!-- Right column: Match Quality card -->
+      <div class="wizard-quality">
+        <div class="quality-sidebar">
+          <div class="quality-header">Match Quality</div>
+          <div class="quality-score-display">
+            <div class="quality-score-number" id="quality-score">0</div>
+            <div class="quality-score-label">/100</div>
+          </div>
+          <div class="quality-bar">
+            <div class="quality-fill basic" id="quality-fill" style="width: 0%;"></div>
+          </div>
+          <div id="quality-label" class="quality-score-label" style="text-align: center; margin-top: 8px;">Basic</div>
+          <div class="quality-recommendation" id="quality-recommendation" style="display: none;"></div>
 
-        <!-- Status indicator sits below the quality card -->
-        <div class="page-status" id="model-status" style="display: none;">
-          <div class="spinner"></div>
-          <span id="status-text">Loading…</span>
+          <!-- Status indicator sits below the quality card -->
+          <div class="page-status" id="model-status" style="display: none;">
+            <div class="spinner"></div>
+            <span id="status-text">Loading…</span>
+          </div>
         </div>
       </div>
-    </div>
     </div>
 
     <!-- Results Section -->
@@ -1522,38 +1540,37 @@
     function calculateMatchQuality(state) {
       let score = 0;
 
-      // Problem Statement: up to 35 points
+      // Problem Statement: up to 14 pts (proportional to length; full weight at 200 chars)
       if (state.problem.trim().length > 0) {
-        const problemLen = state.problem.trim().length;
-        score += Math.min(35, (problemLen / 200) * 35);
+        score += Math.min(14, (state.problem.trim().length / 200) * 14);
       }
 
-      // Service Area: 15 points
-      if (state.serviceArea.length > 0) score += 15;
+      // Service Area: 13 pts
+      if (state.serviceArea.length > 0) score += 13;
 
-      // Deliverables: 15 points
-      if (state.deliverables.length > 0) score += 15;
+      // Deliverables: 12 pts
+      if (state.deliverables.length > 0) score += 12;
 
-      // Business Outcomes: 15 points
-      if (state.outcomes.length > 0) score += 15;
+      // Business Outcomes: 11 pts
+      if (state.outcomes.length > 0) score += 11;
 
-      // Industry: 8 points
-      if (state.industry) score += 8;
+      // Engagement Phase: 11 pts
+      if (state.phase) score += 11;
 
-      // Engagement Phase: 5 points
-      if (state.phase) score += 5;
+      // Industry: 10 pts
+      if (state.industry) score += 10;
 
-      // Buyer or Sponsor: 3 points
-      if (state.sponsor.trim()) score += 3;
+      // Buyer or Sponsor: 9 pts
+      if (state.sponsor.trim()) score += 9;
 
-      // Technologies: 2 points
-      if (state.technologies.length > 0) score += 2;
+      // Technologies: 9 pts
+      if (state.technologies.length > 0) score += 9;
 
-      // Timeline: 1 point
-      if (state.timeline) score += 1;
+      // Timeline: 6 pts
+      if (state.timeline) score += 6;
 
-      // Constraints: 1 point
-      if (state.constraints.trim()) score += 1;
+      // Constraints: 5 pts
+      if (state.constraints.trim()) score += 5;
 
       score = Math.round(score);
 
