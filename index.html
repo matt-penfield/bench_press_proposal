@@ -792,11 +792,10 @@
           <div class="file-chips" id="file-chips"></div>
         </div>
       </div>
-      <button id="search-btn">Find Similar Proposals</button>
 
-      <div class="quality-score-section" id="quality-score-section" style="display:none; margin-top: 20px;">
+      <div class="quality-score-section" id="quality-score-section" style="margin-top: 20px; display: flex;">
         <div class="quality-score-left">
-          <div class="quality-score-label">Match Quality</div>
+          <div class="quality-score-label">Input Quality</div>
           <div class="quality-score-value">
             <div class="quality-text" id="quality-text">Good</div>
             <div class="quality-bar">
@@ -809,9 +808,11 @@
         </div>
         <div class="quality-score-right">
           <div class="quality-next-label">Suggested Next Step</div>
-          <div class="quality-next-text">Add deliverables and business outcomes to improve results.</div>
+          <div class="quality-next-text" id="quality-suggestion">Add deliverables and business outcomes to improve results.</div>
         </div>
       </div>
+
+      <button id="search-btn">Find Similar Proposals</button>
     </div>
 
     <div class="page-status" id="model-status">
@@ -879,6 +880,7 @@
     const elQualityText = document.getElementById('quality-text');
     const elQualityFill = document.getElementById('quality-fill');
     const elQualityPercentage = document.getElementById('quality-percentage');
+    const elQualitySuggestion = document.getElementById('quality-suggestion');
 
     btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
@@ -969,48 +971,61 @@
       elStatus.className = 'page-status' + (cls ? ' ' + cls : '');
     }
 
-    // ── Update quality score display ────────────────────────────────
-    function updateQualityScore(results) {
-      if (results.length === 0) {
-        elQualitySection.style.display = 'none';
-        return;
-      }
+    // ── Get input elements ──────────────────────────────────────────
+    const elProblem = document.getElementById('problem');
+    const elSupplemental = document.getElementById('supplemental');
 
-      const avgScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
-      const roundedScore = Math.round(avgScore);
+    // ── Calculate input quality and show suggestions ──────────────
+    function calculateInputQuality() {
+      const problemLen = elProblem.value.trim().length;
+      const supplLen = elSupplemental.value.trim().length;
+
+      // Scoring logic:
+      // - Problem statement: target 50+ chars for good, 100+ for great
+      // - Supplemental info: target 50+ chars for good, 150+ for great
+      const problemScore = Math.min(100, (problemLen / 100) * 50);
+      const supplScore = Math.min(100, (supplLen / 150) * 50);
+      const totalScore = Math.round((problemScore + supplScore) / 2);
 
       // Determine quality level and color
-      let qualityLevel, colorClass;
-      if (roundedScore >= 90) {
+      let qualityLevel, colorClass, suggestion;
+      if (totalScore >= 90) {
         qualityLevel = 'Excellent';
         colorClass = 'excellent';
-      } else if (roundedScore >= 75) {
+        suggestion = 'Your input is comprehensive. Ready to search!';
+      } else if (totalScore >= 75) {
         qualityLevel = 'Great';
         colorClass = 'great';
-      } else if (roundedScore >= 60) {
+        suggestion = 'Strong input. Add deliverables or timeline for even better results.';
+      } else if (totalScore >= 60) {
         qualityLevel = 'Good';
         colorClass = 'good';
-      } else if (roundedScore >= 40) {
+        suggestion = 'Good start. Add deliverables and business outcomes to improve results.';
+      } else if (totalScore >= 40) {
         qualityLevel = 'Fair';
         colorClass = 'fair';
+        suggestion = 'Provide more detail in problem statement and context for better matches.';
       } else {
         qualityLevel = 'Poor';
         colorClass = 'poor';
+        suggestion = 'Describe the client challenge and add business context for better results.';
       }
 
-      // Update quality text and color
+      // Update display
       elQualityText.textContent = qualityLevel;
       elQualityText.className = 'quality-text ' + colorClass;
-
-      // Update progress bar
-      elQualityFill.style.width = roundedScore + '%';
+      elQualityFill.style.width = totalScore + '%';
       elQualityFill.className = 'fill ' + colorClass;
-
-      // Update percentage
-      elQualityPercentage.textContent = roundedScore + '%';
-
-      elQualitySection.style.display = 'flex';
+      elQualityPercentage.textContent = totalScore + '%';
+      elQualitySuggestion.textContent = suggestion;
     }
+
+    // ── Update input quality on keystroke ─────────────────────────
+    elProblem.addEventListener('input', calculateInputQuality);
+    elSupplemental.addEventListener('input', calculateInputQuality);
+
+    // ── Calculate initial quality ────────────────────────────────
+    calculateInputQuality();
 
     // ── Embed sentences for an entry on demand ─────────────────────
     async function ensureSentenceEmbeddings(entry) {
@@ -1137,9 +1152,6 @@
       elDraftBtn.textContent = selected.size > 0
         ? `Draft Proposal from ${selected.size} Selected`
         : 'Draft Proposal from Selected';
-
-      // Update quality score display
-      updateQualityScore(results);
 
       const checkSvg = `<svg viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 5.5 10.5 11.5 4"/></svg>`;
 
