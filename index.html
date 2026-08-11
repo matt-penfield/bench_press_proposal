@@ -503,11 +503,32 @@
     }
 
     .review-block-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-size: 13px;
       font-weight: 600;
       color: #374151;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    .review-edit-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #5e6ad2;
+      background: #eef0fb;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+      transition: background 0.15s;
+    }
+
+    .review-edit-btn:hover {
+      background: #dde0f7;
     }
 
     .review-item {
@@ -1075,7 +1096,7 @@
               </div>
 
               <div class="review-block">
-                <div class="review-block-title">Client Challenge</div>
+                <div class="review-block-title">Client Challenge<button class="review-edit-btn" data-go-step="1">Edit</button></div>
                 <div class="review-item">
                   <div class="review-label">Problem Statement</div>
                   <div class="review-value" id="review-problem">Not provided</div>
@@ -1083,7 +1104,7 @@
               </div>
 
               <div class="review-block">
-                <div class="review-block-title">Match Context</div>
+                <div class="review-block-title">Match Context<button class="review-edit-btn" data-go-step="2">Edit</button></div>
                 <div class="review-item">
                   <div class="review-label">Service Areas</div>
                   <div class="review-value" id="review-services">None selected</div>
@@ -1103,7 +1124,7 @@
               </div>
 
               <div class="review-block">
-                <div class="review-block-title">Refinement Details</div>
+                <div class="review-block-title">Refinement Details<button class="review-edit-btn" data-go-step="3">Edit</button></div>
                 <div class="review-item">
                   <div class="review-label">Phase</div>
                   <div class="review-value" id="review-phase">Not selected</div>
@@ -1566,6 +1587,11 @@
           showStep(step);
         }
       });
+    });
+
+    document.getElementById('wizard-form').addEventListener('click', (e) => {
+      const btn = e.target.closest('.review-edit-btn');
+      if (btn) showStep(parseInt(btn.dataset.goStep));
     });
 
     // ── Search functionality ─────────────────────────────────────────
