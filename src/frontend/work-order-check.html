@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bench Press — Work Order Check</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -21,9 +26,22 @@
       padding: 32px 24px;
     }
 
-    .page-header { margin-bottom: 24px; }
-    .page-header h1 { font-size: 26px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.4px; }
-    .page-header p { font-size: 14px; color: #6b7280; margin-top: 4px; }
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.4px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
 
     /* ── Shared card ─────────────────────────────────── */
     .panel {
@@ -99,7 +117,9 @@
       opacity: 0.6;
     }
 
-    .file-name span button:hover { opacity: 1; }
+    .file-name span button:hover {
+      opacity: 1;
+    }
 
     .upload-hint {
       font-size: 13px;
@@ -108,7 +128,9 @@
     }
 
     /* ── Checklist ───────────────────────────────────── */
-    .checklist-section { display: none; }
+    .checklist-section {
+      display: none;
+    }
 
     .summary-badge {
       display: inline-flex;
@@ -121,10 +143,25 @@
       margin-bottom: 20px;
     }
 
-    .summary-badge.pending { background: #f3f4f6; color: #6b7280; }
-    .summary-badge.all-pass { background: #ecfdf5; color: #059669; }
-    .summary-badge.has-fail { background: #fef2f2; color: #dc2626; }
-    .summary-badge.has-warn { background: #fef9ee; color: #d97706; }
+    .summary-badge.pending {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .summary-badge.all-pass {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .summary-badge.has-fail {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .summary-badge.has-warn {
+      background: #fef9ee;
+      color: #d97706;
+    }
 
     .checklist-header {
       display: flex;
@@ -146,7 +183,10 @@
       transition: border-color 0.15s, color 0.15s;
     }
 
-    .recheck-btn:hover { border-color: #5e6ad2; color: #5e6ad2; }
+    .recheck-btn:hover {
+      border-color: #5e6ad2;
+      color: #5e6ad2;
+    }
 
     .check-row {
       display: flex;
@@ -160,9 +200,20 @@
       transition: background 0.15s;
     }
 
-    .check-row.pass { background: #f0fdf4; border-color: #d1fae5; }
-    .check-row.fail { background: #fef2f2; border-color: #fecaca; }
-    .check-row.warn { background: #fffbeb; border-color: #fde68a; }
+    .check-row.pass {
+      background: #f0fdf4;
+      border-color: #d1fae5;
+    }
+
+    .check-row.fail {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .check-row.warn {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
 
     .check-icon {
       flex-shrink: 0;
@@ -183,9 +234,16 @@
       animation: spin 0.6s linear infinite;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-    .check-body { flex: 1; min-width: 0; }
+    .check-body {
+      flex: 1;
+      min-width: 0;
+    }
 
     .check-label {
       font-size: 14px;
@@ -211,9 +269,17 @@
       line-height: 1.5;
     }
 
-    .check-row.pass .check-detail { color: #059669; }
-    .check-row.fail .check-detail { color: #dc2626; }
-    .check-row.warn .check-detail { color: #d97706; }
+    .check-row.pass .check-detail {
+      color: #059669;
+    }
+
+    .check-row.fail .check-detail {
+      color: #dc2626;
+    }
+
+    .check-row.warn .check-detail {
+      color: #d97706;
+    }
 
     /* ── Section group label ─────────────────────────── */
     .check-group-label {
@@ -225,7 +291,9 @@
       margin: 20px 0 8px;
     }
 
-    .check-group-label:first-child { margin-top: 0; }
+    .check-group-label:first-child {
+      margin-top: 0;
+    }
 
     /* ── Admin panel ─────────────────────────────────── */
     .admin-description {
@@ -279,7 +347,9 @@
       transition: color 0.15s;
     }
 
-    .remove-btn:hover { color: #dc2626; }
+    .remove-btn:hover {
+      color: #dc2626;
+    }
 
     .add-section-row {
       display: flex;
@@ -306,7 +376,9 @@
       background: #fff;
     }
 
-    .add-section-row input::placeholder { color: #c4c9d4; }
+    .add-section-row input::placeholder {
+      color: #c4c9d4;
+    }
 
     .add-section-btn {
       padding: 8px 16px;
@@ -322,7 +394,9 @@
       white-space: nowrap;
     }
 
-    .add-section-btn:hover { background: #4f5bc0; }
+    .add-section-btn:hover {
+      background: #4f5bc0;
+    }
 
     .reset-link {
       font-size: 12px;
@@ -338,7 +412,9 @@
       transition: color 0.15s;
     }
 
-    .reset-link:hover { color: #dc2626; }
+    .reset-link:hover {
+      color: #dc2626;
+    }
 
     /* ── Sec-01 section table ────────────────────────── */
     .sec-table {
@@ -348,15 +424,22 @@
       font-size: 13px;
     }
 
-    .sec-table tr { border-bottom: 1px solid rgba(0,0,0,0.06); }
-    .sec-table tr:last-child { border-bottom: none; }
+    .sec-table tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .sec-table tr:last-child {
+      border-bottom: none;
+    }
 
     .sec-table td {
       padding: 5px 8px 5px 0;
       vertical-align: middle;
     }
 
-    .sec-name { color: #374151; }
+    .sec-name {
+      color: #374151;
+    }
 
     .sec-badge {
       display: inline-flex;
@@ -369,8 +452,15 @@
       white-space: nowrap;
     }
 
-    .sec-badge-pass { background: #d1fae5; color: #059669; }
-    .sec-badge-fail { background: #fecaca; color: #dc2626; }
+    .sec-badge-pass {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .sec-badge-fail {
+      background: #fecaca;
+      color: #dc2626;
+    }
 
     /* ── Empty state ─────────────────────────────────── */
     .empty-state {
@@ -381,18 +471,21 @@
     }
   </style>
 </head>
+
 <body>
 
   <main>
 
     <div class="page-header">
       <h1>Work Order Check</h1>
-      <p>Upload a Work Order (.docx) and validate it against a compliance checklist. Instant pass/fail feedback on sections, formatting, and content.</p>
+      <p>Upload a Work Order (.docx) and validate it against a compliance checklist. Instant pass/fail feedback on
+        sections, formatting, and content.</p>
     </div>
 
     <div class="panel">
       <div class="panel-title">Validation Settings</div>
-      <p class="admin-description">Select which sections are required in every work order document. Changes apply on the next Re-check.</p>
+      <p class="admin-description">Select which sections are required in every work order document. Changes apply on the
+        next Re-check.</p>
       <ul class="section-list" id="section-list"></ul>
       <div class="add-section-row">
         <input type="text" id="new-section-input" placeholder="Add a custom required section…">
@@ -407,13 +500,18 @@
       <div class="panel-title">Upload Work Order Document</div>
       <div class="file-upload-area">
         <label class="file-upload-btn" id="upload-label">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9M4 4l3-3 3 3"/><path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 1v9M4 4l3-3 3 3" />
+            <path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9" />
+          </svg>
           Choose .docx / .dotx file
           <input type="file" id="file-input" accept=".docx,.dotx" hidden>
         </label>
         <div class="file-name" id="file-name"></div>
       </div>
-      <p class="upload-hint">Accepts Word documents (.docx) and Word templates (.dotx). Validation starts automatically on file selection.</p>
+      <p class="upload-hint">Accepts Word documents (.docx) and Word templates (.dotx). Validation starts automatically
+        on file selection.</p>
     </div>
 
     <!-- ── Checklist Panel ────────────────────────────── -->
@@ -452,26 +550,26 @@
     let currentFile = null;
     let docHtml = '';
     let docText = '';
-    let docZip  = null; // JSZip instance
+    let docZip = null; // JSZip instance
 
     // ── DOM refs ─────────────────────────────────────────────────────
-    const elFileInput      = document.getElementById('file-input');
-    const elFileName       = document.getElementById('file-name');
+    const elFileInput = document.getElementById('file-input');
+    const elFileName = document.getElementById('file-name');
     const elChecklistPanel = document.getElementById('checklist-panel');
-    const elChecklist      = document.getElementById('checklist');
-    const elSummaryBadge   = document.getElementById('summary-badge');
-    const elRecheckBtn     = document.getElementById('recheck-btn');
-    const elSectionList    = document.getElementById('section-list');
-    const elNewSection     = document.getElementById('new-section-input');
-    const elAddSection     = document.getElementById('add-section-btn');
-    const elResetDefaults  = document.getElementById('reset-defaults-btn');
+    const elChecklist = document.getElementById('checklist');
+    const elSummaryBadge = document.getElementById('summary-badge');
+    const elRecheckBtn = document.getElementById('recheck-btn');
+    const elSectionList = document.getElementById('section-list');
+    const elNewSection = document.getElementById('new-section-input');
+    const elAddSection = document.getElementById('add-section-btn');
+    const elResetDefaults = document.getElementById('reset-defaults-btn');
 
     // ── Admin config ─────────────────────────────────────────────────
     function loadFullConfig() {
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) return JSON.parse(stored);
-      } catch (_) {}
+      } catch (_) { }
       return { required: [...DEFAULT_SECTIONS], custom: [] };
     }
 
@@ -828,10 +926,10 @@
       const r7 = await checkCon03();
 
       const results = [r1, r2, r3, r4, r5, r6, r7];
-      const passed  = results.filter(r => r === 'pass').length;
-      const failed  = results.filter(r => r === 'fail').length;
-      const warned  = results.filter(r => r === 'warn').length;
-      const total   = results.length;
+      const passed = results.filter(r => r === 'pass').length;
+      const failed = results.filter(r => r === 'fail').length;
+      const warned = results.filter(r => r === 'warn').length;
+      const total = results.length;
 
       if (failed > 0) {
         elSummaryBadge.className = 'summary-badge has-fail';
@@ -875,4 +973,5 @@
     });
   </script>
 </body>
+
 </html>

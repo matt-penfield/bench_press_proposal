@@ -199,11 +199,11 @@ function buildSidebar(active, links) {
 
   return `
     ${item('dashboard', links.home, 'Dashboard',
-      '<path d="M1 1h5.5v7H1zM9.5 1H15v4H9.5zM9.5 8H15v7H9.5zM1 11h5.5v5H1z"/>')}
+    '<path d="M1 1h5.5v7H1zM9.5 1H15v4H9.5zM9.5 8H15v7H9.5zM1 11h5.5v5H1z"/>')}
     ${item('proposal', links.proposal, 'Proposal Generator',
       '<path d="M2 4h12M2 8h8M2 12h5"/><circle cx="13" cy="11" r="2.5"/><path d="M15 13.5l1.5 1.5"/>')}
     ${item('wo-check', links.woCheck, 'Work Order Check',
-      '<path d="M2 4h12M2 7h8M2 10h6"/><path d="M11 9l1.5 1.5L15 8"/>')}
+        '<path d="M2 4h12M2 7h8M2 10h6"/><path d="M11 9l1.5 1.5L15 8"/>')}
 
     <div class="sidebar-footer">
       <div class="sidebar-version">Bench Press · v0.2</div>

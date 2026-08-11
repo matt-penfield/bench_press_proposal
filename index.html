@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bench Press — Proposal Similarity Matcher</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -21,13 +26,45 @@
       padding: 32px 24px;
     }
 
-    .page-header { margin-bottom: 24px; }
-    .page-header h1 { font-size: 26px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.4px; }
-    .page-header p { font-size: 14px; color: #6b7280; margin-top: 4px; }
-    .page-status { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 13px; color: #9ca3af; margin-top: 16px; }
-    .page-status .status-label { font-weight: 600; color: #6b7280; }
-    .page-status.ready { color: #059669; }
-    .page-status.error { color: #dc2626; }
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.4px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .page-status {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 16px;
+    }
+
+    .page-status .status-label {
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .page-status.ready {
+      color: #059669;
+    }
+
+    .page-status.error {
+      color: #dc2626;
+    }
 
     /* Input section */
     .input-section {
@@ -75,9 +112,13 @@
       background: #fff;
     }
 
-    textarea::placeholder { color: #c4c9d4; }
+    textarea::placeholder {
+      color: #c4c9d4;
+    }
 
-    .field + .field { margin-top: 20px; }
+    .field+.field {
+      margin-top: 20px;
+    }
 
     button#search-btn {
       margin-top: 24px;
@@ -94,8 +135,13 @@
       transition: background 0.15s;
     }
 
-    button#search-btn:hover { background: #4f5bc0; }
-    button#search-btn:active { background: #4550b0; }
+    button#search-btn:hover {
+      background: #4f5bc0;
+    }
+
+    button#search-btn:active {
+      background: #4550b0;
+    }
 
     button#search-btn:disabled {
       background: #c4c9d4;
@@ -151,7 +197,7 @@
     }
 
     .result-card:hover {
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     }
 
     .result-top {
@@ -183,9 +229,20 @@
       font-weight: 700;
     }
 
-    .score-high   { background: #ecfdf5; color: #059669; }
-    .score-medium { background: #fef9ee; color: #d97706; }
-    .score-low    { background: #fef2f2; color: #dc2626; }
+    .score-high {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .score-medium {
+      background: #fef9ee;
+      color: #d97706;
+    }
+
+    .score-low {
+      background: #fef2f2;
+      color: #dc2626;
+    }
 
     .result-excerpt {
       margin-top: 14px;
@@ -237,9 +294,15 @@
     }
 
     .page-status.ready .spinner,
-    .page-status.error .spinner { display: none; }
+    .page-status.error .spinner {
+      display: none;
+    }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     .progress-bar {
       width: 200px;
@@ -285,13 +348,31 @@
       animation: bounce 1.2s ease-in-out infinite;
     }
 
-    .loading-dots span:nth-child(2) { animation-delay: 0.15s; }
-    .loading-dots span:nth-child(3) { animation-delay: 0.3s; }
-    .loading-dots span:nth-child(4) { animation-delay: 0.45s; }
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .loading-dots span:nth-child(4) {
+      animation-delay: 0.45s;
+    }
 
     @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-      30% { transform: translateY(-10px); opacity: 1; }
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+        opacity: 0.4;
+      }
+
+      30% {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
     }
 
     /* Selection */
@@ -372,9 +453,18 @@
       transition: background 0.15s, opacity 0.15s;
     }
 
-    #draft-btn:hover { background: #047857; }
-    #draft-btn:active { background: #065f46; }
-    #draft-btn:disabled { background: #c4c9d4; cursor: not-allowed; }
+    #draft-btn:hover {
+      background: #047857;
+    }
+
+    #draft-btn:active {
+      background: #065f46;
+    }
+
+    #draft-btn:disabled {
+      background: #c4c9d4;
+      cursor: not-allowed;
+    }
 
     /* Draft output */
     .draft-section {
@@ -405,7 +495,9 @@
       margin-bottom: 8px;
     }
 
-    .draft-output h3:first-child { margin-top: 0; }
+    .draft-output h3:first-child {
+      margin-top: 0;
+    }
 
     .draft-output p {
       font-size: 15px;
@@ -453,8 +545,13 @@
       transition: background 0.15s;
     }
 
-    #export-btn:hover { background: #2d2d44; }
-    #export-btn:active { background: #0f0f1a; }
+    #export-btn:hover {
+      background: #2d2d44;
+    }
+
+    #export-btn:active {
+      background: #0f0f1a;
+    }
 
     /* Score explanation */
     .score-why {
@@ -484,7 +581,9 @@
       margin-bottom: 4px;
     }
 
-    .score-why-item:last-child { margin-bottom: 0; }
+    .score-why-item:last-child {
+      margin-bottom: 0;
+    }
 
     .score-why-sim {
       flex-shrink: 0;
@@ -556,14 +655,18 @@
       opacity: 0.6;
     }
 
-    .file-chip button:hover { opacity: 1; }
+    .file-chip button:hover {
+      opacity: 1;
+    }
   </style>
 </head>
+
 <body>
   <main>
     <div class="page-header">
       <h1>Proposal Generator</h1>
-      <p><strong>Find the most relevant past proposals and generate a stronger first draft in minutes.</strong> The more context you provide, the better Bench Press can match relevant past proposals and generate a tailored draft.</p>
+      <p><strong>Find the most relevant past proposals and generate a stronger first draft in minutes.</strong> The more
+        context you provide, the better Bench Press can match relevant past proposals and generate a tailored draft.</p>
     </div>
     <div class="input-section">
       <div class="field">
@@ -571,11 +674,17 @@
         <textarea id="problem" rows="4" placeholder="Describe the client's core challenge or ask…"></textarea>
       </div>
       <div class="field">
-        <label for="supplemental">Supplemental Info <span class="hint">— industry, constraints, technologies, timeline, etc.</span></label>
-        <textarea id="supplemental" rows="3" placeholder="Any additional context that might help find similar work…"></textarea>
+        <label for="supplemental">Supplemental Info <span class="hint">— industry, constraints, technologies, timeline,
+            etc.</span></label>
+        <textarea id="supplemental" rows="3"
+          placeholder="Any additional context that might help find similar work…"></textarea>
         <div class="file-upload-area">
           <label class="file-upload-btn">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9M4 4l3-3 3 3"/><path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9"/></svg>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 1v9M4 4l3-3 3 3" />
+              <path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9" />
+            </svg>
             Upload files
             <input type="file" id="file-input" multiple accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json" hidden>
           </label>
@@ -589,7 +698,9 @@
       <div class="spinner"></div>
       <span class="status-label">Status:</span>
       <span id="status-text">Initializing…</span>
-      <div class="progress-bar" id="progress-bar" style="display:none"><div class="fill" id="progress-fill"></div></div>
+      <div class="progress-bar" id="progress-bar" style="display:none">
+        <div class="fill" id="progress-fill"></div>
+      </div>
     </div>
 
     <div class="results-section" id="results-section" style="display:none;">
@@ -597,7 +708,8 @@
         <h2>Results</h2>
         <span class="count" id="results-count"></span>
       </div>
-      <div class="selection-hint" id="selection-hint" style="display:none;">Select up to <strong>3</strong> proposals to use as reference for your draft.</div>
+      <div class="selection-hint" id="selection-hint" style="display:none;">Select up to <strong>3</strong> proposals to
+        use as reference for your draft.</div>
       <div id="results-list"></div>
       <button id="draft-btn" style="display:none;" disabled>Draft Proposal from Selected</button>
     </div>
@@ -630,19 +742,19 @@
     let uploadedFiles = [];   // { name, content }
 
     // ── DOM refs ─────────────────────────────────────────────────────
-    const btnSearch     = document.getElementById('search-btn');
-    const elStatus      = document.getElementById('model-status');
-    const elStatusText  = document.getElementById('status-text');
-    const elResults     = document.getElementById('results-section');
+    const btnSearch = document.getElementById('search-btn');
+    const elStatus = document.getElementById('model-status');
+    const elStatusText = document.getElementById('status-text');
+    const elResults = document.getElementById('results-section');
     const elResultsList = document.getElementById('results-list');
-    const elResultsCount= document.getElementById('results-count');
-    const elEmpty       = document.getElementById('empty-state');
-    const elDraftBtn    = document.getElementById('draft-btn');
-    const elDraftSection= document.getElementById('draft-section');
+    const elResultsCount = document.getElementById('results-count');
+    const elEmpty = document.getElementById('empty-state');
+    const elDraftBtn = document.getElementById('draft-btn');
+    const elDraftSection = document.getElementById('draft-section');
     const elDraftOutput = document.getElementById('draft-output');
     const elSelectionHint = document.getElementById('selection-hint');
-    const elFileInput   = document.getElementById('file-input');
-    const elFileChips   = document.getElementById('file-chips');
+    const elFileInput = document.getElementById('file-input');
+    const elFileChips = document.getElementById('file-chips');
 
     btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
@@ -675,8 +787,8 @@
       let dot = 0, nA = 0, nB = 0;
       for (let i = 0; i < a.length; i++) {
         dot += a[i] * b[i];
-        nA  += a[i] * a[i];
-        nB  += b[i] * b[i];
+        nA += a[i] * a[i];
+        nB += b[i] * b[i];
       }
       return dot / (Math.sqrt(nA) * Math.sqrt(nB));
     }
@@ -1240,4 +1352,5 @@
     loadCorpus();
   </script>
 </body>
+
 </html>

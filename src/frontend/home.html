@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account Team Helper</title>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --primary:       #5e6ad2;
-      --primary-hover: #4f5bc0;
-      --primary-light: #eef0fb;
-      --bg:            #f8f9fb;
-      --surface:       #ffffff;
-      --border:        #e8eaed;
-      --text:          #1a1a2e;
-      --text-2:        #6b7280;
-      --text-3:        #9ca3af;
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    html { scroll-behavior: smooth; }
+    :root {
+      --primary: #5e6ad2;
+      --primary-hover: #4f5bc0;
+      --primary-light: #eef0fb;
+      --bg: #f8f9fb;
+      --surface: #ffffff;
+      --border: #e8eaed;
+      --text: #1a1a2e;
+      --text-2: #6b7280;
+      --text-3: #9ca3af;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -29,7 +38,9 @@
       min-height: 100vh;
     }
 
-    main { padding: 36px 40px 60px; }
+    main {
+      padding: 36px 40px 60px;
+    }
 
     .page-title {
       font-size: 36px;
@@ -64,15 +75,28 @@
     .stat-card::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 3px;
       border-radius: 12px 12px 0 0;
     }
 
-    .stat-card.indigo::before  { background: var(--primary); }
-    .stat-card.amber::before   { background: #d97706; }
-    .stat-card.green::before   { background: #059669; }
-    .stat-card.slate::before   { background: #6b7280; }
+    .stat-card.indigo::before {
+      background: var(--primary);
+    }
+
+    .stat-card.amber::before {
+      background: #d97706;
+    }
+
+    .stat-card.green::before {
+      background: #059669;
+    }
+
+    .stat-card.slate::before {
+      background: #6b7280;
+    }
 
     .stat-label {
       font-size: 12px;
@@ -97,8 +121,13 @@
       margin-top: 6px;
     }
 
-    .stat-delta.up   { color: #059669; }
-    .stat-delta.down { color: #dc2626; }
+    .stat-delta.up {
+      color: #059669;
+    }
+
+    .stat-delta.down {
+      color: #dc2626;
+    }
 
     /* ── Section header ─────────────────────────────────────────── */
     .section-header {
@@ -157,8 +186,13 @@
       transition: background 0.1s;
     }
 
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: #fafbff; }
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #fafbff;
+    }
 
     td {
       padding: 13px 18px;
@@ -166,14 +200,31 @@
       vertical-align: middle;
     }
 
-    .lead-name { font-weight: 600; color: var(--text); }
-    .lead-company { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+    .lead-name {
+      font-weight: 600;
+      color: var(--text);
+    }
 
-    .ae-name { font-size: 13px; color: var(--text-2); }
+    .lead-company {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
 
-    .est-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .ae-name {
+      font-size: 13px;
+      color: var(--text-2);
+    }
 
-    .last-activity { font-size: 13px; color: var(--text-3); }
+    .est-value {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .last-activity {
+      font-size: 13px;
+      color: var(--text-3);
+    }
 
     /* Stage pills */
     .stage {
@@ -195,20 +246,50 @@
       flex-shrink: 0;
     }
 
-    .stage-discovery    { background: #f3f4f6; color: #6b7280; }
-    .stage-discovery::before { background: #6b7280; }
+    .stage-discovery {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
 
-    .stage-proposal     { background: var(--primary-light); color: var(--primary); }
-    .stage-proposal::before { background: var(--primary); }
+    .stage-discovery::before {
+      background: #6b7280;
+    }
 
-    .stage-negotiation  { background: #fffbeb; color: #d97706; }
-    .stage-negotiation::before { background: #d97706; }
+    .stage-proposal {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
 
-    .stage-won          { background: #ecfdf5; color: #059669; }
-    .stage-won::before  { background: #059669; }
+    .stage-proposal::before {
+      background: var(--primary);
+    }
 
-    .stage-lost         { background: #fef2f2; color: #dc2626; }
-    .stage-lost::before { background: #dc2626; }
+    .stage-negotiation {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    .stage-negotiation::before {
+      background: #d97706;
+    }
+
+    .stage-won {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .stage-won::before {
+      background: #059669;
+    }
+
+    .stage-lost {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .stage-lost::before {
+      background: #dc2626;
+    }
 
     /* ── Feature cards ──────────────────────────────────────────── */
     .feature-grid {
@@ -248,8 +329,13 @@
       flex-shrink: 0;
     }
 
-    .feature-card-icon.indigo { background: var(--primary-light); }
-    .feature-card-icon.teal   { background: #f0fdf4; }
+    .feature-card-icon.indigo {
+      background: var(--primary-light);
+    }
+
+    .feature-card-icon.teal {
+      background: #f0fdf4;
+    }
 
     .feature-card-title {
       font-size: 16px;
@@ -274,87 +360,95 @@
       margin-top: 4px;
     }
 
-    .feature-card-cta svg { transition: transform 0.15s; }
-    .feature-card:hover .feature-card-cta svg { transform: translateX(3px); }
+    .feature-card-cta svg {
+      transition: transform 0.15s;
+    }
+
+    .feature-card:hover .feature-card-cta svg {
+      transform: translateX(3px);
+    }
 
     /* ── Footer ─────────────────────────────────────────────────── */
   </style>
 </head>
+
 <body>
 
   <main>
 
-      <!-- Intro -->
-      <div class="page-title">Account Team Helper</div>
-      <div class="page-subtitle">A suite of tools to help Slalom account teams move faster — from first meeting to signed work order. Bench Press brings together AI-powered proposal matching, compliance validation, and live pipeline visibility in one place. Pick a tool below to get started, or scroll down to review your open leads.</div>
+    <!-- Intro -->
+    <div class="page-title">Account Team Helper</div>
+    <div class="page-subtitle">A suite of tools to help Slalom account teams move faster — from first meeting to signed
+      work order. Bench Press brings together AI-powered proposal matching, compliance validation, and live pipeline
+      visibility in one place. Pick a tool below to get started, or scroll down to review your open leads.</div>
 
-      <!-- Stat cards -->
-      <div class="stat-grid">
-        <div class="stat-card indigo">
-          <div class="stat-label">Open Leads</div>
-          <div class="stat-value" id="stat-open">—</div>
-          <div class="stat-delta">active pipeline</div>
-        </div>
-        <div class="stat-card indigo">
-          <div class="stat-label">In Proposal</div>
-          <div class="stat-value" id="stat-proposal">—</div>
-          <div class="stat-delta">awaiting response</div>
-        </div>
-        <div class="stat-card amber">
-          <div class="stat-label">Negotiation</div>
-          <div class="stat-value" id="stat-negotiation">—</div>
-          <div class="stat-delta">close to close</div>
-        </div>
-        <div class="stat-card green">
-          <div class="stat-label">Won This Month</div>
-          <div class="stat-value" id="stat-won">—</div>
-          <div class="stat-delta up" id="stat-won-value">—</div>
-        </div>
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card indigo">
+        <div class="stat-label">Open Leads</div>
+        <div class="stat-value" id="stat-open">—</div>
+        <div class="stat-delta">active pipeline</div>
       </div>
+      <div class="stat-card indigo">
+        <div class="stat-label">In Proposal</div>
+        <div class="stat-value" id="stat-proposal">—</div>
+        <div class="stat-delta">awaiting response</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Negotiation</div>
+        <div class="stat-value" id="stat-negotiation">—</div>
+        <div class="stat-delta">close to close</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Won This Month</div>
+        <div class="stat-value" id="stat-won">—</div>
+        <div class="stat-delta up" id="stat-won-value">—</div>
+      </div>
+    </div>
 
-      <!-- Leads table -->
-      <div class="section-header">
-        <div class="section-title">All Leads</div>
-        <span class="section-badge" id="lead-count">— leads</span>
-      </div>
+    <!-- Leads table -->
+    <div class="section-header">
+      <div class="section-title">All Leads</div>
+      <span class="section-badge" id="lead-count">— leads</span>
+    </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Lead / Company</th>
-              <th>Account Executive</th>
-              <th>Est. Value</th>
-              <th>Stage</th>
-              <th>Last Activity</th>
-            </tr>
-          </thead>
-          <tbody id="leads-tbody"></tbody>
-        </table>
-      </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Lead / Company</th>
+            <th>Account Executive</th>
+            <th>Est. Value</th>
+            <th>Stage</th>
+            <th>Last Activity</th>
+          </tr>
+        </thead>
+        <tbody id="leads-tbody"></tbody>
+      </table>
+    </div>
 
   </main>
 
   <script>
     const LEADS = [
-      { name: 'Unified Advertising Dashboard',   company: 'Retail Media Co.',        ae: 'Jordan Lee',    value: 485000,  stage: 'proposal',    activity: '2 days ago' },
-      { name: 'Search Relevance Overhaul',        company: 'Commerce Platform Inc.',  ae: 'Sam Rivera',    value: 720000,  stage: 'negotiation', activity: 'Today' },
-      { name: 'Creative Optimization Engine',     company: 'AdTech Partners',         ae: 'Jordan Lee',    value: 610000,  stage: 'won',         activity: '1 week ago' },
-      { name: 'Live Streaming Latency Reduction', company: 'StreamCo',                ae: 'Alex Kim',      value: 540000,  stage: 'discovery',   activity: '3 days ago' },
-      { name: 'Cashierless Checkout Expansion',   company: 'MegaMart',                ae: 'Taylor Nguyen', value: 890000,  stage: 'negotiation', activity: 'Yesterday' },
-      { name: 'Pharmacy Automation Platform',     company: 'HealthRx Group',          ae: 'Sam Rivera',    value: 660000,  stage: 'proposal',    activity: '5 days ago' },
-      { name: 'Brand Safety Scoring',             company: 'Digital Ads Alliance',    ae: 'Jordan Lee',    value: 380000,  stage: 'discovery',   activity: '1 week ago' },
-      { name: 'Content Localization Pipeline',    company: 'Global Entertainment Co.',ae: 'Alex Kim',      value: 495000,  stage: 'won',         activity: '3 days ago' },
-      { name: 'Drone Delivery Ops Platform',      company: 'Last Mile Logistics',     ae: 'Taylor Nguyen', value: 720000,  stage: 'lost',        activity: '2 weeks ago' },
-      { name: 'Developer Portal Modernization',   company: 'Cloud Infra Corp.',       ae: 'Sam Rivera',    value: 430000,  stage: 'proposal',    activity: 'Today' },
+      { name: 'Unified Advertising Dashboard', company: 'Retail Media Co.', ae: 'Jordan Lee', value: 485000, stage: 'proposal', activity: '2 days ago' },
+      { name: 'Search Relevance Overhaul', company: 'Commerce Platform Inc.', ae: 'Sam Rivera', value: 720000, stage: 'negotiation', activity: 'Today' },
+      { name: 'Creative Optimization Engine', company: 'AdTech Partners', ae: 'Jordan Lee', value: 610000, stage: 'won', activity: '1 week ago' },
+      { name: 'Live Streaming Latency Reduction', company: 'StreamCo', ae: 'Alex Kim', value: 540000, stage: 'discovery', activity: '3 days ago' },
+      { name: 'Cashierless Checkout Expansion', company: 'MegaMart', ae: 'Taylor Nguyen', value: 890000, stage: 'negotiation', activity: 'Yesterday' },
+      { name: 'Pharmacy Automation Platform', company: 'HealthRx Group', ae: 'Sam Rivera', value: 660000, stage: 'proposal', activity: '5 days ago' },
+      { name: 'Brand Safety Scoring', company: 'Digital Ads Alliance', ae: 'Jordan Lee', value: 380000, stage: 'discovery', activity: '1 week ago' },
+      { name: 'Content Localization Pipeline', company: 'Global Entertainment Co.', ae: 'Alex Kim', value: 495000, stage: 'won', activity: '3 days ago' },
+      { name: 'Drone Delivery Ops Platform', company: 'Last Mile Logistics', ae: 'Taylor Nguyen', value: 720000, stage: 'lost', activity: '2 weeks ago' },
+      { name: 'Developer Portal Modernization', company: 'Cloud Infra Corp.', ae: 'Sam Rivera', value: 430000, stage: 'proposal', activity: 'Today' },
     ];
 
     const STAGE_META = {
-      discovery:   { label: 'Discovery',    cls: 'stage-discovery' },
-      proposal:    { label: 'Proposal Sent',cls: 'stage-proposal' },
-      negotiation: { label: 'Negotiation',  cls: 'stage-negotiation' },
-      won:         { label: 'Won',          cls: 'stage-won' },
-      lost:        { label: 'Lost',         cls: 'stage-lost' },
+      discovery: { label: 'Discovery', cls: 'stage-discovery' },
+      proposal: { label: 'Proposal Sent', cls: 'stage-proposal' },
+      negotiation: { label: 'Negotiation', cls: 'stage-negotiation' },
+      won: { label: 'Won', cls: 'stage-won' },
+      lost: { label: 'Lost', cls: 'stage-lost' },
     };
 
     function fmt(n) {
@@ -382,18 +476,18 @@
     });
 
     // Populate stat cards
-    const open        = LEADS.filter(l => l.stage !== 'won' && l.stage !== 'lost').length;
-    const inProposal  = LEADS.filter(l => l.stage === 'proposal').length;
-    const inNeg       = LEADS.filter(l => l.stage === 'negotiation').length;
-    const wonLeads    = LEADS.filter(l => l.stage === 'won');
-    const wonValue    = wonLeads.reduce((s, l) => s + l.value, 0);
+    const open = LEADS.filter(l => l.stage !== 'won' && l.stage !== 'lost').length;
+    const inProposal = LEADS.filter(l => l.stage === 'proposal').length;
+    const inNeg = LEADS.filter(l => l.stage === 'negotiation').length;
+    const wonLeads = LEADS.filter(l => l.stage === 'won');
+    const wonValue = wonLeads.reduce((s, l) => s + l.value, 0);
 
-    document.getElementById('stat-open').textContent        = open;
-    document.getElementById('stat-proposal').textContent    = inProposal;
+    document.getElementById('stat-open').textContent = open;
+    document.getElementById('stat-proposal').textContent = inProposal;
     document.getElementById('stat-negotiation').textContent = inNeg;
-    document.getElementById('stat-won').textContent         = wonLeads.length;
-    document.getElementById('stat-won-value').textContent   = fmt(wonValue) + ' closed';
-    document.getElementById('lead-count').textContent       = LEADS.length + ' leads';
+    document.getElementById('stat-won').textContent = wonLeads.length;
+    document.getElementById('stat-won-value').textContent = fmt(wonValue) + ' closed';
+    document.getElementById('lead-count').textContent = LEADS.length + ' leads';
   </script>
 
   <script type="module">
@@ -404,4 +498,5 @@
     });
   </script>
 </body>
+
 </html>
