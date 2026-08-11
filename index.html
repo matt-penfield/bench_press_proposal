@@ -124,7 +124,7 @@
     }
 
     .step-item.completed .step-number {
-      background: #059669;
+      background: #1a1a2e;
       color: #fff;
     }
 
@@ -150,19 +150,19 @@
       color: #1a1a2e;
     }
 
+    .step-item.active .step-title {
+      color: #5e6ad2;
+    }
+
     .step-item.active .step-description,
     .step-item.completed .step-description {
       color: #9ca3af;
     }
 
-    .step-item.completed .step-title {
-      color: #059669;
-    }
-
     /* Match Quality Score Sidebar */
     .quality-sidebar {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: #eff0fc;
+      border: none;
       border-radius: 8px;
       padding: 16px;
       display: flex;
@@ -173,7 +173,7 @@
     .quality-header {
       font-size: 12px;
       font-weight: 600;
-      color: #6b7280;
+      color: #5c6ad9;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -255,13 +255,12 @@
     }
 
     .quality-recommendation {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
       border-radius: 6px;
       padding: 12px;
-      margin-top: 12px;
       font-size: 12px;
-      color: #166534;
+      color: #92400e;
       line-height: 1.4;
     }
 
@@ -301,31 +300,47 @@
       color: #374151;
     }
 
+    .impact-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      font-weight: 600;
+      color: #1a1a2e;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .pmq-abbr {
+      text-decoration: underline dotted #9ca3af;
+      text-underline-offset: 2px;
+      cursor: help;
+    }
+
     .impact-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 4px;
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
 
     .impact-badge.high {
-      background: #fee2e2;
-      color: #dc2626;
+      background: #166534;
+      color: #dcfce7;
     }
 
     .impact-badge.medium {
-      background: #fef3c7;
-      color: #d97706;
+      background: #bbf7d0;
+      color: #14532d;
     }
 
     .impact-badge.low {
-      background: #e0e7ff;
-      color: #4f46e5;
+      background: #f0fdf4;
+      color: #166534;
     }
 
     textarea {
@@ -583,7 +598,7 @@
       border: 1px solid #fcd34d;
       border-radius: 6px;
       font-size: 13px;
-      color: #92400e;
+      color: #1a1a2e;
       line-height: 1.4;
     }
 
@@ -1133,7 +1148,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
-                  <span class="impact-badge high">Highest Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge high">Highest</span></span>
                 </div>
                 <textarea id="problem" name="problem" rows="6"
                   placeholder="Describe the client's core challenge, business issue, or strategic goal…"
@@ -1154,7 +1171,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label>Service Area</label>
-                  <span class="impact-badge high">High Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="service-area-container">
@@ -1175,7 +1194,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label>Deliverables</label>
-                  <span class="impact-badge high">High Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="deliverables-container">
@@ -1197,7 +1218,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label>Business Outcomes</label>
-                  <span class="impact-badge high">High Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="outcomes-container">
@@ -1219,7 +1242,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="industry">Industry</label>
-                  <span class="impact-badge medium">Medium Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge medium">Medium</span></span>
                 </div>
                 <select id="industry" name="industry">
                   <option value="">Select industry…</option>
@@ -1248,7 +1273,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="phase">Engagement Phase</label>
-                  <span class="impact-badge high">High Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <select id="phase" name="phase">
                   <option value="">Select phase…</option>
@@ -1264,7 +1291,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="sponsor">Buyer or Sponsor</label>
-                  <span class="impact-badge medium">Medium Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge medium">Medium</span></span>
                 </div>
                 <input type="text" id="sponsor" name="sponsor" placeholder="e.g., VP of Product, CTO, CFO">
               </div>
@@ -1272,7 +1301,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="technologies">Technologies</label>
-                  <span class="impact-badge medium">Medium Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge medium">Medium</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="technologies-container">
@@ -1286,7 +1317,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="timeline">Timeline</label>
-                  <span class="impact-badge low">Lower Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge low">Lower</span></span>
                 </div>
                 <select id="timeline" name="timeline">
                   <option value="">Select timeline…</option>
@@ -1301,7 +1334,9 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="constraints">Constraints & Considerations</label>
-                  <span class="impact-badge low">Lower Impact</span>
+                  <span class="impact-label"><abbr class="pmq-abbr"
+                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
+                    Impact: <span class="impact-badge low">Lower</span></span>
                 </div>
                 <textarea id="constraints" name="constraints" rows="3"
                   placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
@@ -1354,6 +1389,13 @@
                 <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before
                   searching
                   for similar proposals. Make any final adjustments if needed.</p>
+              </div>
+
+              <div id="review-missing" style="display: none;">
+                <div class="review-missing">
+                  <strong>⚠️ Recommended fields to add for better results:</strong><br>
+                  <span id="missing-list"></span>
+                </div>
               </div>
 
               <div class="review-block">
@@ -1415,13 +1457,6 @@
                   <div class="review-value" id="review-files">None</div>
                 </div>
               </div>
-
-              <div id="review-missing" style="display: none;">
-                <div class="review-missing">
-                  <strong>Recommended fields to add for better results:</strong><br>
-                  <span id="missing-list"></span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -1438,21 +1473,18 @@
       <!-- Right column: Match Quality card -->
       <div class="wizard-quality">
         <div class="quality-sidebar">
-          <div class="quality-header">Match Quality</div>
-          <div class="quality-score-display">
-            <div class="quality-score-number" id="quality-score">0</div>
-            <div class="quality-score-label">/100</div>
-          </div>
-          <div class="quality-bar">
-            <div class="quality-fill basic" id="quality-fill" style="width: 0%;"></div>
-          </div>
-          <div id="quality-label" class="quality-score-label" style="text-align: center; margin-top: 8px;">Basic</div>
-          <div class="quality-recommendation" id="quality-recommendation" style="display: none;"></div>
-
-          <!-- Status indicator sits below the quality card -->
-          <div class="page-status" id="model-status" style="display: none;">
-            <div class="spinner"></div>
-            <span id="status-text">Loading…</span>
+          <div class="quality-header">Proposal Match Quality (PMQ)</div>
+          <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">How much each field improves the accuracy of
+            matching similar past proposals.</div>
+          <div style="border: 1px solid #d4d7f5; border-radius: 8px; padding: 16px; margin-top: 12px;">
+            <div class="quality-score-display">
+              <div class="quality-score-number" id="quality-score">0</div>
+              <div class="quality-score-label">/100</div>
+            </div>
+            <div class="quality-bar">
+              <div class="quality-fill basic" id="quality-fill" style="width: 0%;"></div>
+            </div>
+            <div id="quality-label" class="quality-score-label" style="text-align: center; margin-top: 8px;">Basic</div>
           </div>
         </div>
       </div>
