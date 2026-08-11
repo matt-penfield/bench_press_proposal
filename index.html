@@ -300,13 +300,27 @@
       color: #374151;
     }
 
+    .step-screen-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0;
+      line-height: 1;
+    }
+
+    .step-screen-title+h3 {
+      margin-top: 0 !important;
+    }
+
     .impact-label {
       display: inline-flex;
       align-items: center;
       gap: 5px;
       font-size: 9px;
       font-weight: 600;
-      color: #1a1a2e;
+      color: #6b7280;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
@@ -651,6 +665,14 @@
     .btn-secondary:hover {
       background: #f9fafb;
       border-color: #d1d5db;
+    }
+
+    .btn-secondary:disabled,
+    .btn-secondary:disabled:hover {
+      background: #e5e7eb;
+      color: #9ca3af;
+      border-color: #d1d5db;
+      cursor: not-allowed;
     }
 
     .btn-primary {
@@ -1656,14 +1678,14 @@
           <!-- Step 1: Client Challenge -->
           <div class="form-step active" data-step="1">
             <div class="form-group">
+              <div class="step-screen-title">Client Challenge</div>
               <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What problem is the
                 client trying to solve?</h3>
               <div class="form-field">
                 <div class="field-header">
                   <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge high">Highest</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span
+                      class="impact-badge high">Highest</span></span>
                 </div>
                 <textarea id="problem" name="problem" rows="6"
                   placeholder="Describe the client's core challenge, business issue, or strategic goal…"
@@ -1678,15 +1700,14 @@
           <!-- Step 2: Match Context -->
           <div class="form-step" data-step="2">
             <div class="form-group">
+              <div class="step-screen-title">Match Context</div>
               <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What's the engagement
                 about?</h3>
 
               <div class="form-field">
                 <div class="field-header">
                   <label>Service Area</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge high">High</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="service-area-container">
@@ -1707,9 +1728,7 @@
               <div class="form-field">
                 <div class="field-header">
                   <label>Deliverables</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge high">High</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="deliverables-container">
@@ -1731,9 +1750,7 @@
               <div class="form-field">
                 <div class="field-header">
                   <label>Business Outcomes</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge high">High</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="outcomes-container">
@@ -1755,9 +1772,8 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="industry">Industry</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge medium">Medium</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span
+                      class="impact-badge medium">Medium</span></span>
                 </div>
                 <select id="industry" name="industry">
                   <option value="">Select industry…</option>
@@ -1780,15 +1796,14 @@
           <!-- Step 3: Refinement Details -->
           <div class="form-step" data-step="3">
             <div class="form-group">
+              <div class="step-screen-title">Refinement</div>
               <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">Additional details
               </h3>
 
               <div class="form-field">
                 <div class="field-header">
                   <label for="phase">Engagement Phase</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge high">High</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <select id="phase" name="phase">
                   <option value="">Select phase…</option>
@@ -1804,9 +1819,8 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="sponsor">Buyer or Sponsor</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge medium">Medium</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span
+                      class="impact-badge medium">Medium</span></span>
                 </div>
                 <input type="text" id="sponsor" name="sponsor" placeholder="e.g., VP of Product, CTO, CFO">
               </div>
@@ -1814,9 +1828,8 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="technologies">Technologies</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge medium">Medium</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span
+                      class="impact-badge medium">Medium</span></span>
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="technologies-container">
@@ -1830,9 +1843,7 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="timeline">Timeline</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge low">Lower</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span class="impact-badge low">Lower</span></span>
                 </div>
                 <select id="timeline" name="timeline">
                   <option value="">Select timeline…</option>
@@ -1847,9 +1858,7 @@
               <div class="form-field">
                 <div class="field-header">
                   <label for="constraints">Constraints & Considerations</label>
-                  <span class="impact-label"><abbr class="pmq-abbr"
-                      title="Proposal Match Quality — how much this field improves the accuracy of matching similar past proposals">PMQ</abbr>
-                    Impact: <span class="impact-badge low">Lower</span></span>
+                  <span class="impact-label">Proposal Match Impact: <span class="impact-badge low">Lower</span></span>
                 </div>
                 <textarea id="constraints" name="constraints" rows="3"
                   placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
@@ -1861,6 +1870,7 @@
           <!-- Step 4: Supporting Documents -->
           <div class="form-step" data-step="4">
             <div class="form-group">
+              <div class="step-screen-title">Documents</div>
               <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Supporting documents
               </h3>
               <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Upload any files that give context —
@@ -1897,6 +1907,7 @@
           <div class="form-step" data-step="5">
             <div class="review-section">
               <div>
+                <div class="step-screen-title">Review</div>
                 <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px;">Your input summary
                 </h3>
                 <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before
@@ -1989,7 +2000,7 @@
       <!-- Right column: Match Quality card -->
       <div class="wizard-quality">
         <div class="quality-sidebar">
-          <div class="quality-header">Proposal Match Quality (PMQ)</div>
+          <div class="quality-header">Proposal Match Quality</div>
           <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">How much each field improves the accuracy of
             matching similar past proposals.</div>
           <div style="border: none; border-radius: 8px; padding: 16px; margin-top: 12px; background: #fff;">
@@ -2215,11 +2226,13 @@
       };
       document.getElementById('quality-message').textContent = messages[quality.colorClass] || '';
 
-      if (quality.recommendationMessage) {
-        elQualityRecommendation.textContent = quality.recommendationMessage;
-        elQualityRecommendation.style.display = 'block';
-      } else {
-        elQualityRecommendation.style.display = 'none';
+      if (elQualityRecommendation) {
+        if (quality.recommendationMessage) {
+          elQualityRecommendation.textContent = quality.recommendationMessage;
+          elQualityRecommendation.style.display = 'block';
+        } else {
+          elQualityRecommendation.style.display = 'none';
+        }
       }
     }
 
@@ -2231,7 +2244,9 @@
       formState.sponsor = document.getElementById('sponsor').value;
       formState.timeline = document.getElementById('timeline').value;
       formState.constraints = document.getElementById('constraints').value;
-      document.getElementById('btn-find').disabled = !formState.problem.trim();
+      const hasProblemText = !!formState.problem.trim();
+      document.getElementById('btn-find').disabled = !hasProblemText;
+      document.getElementById('btn-search').disabled = !hasProblemText;
       updateQualityDisplay();
     }
 
@@ -2242,6 +2257,7 @@
     document.getElementById('sponsor').addEventListener('input', updateFormState);
     document.getElementById('timeline').addEventListener('change', updateFormState);
     document.getElementById('constraints').addEventListener('input', updateFormState);
+    updateFormState();
 
     // ── Multi-select Component ───────────────────────────────────────
     class MultiSelect {
@@ -2563,7 +2579,7 @@
           corpus.push({ proposal: p, embedding: embMap[p.id], sentences: null });
         }
         setStatus('Ready — proposals loaded', 'ready');
-        btnSearch.disabled = false;
+        updateFormState();
       } catch (err) {
         console.error(err);
         setStatus('Failed to load proposals: ' + err.message, 'error');
@@ -2937,6 +2953,7 @@
     }
 
     async function search() {
+      updateFormState();
       if (!formState.problem.trim()) return;
 
       document.getElementById('results-title').textContent = 'Matching Proposals';
@@ -3091,11 +3108,15 @@
     // Search button handler
     btnSearch.addEventListener('click', (e) => {
       e.preventDefault();
+      updateFormState();
+      if (!document.getElementById('problem').value.trim()) return;
       search();
     });
 
     document.getElementById('btn-find').addEventListener('click', (e) => {
       e.preventDefault();
+      updateFormState();
+      if (!document.getElementById('problem').value.trim()) return;
       search();
     });
 

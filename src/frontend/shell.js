@@ -164,14 +164,6 @@ const SHELL_CSS = `
   .nav-item svg { flex-shrink: 0; opacity: 0.75; }
   .nav-item.active svg { opacity: 1; }
 
-  .sidebar-footer {
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .sidebar-version { font-size: 11px; color: var(--text-3); padding: 0 10px; }
-
   /* ── App footer ─────────────────────────────────────── */
   .app-footer {
     margin-left: var(--sidebar-w);
@@ -180,7 +172,7 @@ const SHELL_CSS = `
     padding: 16px 40px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .app-footer p { font-size: 12px; color: var(--text-3); }
@@ -203,11 +195,7 @@ function buildSidebar(active, links) {
     ${item('proposal', links.proposal, 'Proposal Generator',
       '<path d="M2 4h12M2 8h8M2 12h5"/><circle cx="13" cy="11" r="2.5"/><path d="M15 13.5l1.5 1.5"/>')}
     ${item('wo-check', links.woCheck, 'Work Order Check',
-        '<path d="M2 4h12M2 7h8M2 10h6"/><path d="M11 9l1.5 1.5L15 8"/>')}
-
-    <div class="sidebar-footer">
-      <div class="sidebar-version">Bench Press · v0.2</div>
-    </div>`;
+      '<path d="M2 4h12M2 7h8M2 10h6"/><path d="M11 9l1.5 1.5L15 8"/>')}`;
 }
 
 export function mountShell({ active, links }) {
@@ -254,11 +242,7 @@ export function mountShell({ active, links }) {
   const footer = document.createElement('footer');
   footer.className = 'app-footer';
   footer.innerHTML = `
-    <p>Account Team Helper &mdash; Bench Press suite &copy; 2026 Slalom</p>
-    <div style="display:flex;gap:20px;">
-      <a href="${links.home}">Home</a>
-      <a href="https://github.com/matt-penfield/bench_press_proposal" target="_blank" rel="noopener">GitHub</a>
-    </div>`;
+    <p>Account Team Helper v0.2 &nbsp;|&nbsp; <a href="https://github.com/matt-penfield/bench_press_proposal" target="_blank" rel="noopener">GitHub</a> &nbsp;|&nbsp; &copy; 2026 Slalom</p>`;
   document.body.appendChild(footer);
 
   document.body.classList.add('shell-mounted');
