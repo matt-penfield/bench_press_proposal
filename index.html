@@ -657,6 +657,91 @@
     .file-chip button:hover {
       opacity: 1;
     }
+
+    /* Quality score section */
+    .quality-score-section {
+      display: none;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #f8f9fb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .quality-score-section.visible {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .quality-score-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quality-score-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+    }
+
+    .quality-score-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+
+    .quality-score-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quality-score-bar {
+      flex: 1;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .quality-score-bar-fill {
+      height: 100%;
+      background: #10b981;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .quality-score-percentage {
+      font-size: 14px;
+      font-weight: 600;
+      color: #10b981;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .quality-score-right {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .quality-score-suggestion-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+    }
+
+    .quality-score-suggestion-text {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
   </style>
 </head>
 
@@ -668,12 +753,29 @@
         context you provide, the better Bench Press can match relevant past proposals and generate a tailored draft.</p>
     </div>
     <div class="input-section">
+      <div class="quality-score-section" id="quality-score-section">
+        <div class="quality-score-left">
+          <div class="quality-score-label">Match Quality</div>
+          <div class="quality-score-value" id="quality-score-value">Good</div>
+          <div class="quality-score-bar-container">
+            <div class="quality-score-bar">
+              <div class="quality-score-bar-fill" id="quality-score-bar-fill" style="width: 72%;"></div>
+            </div>
+            <div class="quality-score-percentage" id="quality-score-percentage">72%</div>
+          </div>
+        </div>
+        <div class="quality-score-right">
+          <div class="quality-score-suggestion-label">Suggested next step</div>
+          <div class="quality-score-suggestion-text">Add deliverables and business outcomes to improve results.</div>
+        </div>
+      </div>
       <div class="field">
         <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
         <textarea id="problem" rows="4" placeholder="Describe the client's core challenge or ask…"></textarea>
       </div>
       <div class="field">
-        <label for="supplemental">Improve Match Quality <div class="hint">Add context to find proposals with a similar approach, scope, and value story.</div></label>
+        <label for="supplemental">Improve Match Quality <div class="hint">Add context to find proposals with a similar
+            approach, scope, and value story.</div></label>
         <textarea id="supplemental" rows="3" style="height: 150px;"
           placeholder="Example: Retail client, service design discovery, focused on improving agent productivity. Desired outputs include journey maps, service blueprint, and future-state recommendations. Timeline is 8 weeks."></textarea>
         <div class="file-upload-area">
@@ -873,6 +975,49 @@
       return 'score-low';
     }
 
+    // ── Update quality score section ─────────────────────────────────
+    function updateQualityScore(results) {
+      const qualitySection = document.getElementById('quality-score-section');
+      if (results.length === 0) {
+        qualitySection.classList.remove('visible');
+        return;
+      }
+
+      // Calculate average score from results
+      const avgScore = Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length);
+      
+      // Determine quality level
+      let qualityLevel, barColor, textColor;
+      if (avgScore >= 70) {
+        qualityLevel = 'Good';
+        barColor = '#10b981'; // green
+        textColor = '#10b981';
+      } else if (avgScore >= 50) {
+        qualityLevel = 'Fair';
+        barColor = '#f59e0b'; // amber
+        textColor = '#f59e0b';
+      } else if (avgScore >= 30) {
+        qualityLevel = 'Poor';
+        barColor = '#ef4444'; // red
+        textColor = '#ef4444';
+      } else {
+        qualityLevel = 'Very Poor';
+        barColor = '#dc2626'; // dark red
+        textColor = '#dc2626';
+      }
+
+      // Update the display
+      document.getElementById('quality-score-value').textContent = qualityLevel;
+      document.getElementById('quality-score-percentage').textContent = avgScore + '%';
+      document.getElementById('quality-score-percentage').style.color = textColor;
+      const barFill = document.getElementById('quality-score-bar-fill');
+      barFill.style.width = avgScore + '%';
+      barFill.style.backgroundColor = barColor;
+
+      // Show the section
+      qualitySection.classList.add('visible');
+    }
+
     // ── Main search ─────────────────────────────────────────────────
     async function search() {
       const problem = document.getElementById('problem').value.trim();
@@ -952,6 +1097,9 @@
       elEmpty.style.display = 'none';
       elResults.style.display = 'block';
       elDraftSection.style.display = 'none';
+
+      // Update quality score section
+      updateQualityScore(results);
 
       if (results.length === 0) {
         elResultsCount.textContent = '';
