@@ -1461,7 +1461,7 @@
 
       // Update form display
       document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-      document.querySelector(`[data-step="${step}"]`).closest('.form-step').classList.add('active');
+      document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
 
       // Update step indicator
       stepIndicator.querySelectorAll('.step-item').forEach(el => {
