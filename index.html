@@ -465,6 +465,108 @@
       cursor: not-allowed;
     }
 
+    /* Quality Score Section */
+    .quality-score-section {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .quality-score-left {
+      flex: 1;
+    }
+
+    .quality-score-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .quality-score-value {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quality-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .quality-text.poor { color: #dc2626; }
+    .quality-text.fair { color: #f97316; }
+    .quality-text.good { color: #059669; }
+    .quality-text.great { color: #0891b2; }
+    .quality-text.excellent { color: #5e6ad2; }
+
+    .quality-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-bar-quality {
+      flex: 1;
+      height: 8px;
+      background: #d1d5db;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-quality .fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .fill.poor { background: #dc2626; }
+    .fill.fair { background: #f97316; }
+    .fill.good { background: #059669; }
+    .fill.great { background: #0891b2; }
+    .fill.excellent { background: #5e6ad2; }
+
+    .quality-percentage {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      min-width: 35px;
+      text-align: right;
+    }
+
+    .quality-score-right {
+      flex: 0 0 auto;
+      text-align: right;
+      border-left: 1px solid #d1d5db;
+      padding-left: 20px;
+    }
+
+    .quality-next-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .quality-next-text {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.4;
+      max-width: 200px;
+    }
+
     /* Draft output */
     .draft-section {
       margin-top: 32px;
@@ -657,91 +759,6 @@
     .file-chip button:hover {
       opacity: 1;
     }
-
-    /* Quality score section */
-    .quality-score-section {
-      display: none !important;
-      margin-bottom: 24px;
-      padding: 16px;
-      background: #f8f9fb;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-    }
-
-    .quality-score-section.visible {
-      display: grid !important;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-    }
-
-    .quality-score-left {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .quality-score-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #6b7280;
-    }
-
-    .quality-score-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-
-    .quality-score-bar-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .quality-score-bar {
-      flex: 1;
-      height: 8px;
-      background: #e5e7eb;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .quality-score-bar-fill {
-      height: 100%;
-      background: #10b981;
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
-
-    .quality-score-percentage {
-      font-size: 14px;
-      font-weight: 600;
-      color: #10b981;
-      min-width: 40px;
-      text-align: right;
-    }
-
-    .quality-score-right {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .quality-score-suggestion-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #6b7280;
-    }
-
-    .quality-score-suggestion-text {
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.5;
-    }
   </style>
 </head>
 
@@ -753,22 +770,6 @@
         context you provide, the better Bench Press can match relevant past proposals and generate a tailored draft.</p>
     </div>
     <div class="input-section">
-      <div class="quality-score-section" id="quality-score-section">
-        <div class="quality-score-left">
-          <div class="quality-score-label">Match Quality</div>
-          <div class="quality-score-value" id="quality-score-value">Good</div>
-          <div class="quality-score-bar-container">
-            <div class="quality-score-bar">
-              <div class="quality-score-bar-fill" id="quality-score-bar-fill" style="width: 72%;"></div>
-            </div>
-            <div class="quality-score-percentage" id="quality-score-percentage">72%</div>
-          </div>
-        </div>
-        <div class="quality-score-right">
-          <div class="quality-score-suggestion-label">Suggested next step</div>
-          <div class="quality-score-suggestion-text">Add deliverables and business outcomes to improve results.</div>
-        </div>
-      </div>
       <div class="field">
         <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
         <textarea id="problem" rows="4" placeholder="Describe the client's core challenge or ask…"></textarea>
@@ -811,6 +812,24 @@
       <div class="selection-hint" id="selection-hint" style="display:none;">Select up to <strong>3</strong> proposals to
         use as reference for your draft.</div>
       <div id="results-list"></div>
+      <div class="quality-score-section" id="quality-score-section" style="display:none;">
+        <div class="quality-score-left">
+          <div class="quality-score-label">Match Quality</div>
+          <div class="quality-score-value">
+            <div class="quality-text" id="quality-text">Good</div>
+            <div class="quality-bar">
+              <div class="progress-bar-quality">
+                <div class="fill" id="quality-fill" style="width: 72%;"></div>
+              </div>
+              <div class="quality-percentage" id="quality-percentage">72%</div>
+            </div>
+          </div>
+        </div>
+        <div class="quality-score-right">
+          <div class="quality-next-label">Suggested Next Step</div>
+          <div class="quality-next-text">Add deliverables and business outcomes to improve results.</div>
+        </div>
+      </div>
       <button id="draft-btn" style="display:none;" disabled>Draft Proposal from Selected</button>
     </div>
 
@@ -855,6 +874,10 @@
     const elSelectionHint = document.getElementById('selection-hint');
     const elFileInput = document.getElementById('file-input');
     const elFileChips = document.getElementById('file-chips');
+    const elQualitySection = document.getElementById('quality-score-section');
+    const elQualityText = document.getElementById('quality-text');
+    const elQualityFill = document.getElementById('quality-fill');
+    const elQualityPercentage = document.getElementById('quality-percentage');
 
     btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
@@ -912,23 +935,18 @@
     // ── Load pre-computed corpus embeddings from static JSON ─────────
     async function loadCorpus() {
       try {
-        console.log('Starting loadCorpus...');
         setStatus('Loading proposals…');
         const res = await fetch('./embeddings.json');
-        console.log('Fetch response status:', res.status);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        console.log('Loaded data, embeddings count:', data.embeddings.length);
-        const { embeddings } = data;
+        const { embeddings } = await res.json();
         const embMap = Object.fromEntries(embeddings.map(e => [e.id, new Float32Array(e.embedding)]));
         for (const p of PROPOSALS) {
           corpus.push({ proposal: p, embedding: embMap[p.id], sentences: null });
         }
-        console.log('Corpus loaded with', corpus.length, 'proposals');
         setStatus('Ready — proposals loaded', 'ready');
         btnSearch.disabled = false;
       } catch (err) {
-        console.error('Error in loadCorpus:', err);
+        console.error(err);
         setStatus('Failed to load proposals: ' + err.message, 'error');
       }
     }
@@ -948,6 +966,49 @@
     function setStatus(msg, cls) {
       elStatusText.textContent = msg;
       elStatus.className = 'page-status' + (cls ? ' ' + cls : '');
+    }
+
+    // ── Update quality score display ────────────────────────────────
+    function updateQualityScore(results) {
+      if (results.length === 0) {
+        elQualitySection.style.display = 'none';
+        return;
+      }
+
+      const avgScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+      const roundedScore = Math.round(avgScore);
+
+      // Determine quality level and color
+      let qualityLevel, colorClass;
+      if (roundedScore >= 90) {
+        qualityLevel = 'Excellent';
+        colorClass = 'excellent';
+      } else if (roundedScore >= 75) {
+        qualityLevel = 'Great';
+        colorClass = 'great';
+      } else if (roundedScore >= 60) {
+        qualityLevel = 'Good';
+        colorClass = 'good';
+      } else if (roundedScore >= 40) {
+        qualityLevel = 'Fair';
+        colorClass = 'fair';
+      } else {
+        qualityLevel = 'Poor';
+        colorClass = 'poor';
+      }
+
+      // Update quality text and color
+      elQualityText.textContent = qualityLevel;
+      elQualityText.className = 'quality-text ' + colorClass;
+
+      // Update progress bar
+      elQualityFill.style.width = roundedScore + '%';
+      elQualityFill.className = 'fill ' + colorClass;
+
+      // Update percentage
+      elQualityPercentage.textContent = roundedScore + '%';
+
+      elQualitySection.style.display = 'flex';
     }
 
     // ── Embed sentences for an entry on demand ─────────────────────
@@ -980,51 +1041,6 @@
       return 'score-low';
     }
 
-    // ── Update quality score section ─────────────────────────────────
-    function updateQualityScore(results) {
-      const qualitySection = document.getElementById('quality-score-section');
-      console.log('updateQualityScore called with', results.length, 'results');
-      
-      if (results.length === 0) {
-        qualitySection.classList.remove('visible');
-        return;
-      }
-
-      // Calculate average score from results
-      const avgScore = Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length);
-      console.log('Average score:', avgScore);
-
-      // Determine quality level
-      let qualityLevel, barColor, textColor;
-      if (avgScore >= 70) {
-        qualityLevel = 'Good';
-        barColor = '#10b981'; // green
-        textColor = '#10b981';
-      } else if (avgScore >= 50) {
-        qualityLevel = 'Fair';
-        barColor = '#f59e0b'; // amber
-        textColor = '#f59e0b';
-      } else if (avgScore >= 30) {
-        qualityLevel = 'Poor';
-        barColor = '#ef4444'; // red
-        textColor = '#ef4444';
-      } else {
-        qualityLevel = 'Very Poor';
-        barColor = '#dc2626'; // dark red
-        textColor = '#dc2626';
-      }
-
-      // Update the display
-      document.getElementById('quality-score-value').textContent = qualityLevel;
-      document.getElementById('quality-score-percentage').textContent = avgScore + '%';
-      document.getElementById('quality-score-percentage').style.color = textColor;
-      const barFill = document.getElementById('quality-score-bar-fill');
-      barFill.style.width = avgScore + '%';
-      barFill.style.backgroundColor = barColor;
-
-      // Show the section
-      qualitySection.classList.add('visible');
-      console.log('Added visible class, current class list:', qualitySection.className);
     // ── Main search ─────────────────────────────────────────────────
     async function search() {
       const problem = document.getElementById('problem').value.trim();
@@ -1105,9 +1121,6 @@
       elResults.style.display = 'block';
       elDraftSection.style.display = 'none';
 
-      // Update quality score section
-      updateQualityScore(results);
-
       if (results.length === 0) {
         elResultsCount.textContent = '';
         elSelectionHint.style.display = 'none';
@@ -1123,6 +1136,9 @@
       elDraftBtn.textContent = selected.size > 0
         ? `Draft Proposal from ${selected.size} Selected`
         : 'Draft Proposal from Selected';
+
+      // Update quality score display
+      updateQualityScore(results);
 
       const checkSvg = `<svg viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 5.5 10.5 11.5 4"/></svg>`;
 
