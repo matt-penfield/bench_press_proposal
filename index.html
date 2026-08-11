@@ -214,15 +214,15 @@
     }
 
     .quality-fill.basic {
-      background: #f97316;
+      background: #ef4444;
     }
 
     .quality-fill.good {
-      background: #059669;
+      background: #f97316;
     }
 
     .quality-fill.strong {
-      background: #5e6ad2;
+      background: #059669;
     }
 
     .quality-details {
@@ -605,11 +605,30 @@
     /* Wizard Controls */
     .wizard-footer {
       display: flex;
+      align-items: center;
       gap: 12px;
-      justify-content: flex-end;
       margin-top: 32px;
       padding-top: 24px;
       border-top: 1px solid #e5e7eb;
+    }
+
+    .wizard-footer .footer-right {
+      display: flex;
+      gap: 12px;
+      margin-left: auto;
+    }
+
+    .btn-tertiary {
+      background: none;
+      border: none;
+      color: #6b7280;
+      padding: 12px 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-tertiary:hover {
+      color: #374151;
     }
 
     button {
@@ -1462,10 +1481,13 @@
 
           <!-- Footer -->
           <div class="wizard-footer">
-            <button type="button" class="btn-secondary" id="btn-prev" style="display: none;">Previous</button>
-            <button type="button" class="btn-primary" id="btn-next">Next</button>
-            <button type="button" class="btn-search" id="btn-search" style="display: none;">Find Similar Proposals
-            </button>
+            <button type="button" class="btn-tertiary" id="btn-prev" style="display: none;">← Previous</button>
+            <div class="footer-right">
+              <button type="button" class="btn-secondary" id="btn-find" disabled>See Matching Proposals</button>
+              <button type="button" class="btn-primary" id="btn-next">Next</button>
+              <button type="button" class="btn-search" id="btn-search" style="display: none;">See Matching
+                Proposals</button>
+            </div>
           </div>
         </form>
       </div>
@@ -1476,7 +1498,7 @@
           <div class="quality-header">Proposal Match Quality (PMQ)</div>
           <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">How much each field improves the accuracy of
             matching similar past proposals.</div>
-          <div style="border: 1px solid #d4d7f5; border-radius: 8px; padding: 16px; margin-top: 12px;">
+          <div style="border: none; border-radius: 8px; padding: 16px; margin-top: 12px; background: #fff;">
             <div class="quality-score-display">
               <div class="quality-score-number" id="quality-score">0</div>
               <div class="quality-score-label">/100</div>
@@ -1485,6 +1507,8 @@
               <div class="quality-fill basic" id="quality-fill" style="width: 0%;"></div>
             </div>
             <div id="quality-label" class="quality-score-label" style="text-align: center; margin-top: 8px;">Basic</div>
+            <div id="quality-message"
+              style="font-size: 11px; color: #6b7280; text-align: center; margin-top: 6px; line-height: 1.4;"></div>
           </div>
         </div>
       </div>
@@ -1672,6 +1696,13 @@
       elQualityFill.className = 'quality-fill ' + quality.colorClass;
       elQualityLabel.textContent = quality.label;
 
+      const messages = {
+        basic: 'Add more context to improve proposal matching.',
+        good: 'Account Team Helper has enough information to find useful proposal examples.',
+        strong: 'Account Team Helper has strong context to identify highly relevant proposal examples.'
+      };
+      document.getElementById('quality-message').textContent = messages[quality.colorClass] || '';
+
       if (quality.recommendationMessage) {
         elQualityRecommendation.textContent = quality.recommendationMessage;
         elQualityRecommendation.style.display = 'block';
@@ -1688,6 +1719,7 @@
       formState.sponsor = document.getElementById('sponsor').value;
       formState.timeline = document.getElementById('timeline').value;
       formState.constraints = document.getElementById('constraints').value;
+      document.getElementById('btn-find').disabled = !formState.problem.trim();
       updateQualityDisplay();
     }
 
@@ -1904,6 +1936,7 @@
       btnPrev.style.display = step > 1 ? 'block' : 'none';
       btnNext.style.display = step < 5 ? 'block' : 'none';
       btnSearch.style.display = step === 5 ? 'block' : 'none';
+      document.getElementById('btn-find').style.display = step === 5 ? 'none' : 'inline-flex';
 
       if (step === 4) loadDocRecommendations();
       if (step === 5) updateReviewStep();
@@ -2167,6 +2200,11 @@
 
     // Search button handler
     btnSearch.addEventListener('click', (e) => {
+      e.preventDefault();
+      search();
+    });
+
+    document.getElementById('btn-find').addEventListener('click', (e) => {
       e.preventDefault();
       search();
     });
