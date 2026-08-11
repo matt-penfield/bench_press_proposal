@@ -858,6 +858,9 @@
 
     btnSearch.disabled = true; // re-enabled after embeddings.json loads
 
+    // Initialize status
+    setStatus('Loading proposals…');
+
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
       const files = Array.from(elFileInput.files);
@@ -912,18 +915,23 @@
     // ── Load pre-computed corpus embeddings from static JSON ─────────
     async function loadCorpus() {
       try {
+        console.log('Starting loadCorpus...');
         setStatus('Loading proposals…');
         const res = await fetch('./embeddings.json');
+        console.log('Fetch response status:', res.status);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const { embeddings } = await res.json();
+        const data = await res.json();
+        console.log('Loaded data, embeddings count:', data.embeddings.length);
+        const { embeddings } = data;
         const embMap = Object.fromEntries(embeddings.map(e => [e.id, new Float32Array(e.embedding)]));
         for (const p of PROPOSALS) {
           corpus.push({ proposal: p, embedding: embMap[p.id], sentences: null });
         }
+        console.log('Corpus loaded with', corpus.length, 'proposals');
         setStatus('Ready — proposals loaded', 'ready');
         btnSearch.disabled = false;
       } catch (err) {
-        console.error(err);
+        console.error('Error in loadCorpus:', err);
         setStatus('Failed to load proposals: ' + err.message, 'error');
       }
     }
