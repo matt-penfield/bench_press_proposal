@@ -660,7 +660,7 @@
 
     /* Quality score section */
     .quality-score-section {
-      display: none;
+      display: none !important;
       margin-bottom: 24px;
       padding: 16px;
       background: #f8f9fb;
@@ -669,7 +669,7 @@
     }
 
     .quality-score-section.visible {
-      display: grid;
+      display: grid !important;
       grid-template-columns: 1fr 1fr;
       gap: 32px;
     }
@@ -978,6 +978,8 @@
     // ── Update quality score section ─────────────────────────────────
     function updateQualityScore(results) {
       const qualitySection = document.getElementById('quality-score-section');
+      console.log('updateQualityScore called with', results.length, 'results');
+      
       if (results.length === 0) {
         qualitySection.classList.remove('visible');
         return;
@@ -985,7 +987,8 @@
 
       // Calculate average score from results
       const avgScore = Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length);
-      
+      console.log('Average score:', avgScore);
+
       // Determine quality level
       let qualityLevel, barColor, textColor;
       if (avgScore >= 70) {
@@ -1016,8 +1019,7 @@
 
       // Show the section
       qualitySection.classList.add('visible');
-    }
-
+      console.log('Added visible class, current class list:', qualitySection.className);
     // ── Main search ─────────────────────────────────────────────────
     async function search() {
       const problem = document.getElementById('problem').value.trim();
