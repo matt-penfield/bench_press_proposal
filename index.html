@@ -41,37 +41,230 @@
       font-size: 14px;
       color: #6b7280;
       margin-top: 4px;
+      line-height: 1.5;
     }
 
-    .page-status {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #9ca3af;
-      margin-top: 16px;
-    }
-
-    .page-status .status-label {
-      font-weight: 600;
-      color: #6b7280;
-    }
-
-    .page-status.ready {
-      color: #059669;
-    }
-
-    .page-status.error {
-      color: #dc2626;
-    }
-
-    /* Input section */
-    .input-section {
+    /* Wizard Container */
+    .wizard-container {
       background: #fff;
       border: 1px solid #e8eaed;
       border-radius: 12px;
-      padding: 28px;
+      padding: 32px;
+      display: flex;
+      gap: 32px;
+    }
+
+    .wizard-sidebar {
+      flex: 0 0 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .wizard-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Step Indicator */
+    .step-indicator {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+      padding: 12px;
+      margin: -12px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .step-item:hover {
+      background: #f3f4f6;
+    }
+
+    .step-item.completed {
+      opacity: 0.7;
+    }
+
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      color: #6b7280;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .step-item.active .step-number {
+      background: #5e6ad2;
+      color: #fff;
+    }
+
+    .step-item.completed .step-number {
+      background: #059669;
+      color: #fff;
+    }
+
+    .step-label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .step-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .step-item.completed .step-title {
+      color: #059669;
+    }
+
+    .step-description {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* Match Quality Score Sidebar */
+    .quality-sidebar {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quality-header {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .quality-score-display {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .quality-score-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1;
+    }
+
+    .quality-score-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+
+    .quality-bar {
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .quality-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .quality-fill.basic { background: #f97316; }
+    .quality-fill.good { background: #059669; }
+    .quality-fill.strong { background: #5e6ad2; }
+
+    .quality-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .quality-detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quality-detail-label {
+      color: #6b7280;
+    }
+
+    .quality-detail-value {
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .quality-detail-value.complete {
+      color: #059669;
+    }
+
+    .quality-recommendation {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #166534;
+      line-height: 1.4;
+    }
+
+    /* Form Styles */
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     label {
@@ -79,16 +272,33 @@
       font-size: 13px;
       font-weight: 600;
       color: #374151;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
     }
 
-    label .hint {
-      font-weight: 400;
-      text-transform: none;
-      letter-spacing: 0;
-      color: #9ca3af;
+    .impact-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .impact-badge.high {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .impact-badge.medium {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .impact-badge.low {
+      background: #e0e7ff;
+      color: #4f46e5;
     }
 
     textarea {
@@ -98,633 +308,149 @@
       padding: 12px 14px;
       font-family: inherit;
       font-size: 15px;
-      color: #1a1a2e;
-      background: #fafbfc;
+      line-height: 1.5;
       resize: vertical;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s;
     }
 
     textarea:focus {
       outline: none;
       border-color: #5e6ad2;
-      box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.1);
-      background: #fff;
+      background: #fbfcfe;
     }
 
     textarea::placeholder {
-      color: #c4c9d4;
+      color: #9ca3af;
     }
 
-    .field+.field {
-      margin-top: 20px;
-    }
-
-    button#search-btn {
-      margin-top: 24px;
+    input[type="text"],
+    input[type="email"],
+    select {
       width: 100%;
-      padding: 13px 24px;
-      background: #5e6ad2;
-      color: #fff;
-      border: none;
+      border: 1.5px solid #e5e7eb;
       border-radius: 8px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    button#search-btn:hover {
-      background: #4f5bc0;
-    }
-
-    button#search-btn:active {
-      background: #4550b0;
-    }
-
-    button#search-btn:disabled {
-      background: #c4c9d4;
-      cursor: not-allowed;
-    }
-
-    /* Results */
-    .results-section {
-      margin-top: 32px;
-    }
-
-    .results-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .results-header h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #374151;
-    }
-
-    .results-header .count {
-      font-size: 13px;
-      color: #9ca3af;
-    }
-
-    .keywords-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .keyword-tag {
-      font-size: 12px;
-      padding: 3px 10px;
-      background: #eef0fb;
-      color: #5e6ad2;
-      border-radius: 100px;
-      font-weight: 500;
-    }
-
-    .result-card {
-      background: #fff;
-      border: 1px solid #e8eaed;
-      border-radius: 10px;
-      padding: 22px 24px;
-      margin-bottom: 12px;
-      transition: box-shadow 0.15s;
-    }
-
-    .result-card:hover {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    }
-
-    .result-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .result-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1a1a2e;
-    }
-
-    .result-source {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 2px;
-    }
-
-    .score-badge {
-      flex-shrink: 0;
-      min-width: 52px;
-      text-align: center;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .score-high {
-      background: #ecfdf5;
-      color: #059669;
-    }
-
-    .score-medium {
-      background: #fef9ee;
-      color: #d97706;
-    }
-
-    .score-low {
-      background: #fef2f2;
-      color: #dc2626;
-    }
-
-    .result-excerpt {
-      margin-top: 14px;
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.7;
-      border-left: 3px solid #e8eaed;
-      padding-left: 14px;
-    }
-
-    .result-excerpt mark {
-      background: #fef08a;
-      color: inherit;
-      border-radius: 2px;
-      padding: 0 2px;
-    }
-
-    /* Empty / no results */
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-      color: #9ca3af;
-    }
-
-    .empty-state .icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-
-    .empty-state p {
-      font-size: 15px;
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 40px 24px;
-      color: #9ca3af;
-      font-size: 15px;
-    }
-
-    /* Model status */
-    .spinner {
-      width: 14px;
-      height: 14px;
-      border: 2px solid #e5e7eb;
-      border-top-color: #5e6ad2;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-    }
-
-    .page-status.ready .spinner,
-    .page-status.error .spinner {
-      display: none;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .progress-bar {
-      width: 200px;
-      height: 4px;
-      background: #e5e7eb;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .progress-bar .fill {
-      height: 100%;
-      background: #5e6ad2;
-      border-radius: 2px;
-      transition: width 0.3s;
-    }
-
-    .searching-msg {
-      text-align: center;
-      padding: 48px 24px;
-      color: #6b7280;
-      font-size: 15px;
-    }
-
-    .searching-msg .spinner {
-      width: 20px;
-      height: 20px;
-      margin: 0 auto 12px;
-    }
-
-    .loading-dots {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .loading-dots span {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      background: #5e6ad2;
-      border-radius: 50%;
-      animation: bounce 1.2s ease-in-out infinite;
-    }
-
-    .loading-dots span:nth-child(2) {
-      animation-delay: 0.15s;
-    }
-
-    .loading-dots span:nth-child(3) {
-      animation-delay: 0.3s;
-    }
-
-    .loading-dots span:nth-child(4) {
-      animation-delay: 0.45s;
-    }
-
-    @keyframes bounce {
-
-      0%,
-      60%,
-      100% {
-        transform: translateY(0);
-        opacity: 0.4;
-      }
-
-      30% {
-        transform: translateY(-10px);
-        opacity: 1;
-      }
-    }
-
-    /* Selection */
-    .result-card {
-      cursor: pointer;
-      position: relative;
-    }
-
-    .result-card.selected {
-      border-color: #5e6ad2;
-      box-shadow: 0 0 0 2px rgba(94, 106, 210, 0.15);
-      background: #fafaff;
-    }
-
-    .select-check {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      border: 2px solid #d1d5db;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-    }
-
-    .result-card.selected .select-check {
-      border-color: #5e6ad2;
-      background: #5e6ad2;
-    }
-
-    .select-check svg {
-      width: 14px;
-      height: 14px;
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-
-    .result-card.selected .select-check svg {
-      opacity: 1;
-    }
-
-    .result-card .result-top {
-      padding-left: 32px;
-    }
-
-    .selection-hint {
-      font-size: 15px;
-      font-weight: 600;
-      color: #1a1a2e;
-      background: #eef0fb;
-      border: 1px solid #d9ddf7;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-    }
-
-    .selection-hint strong {
-      color: #5e6ad2;
-    }
-
-    /* Draft button */
-    #draft-btn {
-      margin-top: 20px;
-      width: 100%;
-      padding: 14px 24px;
-      background: #059669;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s, opacity 0.15s;
-    }
-
-    #draft-btn:hover {
-      background: #047857;
-    }
-
-    #draft-btn:active {
-      background: #065f46;
-    }
-
-    #draft-btn:disabled {
-      background: #c4c9d4;
-      cursor: not-allowed;
-    }
-
-    /* Quality Score Section */
-    .quality-score-section {
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 24px;
-    }
-
-    .quality-score-left {
-      flex: 1;
-    }
-
-    .quality-score-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-
-    .quality-score-value {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .quality-text {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1a1a2e;
-    }
-
-    .quality-text.poor { color: #dc2626; }
-    .quality-text.fair { color: #f97316; }
-    .quality-text.good { color: #059669; }
-    .quality-text.great { color: #0891b2; }
-    .quality-text.excellent { color: #5e6ad2; }
-
-    .quality-bar {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .progress-bar-quality {
-      flex: 1;
-      height: 8px;
-      background: #d1d5db;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-bar-quality .fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .fill.poor { background: #dc2626; }
-    .fill.fair { background: #f97316; }
-    .fill.good { background: #059669; }
-    .fill.great { background: #0891b2; }
-    .fill.excellent { background: #5e6ad2; }
-
-    .quality-percentage {
-      font-size: 13px;
-      font-weight: 600;
-      color: #374151;
-      min-width: 35px;
-      text-align: right;
-    }
-
-    .quality-score-right {
-      flex: 0 0 auto;
-      text-align: right;
-      border-left: 1px solid #d1d5db;
-      padding-left: 20px;
-    }
-
-    .quality-next-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-
-    .quality-next-text {
-      font-size: 13px;
-      color: #374151;
-      line-height: 1.4;
-      max-width: 200px;
-    }
-
-    /* Draft output */
-    .draft-section {
-      margin-top: 32px;
-    }
-
-    .draft-section h2 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1a1a2e;
-      margin-bottom: 16px;
-    }
-
-    .draft-output {
-      background: #fff;
-      border: 1px solid #e8eaed;
-      border-radius: 12px;
-      padding: 28px;
-    }
-
-    .draft-output h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #5e6ad2;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 24px;
-      margin-bottom: 8px;
-    }
-
-    .draft-output h3:first-child {
-      margin-top: 0;
-    }
-
-    .draft-output p {
-      font-size: 15px;
-      color: #374151;
-      line-height: 1.8;
-      margin-bottom: 8px;
-    }
-
-    .draft-output ul {
-      padding-left: 20px;
-      margin-bottom: 8px;
-    }
-
-    .draft-output li {
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.7;
-      margin-bottom: 4px;
-    }
-
-    .draft-output .ref-tag {
-      display: inline-block;
-      font-size: 12px;
-      padding: 2px 8px;
-      background: #eef0fb;
-      color: #5e6ad2;
-      border-radius: 4px;
-      margin-right: 6px;
-      margin-bottom: 4px;
-    }
-
-    /* Export button */
-    #export-btn {
-      margin-top: 20px;
-      width: 100%;
-      padding: 14px 24px;
-      background: #1a1a2e;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    #export-btn:hover {
-      background: #2d2d44;
-    }
-
-    #export-btn:active {
-      background: #0f0f1a;
-    }
-
-    /* Score explanation */
-    .score-why {
-      margin-top: 12px;
       padding: 12px 14px;
-      background: #f8f9fb;
-      border-radius: 8px;
-      border: 1px solid #eef0fb;
+      font-family: inherit;
+      font-size: 15px;
+      transition: border-color 0.15s;
     }
 
-    .score-why-header {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #9ca3af;
-      margin-bottom: 6px;
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #5e6ad2;
+      background: #fbfcfe;
     }
 
-    .score-why-item {
+    /* Multi-select Tags */
+    .multi-select-container {
       display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 13px;
-      color: #4b5563;
-      line-height: 1.5;
-      margin-bottom: 4px;
-    }
-
-    .score-why-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .score-why-sim {
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 1px 6px;
-      border-radius: 4px;
-      background: #eef0fb;
-      color: #5e6ad2;
-      margin-top: 1px;
-    }
-
-    /* File upload */
-    .file-upload-area {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
       flex-wrap: wrap;
+      gap: 8px;
+      padding: 4px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      min-height: 44px;
+      align-items: center;
+      background: #fff;
     }
 
-    .file-upload-btn {
+    .multi-select-input {
+      flex: 1;
+      min-width: 120px;
+      border: none;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      padding: 8px 0;
+    }
+
+    .multi-select-tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 14px;
-      background: #f3f4f6;
-      border: 1.5px dashed #d1d5db;
-      border-radius: 6px;
-      font-family: inherit;
+      padding: 6px 10px;
+      background: #eef0fb;
+      color: #5e6ad2;
+      border-radius: 100px;
       font-size: 13px;
-      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .multi-select-tag button {
+      background: none;
+      border: none;
+      color: #5e6ad2;
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
+      font-size: 16px;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.6;
+    }
+
+    .multi-select-tag button:hover {
+      opacity: 1;
+    }
+
+    .multi-select-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+    }
+
+    .multi-select-dropdown.open {
+      display: block;
+    }
+
+    .multi-select-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .multi-select-option:hover {
+      background: #f3f4f6;
+    }
+
+    .multi-select-option.selected {
+      background: #eef0fb;
+      color: #5e6ad2;
+    }
+
+    /* File Upload */
+    .file-upload-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      border: 1.5px dashed #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+
+    .file-upload-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #5e6ad2;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s;
     }
 
     .file-upload-btn:hover {
-      border-color: #5e6ad2;
-      background: #eef0fb;
-      color: #5e6ad2;
+      color: #4550b0;
     }
 
     .file-chips {
@@ -759,6 +485,324 @@
     .file-chip button:hover {
       opacity: 1;
     }
+
+    /* Review Step */
+    .review-section {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .review-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .review-block-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .review-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 14px;
+    }
+
+    .review-label {
+      color: #6b7280;
+    }
+
+    .review-value {
+      color: #1a1a2e;
+      font-weight: 500;
+      text-align: right;
+      flex: 1;
+      margin-left: 16px;
+    }
+
+    .review-missing {
+      padding: 12px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.4;
+    }
+
+    /* Wizard Controls */
+    .wizard-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #374151;
+      border: 1.5px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .btn-primary {
+      background: #5e6ad2;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #4550b0;
+    }
+
+    .btn-primary:disabled {
+      background: #c4c9d4;
+      cursor: not-allowed;
+    }
+
+    .btn-search {
+      background: #059669;
+      color: #fff;
+    }
+
+    .btn-search:hover {
+      background: #047857;
+    }
+
+    .btn-search:disabled {
+      background: #c4c9d4;
+      cursor: not-allowed;
+    }
+
+    /* Status and Results */
+    .page-status {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 16px;
+    }
+
+    .page-status .status-label {
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .page-status.ready {
+      color: #059669;
+    }
+
+    .page-status.error {
+      color: #dc2626;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #6b7280;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Results Section */
+    .results-section {
+      margin-top: 32px;
+      display: none;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .results-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .results-header .count {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    .result-card {
+      background: #fff;
+      border: 1px solid #e8eaed;
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 12px;
+      transition: box-shadow 0.15s;
+      cursor: pointer;
+    }
+
+    .result-card:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .result-card.selected {
+      border-color: #5e6ad2;
+      background: #fbfcfe;
+    }
+
+    .result-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .result-source {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .score-badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      min-width: 50px;
+    }
+
+    .score-high {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .score-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .score-low {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .draft-section {
+      margin-top: 32px;
+      display: none;
+    }
+
+    .draft-section.show {
+      display: block;
+    }
+
+    .draft-output {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+      max-height: 600px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #4b5563;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .progress-bar.show {
+      display: block;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      background: #5e6ad2;
+      transition: width 0.3s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .wizard-container {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .wizard-sidebar {
+        flex: none;
+        width: 100%;
+      }
+
+      .step-indicator {
+        flex-direction: row;
+        gap: 12px;
+        justify-content: space-between;
+      }
+
+      .step-item {
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 12px 8px;
+        margin: -8px;
+      }
+
+      .step-description {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -767,81 +811,354 @@
     <div class="page-header">
       <h1>Proposal Generator</h1>
       <p><strong>Find the most relevant past proposals and generate a stronger first draft in minutes.</strong> The more
-        context you provide, the better Account Team Helper can match relevant past proposals and generate a tailored draft.</p>
+        context you provide, the better Account Team Helper can identify similar engagements and create a tailored
+        proposal draft.</p>
     </div>
-    <div class="input-section">
-      <div class="field">
-        <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
-        <textarea id="problem" rows="4" placeholder="Describe the client's core challenge or ask…"></textarea>
-      </div>
-      <div class="field">
-        <label for="supplemental">Improve Match Quality <div class="hint">Add context to find proposals with a similar
-            approach, scope, and value story.</div></label>
-        <textarea id="supplemental" rows="3" style="height: 150px;"
-          placeholder="Example: Retail client, service design discovery, focused on improving agent productivity. Desired outputs include journey maps, service blueprint, and future-state recommendations. Timeline is 8 weeks."></textarea>
-        <div class="file-upload-area">
-          <label class="file-upload-btn">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M7 1v9M4 4l3-3 3 3" />
-              <path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9" />
-            </svg>
-            Upload files
-            <input type="file" id="file-input" multiple accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json" hidden>
-          </label>
-          <div class="file-chips" id="file-chips"></div>
-        </div>
-      </div>
 
-      <div class="quality-score-section" id="quality-score-section" style="margin-top: 20px; display: flex;">
-        <div class="quality-score-left">
-          <div class="quality-score-label">Input Quality</div>
-          <div class="quality-score-value">
-            <div class="quality-text" id="quality-text">Good</div>
-            <div class="quality-bar">
-              <div class="progress-bar-quality">
-                <div class="fill" id="quality-fill" style="width: 72%;"></div>
-              </div>
-              <div class="quality-percentage" id="quality-percentage">72%</div>
+    <div class="wizard-container">
+      <!-- Sidebar with step indicator and quality score -->
+      <div class="wizard-sidebar">
+        <!-- Step Indicator -->
+        <div class="step-indicator" id="step-indicator">
+          <div class="step-item active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">
+              <div class="step-title">Client Challenge</div>
+              <div class="step-description">Problem statement</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">
+              <div class="step-title">Match Context</div>
+              <div class="step-description">Service & outcomes</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">
+              <div class="step-title">Refinement</div>
+              <div class="step-description">Details & files</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">
+              <div class="step-title">Review</div>
+              <div class="step-description">Summary</div>
             </div>
           </div>
         </div>
-        <div class="quality-score-right">
-          <div class="quality-next-label">Suggested Next Step</div>
-          <div class="quality-next-text" id="quality-suggestion">Add deliverables and business outcomes to improve results.</div>
+
+        <!-- Quality Score Card -->
+        <div class="quality-sidebar">
+          <div class="quality-header">Match Quality</div>
+          <div class="quality-score-display">
+            <div class="quality-score-number" id="quality-score">0</div>
+            <div class="quality-score-label">/100</div>
+          </div>
+          <div class="quality-bar">
+            <div class="quality-fill basic" id="quality-fill" style="width: 0%;"></div>
+          </div>
+          <div id="quality-label" class="quality-score-label" style="text-align: center; margin-top: 8px;">Basic</div>
+          <div class="quality-recommendation" id="quality-recommendation" style="display: none;"></div>
         </div>
       </div>
 
-      <button id="search-btn">Find Similar Proposals</button>
+      <!-- Main Content -->
+      <div class="wizard-content">
+        <form id="wizard-form">
+          <!-- Step 1: Client Challenge -->
+          <div class="form-step active" data-step="1">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What problem is the
+                client trying to solve?</h3>
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
+                  <span class="impact-badge high">Highest Impact</span>
+                </div>
+                <textarea id="problem" name="problem" rows="6"
+                  placeholder="Describe the client's core challenge, business issue, or strategic goal…" required></textarea>
+                <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;" id="problem-help">Example: A mid-sized retailer is struggling with declining foot traffic due to poor in-store customer experience and needs to modernize their engagement approach.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Match Context -->
+          <div class="form-step" data-step="2">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">What's the engagement
+                about?</h3>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Service Area</label>
+                  <span class="impact-badge high">High Impact</span>
+                </div>
+                <div class="multi-select-container" id="service-area-container">
+                  <input type="text" class="multi-select-input" placeholder="Select service areas…" id="service-area-input">
+                </div>
+                <div class="multi-select-dropdown" id="service-area-dropdown">
+                  <div class="multi-select-option">Strategy</div>
+                  <div class="multi-select-option">Customer Experience</div>
+                  <div class="multi-select-option">Digital Transformation</div>
+                  <div class="multi-select-option">Operations</div>
+                  <div class="multi-select-option">Technology</div>
+                  <div class="multi-select-option">Organizational Change</div>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Deliverables</label>
+                  <span class="impact-badge high">High Impact</span>
+                </div>
+                <div class="multi-select-container" id="deliverables-container">
+                  <input type="text" class="multi-select-input" placeholder="Select deliverables…" id="deliverables-input">
+                </div>
+                <div class="multi-select-dropdown" id="deliverables-dropdown">
+                  <div class="multi-select-option">Roadmap</div>
+                  <div class="multi-select-option">Strategy Document</div>
+                  <div class="multi-select-option">Business Case</div>
+                  <div class="multi-select-option">Journey Map</div>
+                  <div class="multi-select-option">Service Blueprint</div>
+                  <div class="multi-select-option">Implementation Plan</div>
+                  <div class="multi-select-option">Training Materials</div>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Business Outcomes</label>
+                  <span class="impact-badge high">High Impact</span>
+                </div>
+                <div class="multi-select-container" id="outcomes-container">
+                  <input type="text" class="multi-select-input" placeholder="Select business outcomes…" id="outcomes-input">
+                </div>
+                <div class="multi-select-dropdown" id="outcomes-dropdown">
+                  <div class="multi-select-option">Revenue Growth</div>
+                  <div class="multi-select-option">Cost Reduction</div>
+                  <div class="multi-select-option">Customer Satisfaction</div>
+                  <div class="multi-select-option">Market Share</div>
+                  <div class="multi-select-option">Operational Efficiency</div>
+                  <div class="multi-select-option">Employee Engagement</div>
+                  <div class="multi-select-option">Risk Mitigation</div>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="industry">Industry</label>
+                  <span class="impact-badge medium">Medium Impact</span>
+                </div>
+                <select id="industry" name="industry">
+                  <option value="">Select industry…</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Finance">Finance & Banking</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Energy">Energy & Utilities</option>
+                  <option value="Automotive">Automotive</option>
+                  <option value="Telecommunications">Telecommunications</option>
+                  <option value="Government">Government</option>
+                  <option value="Education">Education</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Refinement Details -->
+          <div class="form-step" data-step="3">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 8px;">Additional details
+              </h3>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="phase">Engagement Phase</label>
+                  <span class="impact-badge medium">Medium Impact</span>
+                </div>
+                <select id="phase" name="phase">
+                  <option value="">Select phase…</option>
+                  <option value="Discovery">Discovery</option>
+                  <option value="Assessment">Assessment</option>
+                  <option value="Design">Design</option>
+                  <option value="Implementation">Implementation</option>
+                  <option value="Optimization">Optimization</option>
+                  <option value="Ongoing">Ongoing Support</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="sponsor">Buyer or Sponsor</label>
+                  <span class="impact-badge medium">Medium Impact</span>
+                </div>
+                <input type="text" id="sponsor" name="sponsor" placeholder="e.g., VP of Product, CTO, CFO">
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="technologies">Technologies</label>
+                  <span class="impact-badge low">Lower Impact</span>
+                </div>
+                <div class="multi-select-container" id="technologies-container">
+                  <input type="text" class="multi-select-input" placeholder="Add technologies…" id="technologies-input">
+                </div>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="timeline">Timeline</label>
+                  <span class="impact-badge low">Lower Impact</span>
+                </div>
+                <select id="timeline" name="timeline">
+                  <option value="">Select timeline…</option>
+                  <option value="4 weeks">4 weeks or less</option>
+                  <option value="8 weeks">8 weeks</option>
+                  <option value="12 weeks">12 weeks</option>
+                  <option value="16 weeks">16 weeks</option>
+                  <option value="20+ weeks">20+ weeks</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label for="constraints">Constraints & Considerations</label>
+                  <span class="impact-badge low">Lower Impact</span>
+                </div>
+                <textarea id="constraints" name="constraints" rows="3"
+                  placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
+              </div>
+
+              <div class="form-field">
+                <div class="field-header">
+                  <label>Supporting Documents (Optional)</label>
+                </div>
+                <div class="file-upload-area">
+                  <label class="file-upload-btn">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor"
+                      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 1v9M4 4l3-3 3 3" />
+                      <path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9" />
+                    </svg>
+                    Upload files
+                    <input type="file" id="file-input" multiple
+                      accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json" hidden>
+                  </label>
+                  <div class="file-chips" id="file-chips"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Review -->
+          <div class="form-step" data-step="4">
+            <div class="review-section">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px;">Your input
+                  summary</h3>
+                <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before searching
+                  for similar proposals. Make any final adjustments if needed.</p>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Client Challenge</div>
+                <div class="review-item">
+                  <div class="review-label">Problem Statement</div>
+                  <div class="review-value" id="review-problem">Not provided</div>
+                </div>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Match Context</div>
+                <div class="review-item">
+                  <div class="review-label">Service Areas</div>
+                  <div class="review-value" id="review-services">None selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Deliverables</div>
+                  <div class="review-value" id="review-deliverables">None selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Business Outcomes</div>
+                  <div class="review-value" id="review-outcomes">None selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Industry</div>
+                  <div class="review-value" id="review-industry">Not selected</div>
+                </div>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Refinement Details</div>
+                <div class="review-item">
+                  <div class="review-label">Phase</div>
+                  <div class="review-value" id="review-phase">Not selected</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Sponsor</div>
+                  <div class="review-value" id="review-sponsor">Not provided</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Technologies</div>
+                  <div class="review-value" id="review-technologies">None added</div>
+                </div>
+                <div class="review-item">
+                  <div class="review-label">Timeline</div>
+                  <div class="review-value" id="review-timeline">Not selected</div>
+                </div>
+              </div>
+
+              <div id="review-missing" style="display: none;">
+                <div class="review-missing">
+                  <strong>Recommended fields to add for better results:</strong><br>
+                  <span id="missing-list"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="wizard-footer">
+            <button type="button" class="btn-secondary" id="btn-prev" style="display: none;">Previous</button>
+            <button type="button" class="btn-primary" id="btn-next">Next</button>
+            <button type="button" class="btn-search" id="btn-search" style="display: none;">Find Similar Proposals
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <div class="page-status" id="model-status">
+    <!-- Status -->
+    <div class="page-status" id="model-status" style="display: none;">
       <div class="spinner"></div>
       <span class="status-label">Status:</span>
-      <span id="status-text">Initializing…</span>
-      <div class="progress-bar" id="progress-bar" style="display:none">
+      <span id="status-text">Loading…</span>
+      <div class="progress-bar show" id="progress-bar">
         <div class="fill" id="progress-fill"></div>
       </div>
     </div>
 
-    <div class="results-section" id="results-section" style="display:none;">
+    <!-- Results Section -->
+    <div class="results-section" id="results-section">
       <div class="results-header">
         <h2>Results</h2>
         <span class="count" id="results-count"></span>
       </div>
-      <div class="selection-hint" id="selection-hint" style="display:none;">Select up to <strong>3</strong> proposals to
-        use as reference for your draft.</div>
       <div id="results-list"></div>
-      <button id="draft-btn" style="display:none;" disabled>Draft Proposal from Selected</button>
+      <button id="draft-btn" style="display: none;" class="btn-search">Draft Proposal from Selected</button>
     </div>
 
-    <div class="draft-section" id="draft-section" style="display:none;">
+    <!-- Draft Section -->
+    <div class="draft-section" id="draft-section">
       <h2>Drafted Proposal</h2>
       <div class="draft-output" id="draft-output"></div>
-      <button id="export-btn">Export to Word (.docx)</button>
+      <button id="export-btn" class="btn-primary">Export to Word (.docx)</button>
     </div>
-
-    <div class="empty-state" id="empty-state"></div>
   </main>
 
   <script src="proposals.js"></script>
@@ -852,37 +1169,267 @@
       links: { home: 'src/frontend/home.html', proposal: 'index.html', woCheck: 'src/frontend/work-order-check.html' }
     });
   </script>
+
   <script type="module">
     import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3';
 
     // ── State ────────────────────────────────────────────────────────
     let embedder = null;
-    const corpus = [];  // { proposal, embedding, sentences: [{ text, embedding }] }
-    let currentResults = [];  // last search results
-    let selected = new Set(); // selected proposal IDs (max 3)
-    let uploadedFiles = [];   // { name, content }
+    const corpus = [];
+    let currentResults = [];
+    let selected = new Set();
+    let uploadedFiles = [];
+    let currentStep = 1;
+
+    const formState = {
+      problem: '',
+      serviceArea: [],
+      deliverables: [],
+      outcomes: [],
+      industry: '',
+      phase: '',
+      sponsor: '',
+      technologies: [],
+      timeline: '',
+      constraints: ''
+    };
 
     // ── DOM refs ─────────────────────────────────────────────────────
-    const btnSearch = document.getElementById('search-btn');
-    const elStatus = document.getElementById('model-status');
-    const elStatusText = document.getElementById('status-text');
+    const form = document.getElementById('wizard-form');
+    const stepIndicator = document.getElementById('step-indicator');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSearch = document.getElementById('btn-search');
     const elResults = document.getElementById('results-section');
     const elResultsList = document.getElementById('results-list');
     const elResultsCount = document.getElementById('results-count');
-    const elEmpty = document.getElementById('empty-state');
     const elDraftBtn = document.getElementById('draft-btn');
     const elDraftSection = document.getElementById('draft-section');
     const elDraftOutput = document.getElementById('draft-output');
-    const elSelectionHint = document.getElementById('selection-hint');
+    const elStatus = document.getElementById('model-status');
+    const elStatusText = document.getElementById('status-text');
+    const elProgressFill = document.getElementById('progress-fill');
     const elFileInput = document.getElementById('file-input');
     const elFileChips = document.getElementById('file-chips');
-    const elQualitySection = document.getElementById('quality-score-section');
-    const elQualityText = document.getElementById('quality-text');
+    const elQualityScore = document.getElementById('quality-score');
     const elQualityFill = document.getElementById('quality-fill');
-    const elQualityPercentage = document.getElementById('quality-percentage');
-    const elQualitySuggestion = document.getElementById('quality-suggestion');
+    const elQualityLabel = document.getElementById('quality-label');
+    const elQualityRecommendation = document.getElementById('quality-recommendation');
 
-    btnSearch.disabled = true; // re-enabled after embeddings.json loads
+    // ── Utility functions ────────────────────────────────────────────
+    function esc(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ── Calculate Match Quality ──────────────────────────────────────
+    function calculateMatchQuality(state) {
+      let score = 0;
+
+      // Problem Statement: up to 35 points
+      if (state.problem.trim().length > 0) {
+        const problemLen = state.problem.trim().length;
+        score += Math.min(35, (problemLen / 200) * 35);
+      }
+
+      // Service Area: 15 points
+      if (state.serviceArea.length > 0) score += 15;
+
+      // Deliverables: 15 points
+      if (state.deliverables.length > 0) score += 15;
+
+      // Business Outcomes: 15 points
+      if (state.outcomes.length > 0) score += 15;
+
+      // Industry: 8 points
+      if (state.industry) score += 8;
+
+      // Engagement Phase: 5 points
+      if (state.phase) score += 5;
+
+      // Buyer or Sponsor: 3 points
+      if (state.sponsor.trim()) score += 3;
+
+      // Technologies: 2 points
+      if (state.technologies.length > 0) score += 2;
+
+      // Timeline: 1 point
+      if (state.timeline) score += 1;
+
+      // Constraints: 1 point
+      if (state.constraints.trim()) score += 1;
+
+      score = Math.round(score);
+
+      // Determine label
+      let label, colorClass;
+      if (score >= 80) {
+        label = 'Strong';
+        colorClass = 'strong';
+      } else if (score >= 60) {
+        label = 'Good';
+        colorClass = 'good';
+      } else {
+        label = 'Basic';
+        colorClass = 'basic';
+      }
+
+      // Determine missing fields
+      const completedFields = [];
+      const missingRecommendedFields = [];
+
+      if (state.problem.trim()) completedFields.push('Problem Statement');
+      else missingRecommendedFields.push('Problem Statement');
+
+      if (state.serviceArea.length > 0) completedFields.push('Service Area');
+      else missingRecommendedFields.push('Service Area');
+
+      if (state.deliverables.length > 0) completedFields.push('Deliverables');
+      else missingRecommendedFields.push('Deliverables');
+
+      if (state.outcomes.length > 0) completedFields.push('Business Outcomes');
+      else missingRecommendedFields.push('Business Outcomes');
+
+      if (state.industry) completedFields.push('Industry');
+      if (state.phase) completedFields.push('Engagement Phase');
+      if (state.sponsor.trim()) completedFields.push('Buyer/Sponsor');
+      if (state.technologies.length > 0) completedFields.push('Technologies');
+      if (state.timeline) completedFields.push('Timeline');
+      if (state.constraints.trim()) completedFields.push('Constraints');
+
+      let recommendationMessage = '';
+      if (score < 80) {
+        const missing = [];
+        if (!state.serviceArea.length) missing.push('service areas');
+        if (!state.deliverables.length) missing.push('deliverables');
+        if (!state.outcomes.length) missing.push('business outcomes');
+        if (missing.length > 0) {
+          recommendationMessage = `Add ${missing.join(', ')} for better matches.`;
+        }
+      }
+
+      return {
+        score,
+        label,
+        colorClass,
+        recommendationMessage,
+        completedFields,
+        missingRecommendedFields
+      };
+    }
+
+    // ── Update Quality Display ───────────────────────────────────────
+    function updateQualityDisplay() {
+      const quality = calculateMatchQuality(formState);
+      elQualityScore.textContent = quality.score;
+      const percentage = (quality.score / 100) * 100;
+      elQualityFill.style.width = percentage + '%';
+      elQualityFill.className = 'quality-fill ' + quality.colorClass;
+      elQualityLabel.textContent = quality.label;
+
+      if (quality.recommendationMessage) {
+        elQualityRecommendation.textContent = quality.recommendationMessage;
+        elQualityRecommendation.style.display = 'block';
+      } else {
+        elQualityRecommendation.style.display = 'none';
+      }
+    }
+
+    // ── Form state management ────────────────────────────────────────
+    function updateFormState() {
+      formState.problem = document.getElementById('problem').value;
+      formState.industry = document.getElementById('industry').value;
+      formState.phase = document.getElementById('phase').value;
+      formState.sponsor = document.getElementById('sponsor').value;
+      formState.timeline = document.getElementById('timeline').value;
+      formState.constraints = document.getElementById('constraints').value;
+      updateQualityDisplay();
+    }
+
+    // Add listeners to all form inputs
+    document.getElementById('problem').addEventListener('input', updateFormState);
+    document.getElementById('industry').addEventListener('change', updateFormState);
+    document.getElementById('phase').addEventListener('change', updateFormState);
+    document.getElementById('sponsor').addEventListener('input', updateFormState);
+    document.getElementById('timeline').addEventListener('change', updateFormState);
+    document.getElementById('constraints').addEventListener('input', updateFormState);
+
+    // ── Multi-select Component ───────────────────────────────────────
+    class MultiSelect {
+      constructor(containerId, inputId, dropdownId, formStateKey) {
+        this.container = document.getElementById(containerId);
+        this.input = document.getElementById(inputId);
+        this.dropdown = document.getElementById(dropdownId);
+        this.formStateKey = formStateKey;
+        this.options = Array.from(this.dropdown.querySelectorAll('.multi-select-option')).map(opt => opt.textContent);
+
+        this.input.addEventListener('input', () => this.filterOptions());
+        this.input.addEventListener('focus', () => this.dropdown.classList.add('open'));
+        document.addEventListener('click', (e) => {
+          if (!this.container.contains(e.target)) {
+            this.dropdown.classList.remove('open');
+          }
+        });
+
+        this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
+          opt.addEventListener('click', () => this.selectOption(opt.textContent));
+        });
+      }
+
+      filterOptions() {
+        const searchText = this.input.value.toLowerCase();
+        this.dropdown.querySelectorAll('.multi-select-option').forEach(opt => {
+          opt.style.display = opt.textContent.toLowerCase().includes(searchText) ? '' : 'none';
+        });
+      }
+
+      selectOption(text) {
+        const selected = formState[this.formStateKey];
+        if (!selected.includes(text)) {
+          selected.push(text);
+          this.render();
+          updateFormState();
+        }
+        this.input.value = '';
+        this.filterOptions();
+      }
+
+      removeOption(text) {
+        formState[this.formStateKey] = formState[this.formStateKey].filter(t => t !== text);
+        this.render();
+        updateFormState();
+      }
+
+      render() {
+        const selected = formState[this.formStateKey];
+        const html = selected.map(text => 
+          `<div class="multi-select-tag">${esc(text)}<button type="button">&times;</button></div>`
+        ).join('');
+        const tagsHtml = html + `<input type="text" class="multi-select-input" placeholder="Add more…">`;
+        
+        const tempHtml = this.container.innerHTML;
+        this.container.innerHTML = html + `<input type="text" class="multi-select-input" placeholder="Add more…">`;
+        
+        this.input = this.container.querySelector('.multi-select-input');
+        this.input.addEventListener('input', () => this.filterOptions());
+        this.input.addEventListener('focus', () => this.dropdown.classList.add('open'));
+
+        this.container.querySelectorAll('.multi-select-tag button').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tag = btn.closest('.multi-select-tag');
+            this.removeOption(tag.textContent.trim().slice(0, -1));
+          });
+        });
+      }
+    }
+
+    // Initialize multi-selects
+    new MultiSelect('service-area-container', 'service-area-input', 'service-area-dropdown', 'serviceArea');
+    new MultiSelect('deliverables-container', 'deliverables-input', 'deliverables-dropdown', 'deliverables');
+    new MultiSelect('outcomes-container', 'outcomes-input', 'outcomes-dropdown', 'outcomes');
+    new MultiSelect('technologies-container', 'technologies-input', 'technologies-dropdown', 'technologies');
 
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
@@ -908,7 +1455,93 @@
       });
     }
 
-    // ── Cosine similarity ───────────────────────────────────────────
+    // ── Step Navigation ──────────────────────────────────────────────
+    function showStep(step) {
+      currentStep = step;
+
+      // Update form display
+      document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+      document.querySelector(`[data-step="${step}"]`).closest('.form-step').classList.add('active');
+
+      // Update step indicator
+      stepIndicator.querySelectorAll('.step-item').forEach(el => {
+        const stepNum = parseInt(el.dataset.step);
+        el.classList.remove('active', 'completed');
+        if (stepNum === step) el.classList.add('active');
+        else if (stepNum < step) el.classList.add('completed');
+      });
+
+      // Update buttons
+      btnPrev.style.display = step > 1 ? 'block' : 'none';
+      btnNext.style.display = step < 4 ? 'block' : 'none';
+      btnSearch.style.display = step === 4 ? 'block' : 'none';
+
+      // On review step, update summary
+      if (step === 4) {
+        updateReviewStep();
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    function updateReviewStep() {
+      // Problem
+      document.getElementById('review-problem').textContent = formState.problem.slice(0, 100) + (formState.problem.length > 100 ? '…' : '') || 'Not provided';
+
+      // Services
+      document.getElementById('review-services').textContent = formState.serviceArea.length > 0 ? formState.serviceArea.join(', ') : 'None selected';
+
+      // Deliverables
+      document.getElementById('review-deliverables').textContent = formState.deliverables.length > 0 ? formState.deliverables.join(', ') : 'None selected';
+
+      // Outcomes
+      document.getElementById('review-outcomes').textContent = formState.outcomes.length > 0 ? formState.outcomes.join(', ') : 'None selected';
+
+      // Industry
+      document.getElementById('review-industry').textContent = formState.industry || 'Not selected';
+
+      // Phase
+      document.getElementById('review-phase').textContent = formState.phase || 'Not selected';
+
+      // Sponsor
+      document.getElementById('review-sponsor').textContent = formState.sponsor || 'Not provided';
+
+      // Technologies
+      document.getElementById('review-technologies').textContent = formState.technologies.length > 0 ? formState.technologies.join(', ') : 'None added';
+
+      // Timeline
+      document.getElementById('review-timeline').textContent = formState.timeline || 'Not selected';
+
+      // Missing recommended fields
+      const quality = calculateMatchQuality(formState);
+      if (quality.missingRecommendedFields.length > 0) {
+        const missingList = document.getElementById('missing-list');
+        missingList.textContent = quality.missingRecommendedFields.slice(0, 4).join(', ');
+        document.getElementById('review-missing').style.display = 'block';
+      } else {
+        document.getElementById('review-missing').style.display = 'none';
+      }
+    }
+
+    btnNext.addEventListener('click', () => {
+      if (currentStep < 4) showStep(currentStep + 1);
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentStep > 1) showStep(currentStep - 1);
+    });
+
+    stepIndicator.querySelectorAll('.step-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const step = parseInt(item.dataset.step);
+        if (step <= currentStep || step === 4) {
+          showStep(step);
+        }
+      });
+    });
+
+    // ── Search functionality ─────────────────────────────────────────
+    // (Keep existing search code from original index.html)
     function cosineSim(a, b) {
       let dot = 0, nA = 0, nB = 0;
       for (let i = 0; i < a.length; i++) {
@@ -919,12 +1552,10 @@
       return dot / (Math.sqrt(nA) * Math.sqrt(nB));
     }
 
-    // ── Split content into sentences ────────────────────────────────
     function splitSentences(text) {
       return text.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
     }
 
-    // ── Embed one or more texts, return array of Float32Arrays ──────
     async function embedTexts(texts) {
       const out = await embedder(texts, { pooling: 'mean', normalize: true });
       const dim = out.dims[out.dims.length - 1];
@@ -935,7 +1566,6 @@
       return results;
     }
 
-    // ── Load pre-computed corpus embeddings from static JSON ─────────
     async function loadCorpus() {
       try {
         setStatus('Loading proposals…');
@@ -954,80 +1584,23 @@
       }
     }
 
-    // ── Lazy-load model on first search ──────────────────────────────
     async function loadModel() {
       if (embedder) return;
-      setStatus('Loading semantic model for first search (~30 MB)…');
+      setStatus('Loading semantic model (~30 MB)…');
       try {
         embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', { dtype: 'fp32' });
       } catch (err) {
-        embedder = null; // allow retry on next search
+        embedder = null;
         throw err;
       }
     }
 
     function setStatus(msg, cls) {
+      elStatus.style.display = 'flex';
       elStatusText.textContent = msg;
       elStatus.className = 'page-status' + (cls ? ' ' + cls : '');
     }
 
-    // ── Get input elements ──────────────────────────────────────────
-    const elProblem = document.getElementById('problem');
-    const elSupplemental = document.getElementById('supplemental');
-
-    // ── Calculate input quality and show suggestions ──────────────
-    function calculateInputQuality() {
-      const problemLen = elProblem.value.trim().length;
-      const supplLen = elSupplemental.value.trim().length;
-
-      // Scoring logic:
-      // - Problem statement: target 50+ chars for good, 100+ for great
-      // - Supplemental info: target 50+ chars for good, 150+ for great
-      const problemScore = Math.min(100, (problemLen / 100) * 50);
-      const supplScore = Math.min(100, (supplLen / 150) * 50);
-      const totalScore = Math.round((problemScore + supplScore) / 2);
-
-      // Determine quality level and color
-      let qualityLevel, colorClass, suggestion;
-      if (totalScore >= 90) {
-        qualityLevel = 'Excellent';
-        colorClass = 'excellent';
-        suggestion = 'Your input is comprehensive. Ready to search!';
-      } else if (totalScore >= 75) {
-        qualityLevel = 'Great';
-        colorClass = 'great';
-        suggestion = 'Strong input. Add deliverables or timeline for even better results.';
-      } else if (totalScore >= 60) {
-        qualityLevel = 'Good';
-        colorClass = 'good';
-        suggestion = 'Good start. Add deliverables and business outcomes to improve results.';
-      } else if (totalScore >= 40) {
-        qualityLevel = 'Fair';
-        colorClass = 'fair';
-        suggestion = 'Provide more detail in problem statement and context for better matches.';
-      } else {
-        qualityLevel = 'Poor';
-        colorClass = 'poor';
-        suggestion = 'Describe the client challenge and add business context for better results.';
-      }
-
-      // Update display
-      elQualityText.textContent = qualityLevel;
-      elQualityText.className = 'quality-text ' + colorClass;
-      elQualityFill.style.width = totalScore + '%';
-      elQualityFill.className = 'fill ' + colorClass;
-      elQualityPercentage.textContent = totalScore + '%';
-      elQualitySuggestion.textContent = suggestion;
-    }
-
-    // ── Update input quality on keystroke ─────────────────────────
-    elProblem.addEventListener('input', calculateInputQuality);
-    elSupplemental.addEventListener('input', calculateInputQuality);
-
-    // ── Calculate initial quality ────────────────────────────────
-    calculateInputQuality();
-
-    // ── Embed sentences for an entry on demand ─────────────────────
     async function ensureSentenceEmbeddings(entry) {
       if (entry.sentences) return;
       const texts = splitSentences(entry.proposal.content);
@@ -1035,7 +1608,6 @@
       entry.sentences = texts.map((text, i) => ({ text, embedding: embeddings[i] }));
     }
 
-    // ── Find best excerpt sentences with scores ────────────────────
     async function bestExcerpts(queryEmb, entry, count) {
       await ensureSentenceEmbeddings(entry);
       const ranked = entry.sentences
@@ -1050,43 +1622,39 @@
       };
     }
 
-    // ── Score class ─────────────────────────────────────────────────
     function scoreClass(s) {
       if (s >= 55) return 'score-high';
       if (s >= 35) return 'score-medium';
       return 'score-low';
     }
 
-    // ── Main search ─────────────────────────────────────────────────
     async function search() {
-      const problem = document.getElementById('problem').value.trim();
-      const supplemental = document.getElementById('supplemental').value.trim();
-      if (!problem && !supplemental && uploadedFiles.length === 0) return;
+      if (!formState.problem.trim()) return;
 
-      // combine typed supplemental + uploaded file contents
-      const fileParts = uploadedFiles.map(f => f.content).join('\n');
-      const queryText = [problem, supplemental, fileParts].filter(Boolean).join('\n');
-
-      // show searching state
-      elEmpty.style.display = 'none';
-      elResults.style.display = 'block';
-      elResultsCount.textContent = '';
-      elSelectionHint.style.display = 'none';
-      elDraftBtn.style.display = 'none';
-      elResultsList.innerHTML = '<div class="searching-msg"><div class="loading-dots"><span></span><span></span><span></span><span></span></div>Finding similar proposals\u2026</div>';
-      btnSearch.disabled = true;
-
-      // Force browser repaint before heavy async work
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      elStatus.style.display = 'flex';
+      elResults.classList.remove('show');
+      elResults.querySelector('#results-list').innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;">Finding similar proposals…</div>';
 
       try {
         await loadModel();
         setStatus('Ready — semantic matching active', 'ready');
 
-        // embed query
+        const queryText = [
+          formState.problem,
+          formState.serviceArea.join(' '),
+          formState.deliverables.join(' '),
+          formState.outcomes.join(' '),
+          formState.industry,
+          formState.phase,
+          formState.sponsor,
+          formState.technologies.join(' '),
+          formState.timeline,
+          formState.constraints,
+          uploadedFiles.map(f => f.content).join('\n')
+        ].filter(Boolean).join('\n');
+
         const [queryEmb] = await embedTexts([queryText]);
 
-        // score each proposal by cosine similarity (fast — uses pre-computed embeddings)
         const scored = corpus
           .map(entry => ({
             entry,
@@ -1097,7 +1665,6 @@
           .sort((a, b) => b.score - a.score)
           .slice(0, 10);
 
-        // Only embed sentences for top results (on-demand, much faster)
         const results = [];
         for (const { entry, score } of scored) {
           const { texts: excerpts, reasons } = await bestExcerpts(queryEmb, entry, 2);
@@ -1106,432 +1673,68 @@
 
         currentResults = results;
         selected = new Set();
-
-        // auto-select results scoring above 70 (max 3)
         results.filter(r => r.score > 70).slice(0, 3).forEach(r => selected.add(r.id));
 
-        render(results);
+        renderResults(results);
+        elResults.classList.add('show');
       } catch (err) {
         console.error(err);
-        setStatus('Search failed: ' + err.message + ' — try again', 'error');
-        elResultsList.innerHTML = '';
-      } finally {
-        btnSearch.disabled = false;
+        setStatus('Search failed: ' + err.message, 'error');
       }
     }
 
-    // ── Toggle selection ─────────────────────────────────────────────
-    function toggleSelect(id) {
-      if (selected.has(id)) {
-        selected.delete(id);
-      } else {
-        if (selected.size >= 3) return; // max 3
-        selected.add(id);
-      }
-      render(currentResults);
-    }
-
-    // ── Render results ──────────────────────────────────────────────
-    function render(results) {
-      elEmpty.style.display = 'none';
-      elResults.style.display = 'block';
-      elDraftSection.style.display = 'none';
-
+    function renderResults(results) {
       if (results.length === 0) {
-        elResultsCount.textContent = '';
-        elSelectionHint.style.display = 'none';
-        elDraftBtn.style.display = 'none';
-        elResultsList.innerHTML = '<div class="no-results">No similar proposals found. Try a different description.</div>';
+        elResults.querySelector('#results-list').innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;">No similar proposals found.</div>';
         return;
       }
 
       elResultsCount.textContent = `${results.length} match${results.length === 1 ? '' : 'es'}`;
-      elSelectionHint.style.display = 'block';
-      elDraftBtn.style.display = 'block';
-      elDraftBtn.disabled = selected.size === 0;
-      elDraftBtn.textContent = selected.size > 0
-        ? `Draft Proposal from ${selected.size} Selected`
-        : 'Draft Proposal from Selected';
 
-      const checkSvg = `<svg viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 5.5 10.5 11.5 4"/></svg>`;
-
-      elResultsList.innerHTML = results.map(r => {
+      elResults.querySelector('#results-list').innerHTML = results.map(r => {
         const sel = selected.has(r.id);
         const whyHtml = (r.reasons || []).map(reason =>
-          `<div class="score-why-item"><span class="score-why-sim">${reason.sim}</span><span>${esc(reason.text)}</span></div>`
+          `<div style="margin-bottom: 8px; font-size: 12px;"><span style="background: #eef0fb; color: #5e6ad2; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-right: 8px;">${reason.sim}</span>${esc(reason.text)}</div>`
         ).join('');
         return `
-        <div class="result-card${sel ? ' selected' : ''}" data-id="${esc(r.id)}">
-          <div class="select-check">${checkSvg}</div>
-          <div class="result-top">
-            <div>
-              <div class="result-title">${esc(r.title)}</div>
-              <div class="result-source">${esc(r.source)}</div>
+          <div class="result-card${sel ? ' selected' : ''}" data-id="${esc(r.id)}">
+            <div class="result-top">
+              <div>
+                <div class="result-title">${esc(r.title)}</div>
+                <div class="result-source">${esc(r.source)}</div>
+              </div>
+              <div class="score-badge ${scoreClass(r.score)}">${r.score}</div>
             </div>
-            <div class="score-badge ${scoreClass(r.score)}">${r.score}</div>
-          </div>
-          ${r.excerpts.length ? `<div class="result-excerpt">${r.excerpts.map(e => esc(e)).join(' … ')}</div>` : ''}
-          ${whyHtml ? `<div class="score-why"><div class="score-why-header">Why it matched</div>${whyHtml}</div>` : ''}
-        </div>`;
+            ${r.excerpts.length ? `<div style="font-size: 13px; color: #6b7280; margin-top: 12px;">${r.excerpts.map(e => esc(e)).join(' … ')}</div>` : ''}
+            ${whyHtml ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">${whyHtml}</div>` : ''}
+          </div>`;
       }).join('');
 
-      // bind click handlers
-      elResultsList.querySelectorAll('.result-card').forEach(card => {
-        card.addEventListener('click', () => toggleSelect(card.dataset.id));
-      });
-    }
-
-    // ── Draft proposal from selections ──────────────────────────────
-    function draftProposal() {
-      const problem = document.getElementById('problem').value.trim();
-      const supplemental = document.getElementById('supplemental').value.trim();
-      const fileContext = uploadedFiles.map(f => f.content).join('\n');
-      const selectedProposals = currentResults.filter(r => selected.has(r.id));
-
-      if (selectedProposals.length === 0) return;
-
-      // Helper: extract sentences matching a pattern from selected proposals
-      function gatherSentences(pattern, max) {
-        const results = [];
-        for (const sp of selectedProposals) {
-          const sentences = (sp.content || '').split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
-          const matches = sentences.filter(s => pattern.test(s));
-          results.push(...matches.slice(0, max));
-        }
-        return results;
-      }
-
-      let html = '';
-
-      // ── PURPOSE ──
-      html += `<h3>Purpose</h3>`;
-      html += `<p>This document outlines Slalom's proposed approach, team structure, and engagement model to the client need described below.</p>`;
-
-      // ── OUR UNDERSTANDING ──
-      html += `<h3>Our Understanding</h3>`;
-      // Build a concise summary: restate the problem + high-level solution direction from top proposals
-      const understandingSentences = [];
-      // Start with 1-2 sentences restating the core problem
-      const problemSentences = problem.split(/(?<=[.!?])\s+/).filter(s => s.length > 20);
-      if (problemSentences.length > 0) {
-        understandingSentences.push(problemSentences[0]);
-        if (problemSentences.length > 1) understandingSentences.push(problemSentences[1]);
-      }
-      // Add 1-2 high-level challenge/context sentences from the best-matching proposals
-      const challenges = gatherSentences(
-        /\b(challenge|problem|issue|gap|risk|struggle|pain|lack|limit|fragment|siloed|decline|unable|cannot)\b/i, 3
-      );
-      if (challenges.length > 0) understandingSentences.push(challenges[0]);
-      // Add 1 sentence describing the high-level solution direction
-      const solutionHints = gatherSentences(
-        /\b(propos|recommend|approach|deliver|solution|enable|platform|system|tool)\b/i, 2
-      );
-      if (solutionHints.length > 0) understandingSentences.push(solutionHints[0]);
-      // Cap at 5 sentences
-      const summary = understandingSentences.slice(0, 5).join(' ');
-      html += `<p>${esc(summary)}</p>`;
-
-      // ── SLALOM PROPOSED DELIVERY APPROACH ──
-      html += `<h3>Slalom Proposed Delivery Approach</h3>`;
-      html += `<p>Based on the problem statement and reference engagements, Slalom proposes the following scope:</p>`;
-
-      // Always generate scope — derive from problem statement keywords + reference proposal deliverables
-      const scopeItems = [];
-
-      // 1. Derive scope bullets from the problem statement itself
-      const problemWords = problem.toLowerCase();
-      const scopeFromProblem = [];
-      if (/\b(latency|speed|performance|slow|fast|real.?time)\b/.test(problemWords)) {
-        scopeFromProblem.push('Performance profiling, bottleneck identification, and optimization of the end-to-end pipeline');
-      }
-      if (/\b(dashboard|report|analytics|data|insight|metric|measure)\b/.test(problemWords)) {
-        scopeFromProblem.push('Design and implementation of an analytics solution providing actionable insights and self-service reporting');
-      }
-      if (/\b(automat|manual|process|workflow|efficien)\b/.test(problemWords)) {
-        scopeFromProblem.push('Process automation to eliminate manual effort and reduce cycle time');
-      }
-      if (/\b(experience|ux|design|user|customer|patient|portal|app)\b/.test(problemWords)) {
-        scopeFromProblem.push('User experience research, design, and validated prototyping');
-      }
-      if (/\b(migrat|modern|legacy|upgrad|transform)\b/.test(problemWords)) {
-        scopeFromProblem.push('Architecture modernization with phased migration strategy');
-      }
-      if (/\b(security|fraud|risk|compliance|protect|detect)\b/.test(problemWords)) {
-        scopeFromProblem.push('Security assessment and implementation of detection and prevention controls');
-      }
-      if (/\b(ml|ai|model|predict|intelligen|learn)\b/.test(problemWords)) {
-        scopeFromProblem.push('Machine learning model development, training, and production deployment');
-      }
-      if (/\b(integrat|connect|api|pipeline|ingest)\b/.test(problemWords)) {
-        scopeFromProblem.push('System integration and data pipeline development');
-      }
-      if (/\b(scale|grow|expand|volume|capacity)\b/.test(problemWords)) {
-        scopeFromProblem.push('Scalability engineering to support growth and increased volume');
-      }
-      if (/\b(interactive|engage|feature|build|launch|product)\b/.test(problemWords)) {
-        scopeFromProblem.push('Feature development and iterative delivery through rapid prototyping and testing');
-      }
-      // Always include discovery and knowledge transfer
-      scopeFromProblem.unshift('Discovery and requirements gathering with key stakeholders');
-      scopeFromProblem.push('Knowledge transfer, documentation, and transition to client operations');
-
-      // 2. Pull specific deliverable language from selected reference proposals
-      const refDeliverables = [];
-      for (const sp of selectedProposals) {
-        const content = sp.content || '';
-        const approachMatch = content.match(/Slalom Proposed Delivery Approach[:\s]*([\s\S]*?)(?=Slalom Roles|Timeline|Total Estimated|Assumptions|Next Steps|$)/i);
-        const approachText = approachMatch ? approachMatch[1] : '';
-        if (!approachText) continue;
-        const sentences = approachText.split(/(?<=[.!?])\s+/).filter(s => s.length > 30);
-        const scopeOnly = sentences.filter(s =>
-          /\b(build|implement|deliver|develop|design|create|deploy|automat|integrat|conduct|establish)\b/i.test(s) &&
-          !/^\s*(Phase \d|Weeks? \d)/i.test(s) &&
-          !/\b(this document outlines|purpose|will be available|will provide access|will review)\b/i.test(s)
-        );
-        refDeliverables.push(...scopeOnly.slice(0, 2));
-      }
-
-      // 3. Combine: problem-derived scope + reference deliverables, deduplicated
-      const combined = [...scopeFromProblem, ...refDeliverables];
-      const usedScope = [];
-      for (const s of combined) {
-        const words = new Set(s.toLowerCase().split(/\s+/));
-        const isDuplicate = usedScope.some(used => {
-          const usedWords = new Set(used.toLowerCase().split(/\s+/));
-          const overlap = [...words].filter(w => usedWords.has(w)).length;
-          return overlap / Math.max(words.size, usedWords.size) > 0.5;
+      elResults.querySelectorAll('.result-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.dataset.id;
+          if (selected.has(id)) selected.delete(id);
+          else if (selected.size < 3) selected.add(id);
+          renderResults(results);
+          elDraftBtn.disabled = selected.size === 0;
         });
-        if (!isDuplicate) usedScope.push(s);
-        if (usedScope.length >= 7) break;
-      }
-      html += `<ul>`;
-      for (const s of usedScope) html += `<li>${esc(s)}</li>`;
-      html += `</ul>`;
-
-      // ── SLALOM ROLES & RESPONSIBILITIES ──
-      html += `<h3>Slalom Roles &amp; Responsibilities</h3>`;
-      const roleSentences = gatherSentences(
-        /\b(responsible|role|lead|manager|engineer|architect|designer|analyst|consultant|SME|executive)\b/i, 5
-      );
-      if (roleSentences.length) {
-        html += `<table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:8px;">`;
-        html += `<thead><tr style="border-bottom:2px solid #e8eaed;text-align:left;"><th style="padding:8px 12px;">Role</th><th style="padding:8px 12px;">Responsibility</th></tr></thead><tbody>`;
-        for (const rs of roleSentences) {
-          // Try to extract a role name from the sentence
-          const roleMatch = rs.match(/\b((?:Engagement|Program|Engineering|Product|Technical|Principal|Quality|UX|Data|Software|Delivery|Accountable)\s*(?:Lead|Manager|Engineer|Architect|Designer|Executive|SME)?)\b/i);
-          const roleName = roleMatch ? roleMatch[1] : 'TBD';
-          html += `<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:8px 12px;font-weight:600;white-space:nowrap;vertical-align:top;">${esc(roleName)}</td><td style="padding:8px 12px;">${esc(rs)}</td></tr>`;
-        }
-        html += `</tbody></table>`;
-      } else {
-        html += `<p><em>[Roles to be determined based on engagement scope]</em></p>`;
-      }
-
-      // ── TIMELINE ──
-      html += `<h3>Timeline</h3>`;
-      // Only pull sentences that are specifically about timing, duration, and phasing
-      const timelineSentences = gatherSentences(
-        /\b(\d+[\s-]*week|\d+[\s-]*month|Phase \d|timeline|duration|kickoff|onboard)\b/i, 6
-      );
-      // Filter to only sentences with actual time references, exclude generic scope sentences
-      const timeOnly = timelineSentences.filter(s =>
-        /\d+[\s-]*(week|month)|Phase \d/i.test(s)
-      );
-      if (timeOnly.length) {
-        html += `<ul>`;
-        const usedTime = [];
-        for (const t of timeOnly) {
-          const words = new Set(t.toLowerCase().split(/\s+/));
-          const isDuplicate = usedTime.some(used => {
-            const usedWords = new Set(used.toLowerCase().split(/\s+/));
-            const overlap = [...words].filter(w => usedWords.has(w)).length;
-            return overlap / Math.max(words.size, usedWords.size) > 0.6;
-          });
-          if (!isDuplicate) {
-            usedTime.push(t);
-            html += `<li>${esc(t)}</li>`;
-          }
-          if (usedTime.length >= 3) break;
-        }
-        html += `</ul>`;
-      } else {
-        html += `<p><em>[Timeline to be determined during scoping]</em></p>`;
-      }
-
-      // ── TOTAL ESTIMATED COST ──
-      html += `<h3>Total Estimated Cost</h3>`;
-      html += `<p>This engagement is structured as a fixed-capacity model. Total cost will be determined based on finalized team structure and duration.</p>`;
-      html += `<p><em>[Cost estimate to be developed once scope and team are confirmed]</em></p>`;
-
-      // ── ASSUMPTIONS ──
-      html += `<h3>Assumptions</h3>`;
-      html += `<ul>`;
-      html += `<li>Client stakeholders and business users will be available for interviews and feedback cycles and will respond to Slalom requests for information in a timely manner (within 1-2 business days).</li>`;
-      html += `<li>Client will review Deliverables and respond with comments or acceptance in an agreed-upon timeframe.</li>`;
-      html += `<li>Client will provide access to, and all necessary permissions to use agreed upon project tooling.</li>`;
-      html += `<li>The timeline for this project assumes use of existing internally approved tools and access to information necessary to complete the deliverables.</li>`;
-      // Add domain-specific assumptions from reference proposals
-      const assumptionSentences = gatherSentences(
-        /\b(assum|provid|access|responsible|dependent|require|timely|necessary|approval)\b/i, 3
-      );
-      for (const a of assumptionSentences) {
-        html += `<li>${esc(a)}</li>`;
-      }
-      html += `</ul>`;
-
-      // ── NEXT STEPS ──
-      html += `<h3>Next Steps</h3>`;
-      html += `<ol>`;
-      html += `<li>Incorporate client feedback on this proposal.</li>`;
-      html += `<li>Conduct final review of proposal with client sponsors and stakeholders.</li>`;
-      html += `<li>Upon alignment, Slalom will generate a formal Work Order.</li>`;
-      html += `<li>Client will initiate Legal, Tax and Finance approval processes. (Typically, a two-week process)</li>`;
-      html += `<li>Slalom to identify the team and begin the onboarding process. (Typically, a two-week process)</li>`;
-      html += `<li>Upon approval of Work Order, conduct project kickoff and commence engagement.</li>`;
-      html += `</ol>`;
-
-      // ── Reference ──
-      html += `<h3 style="margin-top:32px;font-size:12px;color:#9ca3af;">Reference Proposals Used</h3><div>`;
-      for (const sp of selectedProposals) {
-        html += `<span class="ref-tag">${esc(sp.title)} (score: ${sp.score})</span>`;
-      }
-      html += `</div>`;
-
-      elDraftOutput.innerHTML = html;
-      elDraftSection.style.display = 'block';
-      elDraftSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // ── Escape HTML ─────────────────────────────────────────────────
-    function esc(str) {
-      const el = document.createElement('span');
-      el.textContent = str;
-      return el.innerHTML;
-    }
-
-    // ── Export to Word (.docx) ─────────────────────────────────────
-    async function exportToWord() {
-      const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType, AlignmentType, convertInchesToTwip } = await import('https://cdn.jsdelivr.net/npm/docx@9.0.2/+esm');
-
-      const children = [];
-
-      const sections = elDraftOutput.querySelectorAll('h3, p, ul, ol, table, div');
-      for (const el of sections) {
-        if (el.tagName === 'H3') {
-          children.push(new Paragraph({
-            children: [new TextRun({ text: el.textContent, font: 'Calibri Light', size: 32, bold: true, color: '000000' })],
-            spacing: { before: 480, after: 120 }
-          }));
-        } else if (el.tagName === 'P') {
-          children.push(new Paragraph({
-            children: [new TextRun({ text: el.textContent, font: 'Calibri', size: 22, color: '000000' })],
-            spacing: { after: 120, line: 360 }
-          }));
-        } else if (el.tagName === 'UL') {
-          const items = el.querySelectorAll('li');
-          items.forEach(li => {
-            children.push(new Paragraph({
-              children: [new TextRun({ text: li.textContent, font: 'Calibri', size: 22, color: '000000' })],
-              bullet: { level: 0 },
-              spacing: { after: 60, line: 360 }
-            }));
-          });
-        } else if (el.tagName === 'OL') {
-          const items = el.querySelectorAll('li');
-          items.forEach((li, idx) => {
-            children.push(new Paragraph({
-              children: [new TextRun({ text: `${idx + 1}. ${li.textContent}`, font: 'Calibri', size: 22, color: '000000' })],
-              spacing: { after: 60, line: 360 },
-              indent: { left: convertInchesToTwip(0.25) }
-            }));
-          });
-        } else if (el.tagName === 'TABLE') {
-          const rows = el.querySelectorAll('tr');
-          const tableRows = [];
-          rows.forEach((row, rowIdx) => {
-            const cells = row.querySelectorAll('th, td');
-            const tableCells = [];
-            cells.forEach(cell => {
-              const isHeader = cell.tagName === 'TH';
-              tableCells.push(new TableCell({
-                children: [new Paragraph({
-                  children: [new TextRun({
-                    text: cell.textContent,
-                    font: 'Calibri',
-                    size: 20,
-                    bold: isHeader,
-                    color: isHeader ? 'FFFFFF' : '000000'
-                  })]
-                })],
-                shading: isHeader
-                  ? { type: ShadingType.SOLID, color: '4472C4', fill: '4472C4' }
-                  : rowIdx % 2 === 1
-                    ? { type: ShadingType.SOLID, color: 'D9E2F3', fill: 'D9E2F3' }
-                    : undefined,
-                width: { size: 50, type: WidthType.PERCENTAGE }
-              }));
-            });
-            if (tableCells.length > 0) tableRows.push(new TableRow({ children: tableCells }));
-          });
-          if (tableRows.length > 0) {
-            children.push(new Table({ rows: tableRows, width: { size: 100, type: WidthType.PERCENTAGE } }));
-            children.push(new Paragraph({ text: '', spacing: { after: 120 } }));
-          }
-        } else if (el.tagName === 'DIV' && el.querySelector('.ref-tag')) {
-          // Reference tags section — render as italic grey text
-          const tags = el.querySelectorAll('.ref-tag');
-          const tagTexts = Array.from(tags).map(t => t.textContent).join('  |  ');
-          children.push(new Paragraph({
-            children: [new TextRun({ text: tagTexts, font: 'Calibri', size: 18, italics: true, color: '44546A' })],
-            spacing: { before: 240, after: 120 }
-          }));
-        }
-      }
-
-      const doc = new Document({
-        sections: [{
-          properties: {
-            page: {
-              margin: { top: convertInchesToTwip(1), bottom: convertInchesToTwip(1), left: convertInchesToTwip(1), right: convertInchesToTwip(1) }
-            }
-          },
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: 'Proposal Draft', font: 'Calibri Light', size: 56, bold: true, color: '000000' })],
-              spacing: { after: 600 }
-            }),
-            ...children
-          ]
-        }]
       });
 
-      const blob = await Packer.toBlob(doc);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'proposal-draft.docx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      elDraftBtn.disabled = selected.size === 0;
+      elDraftBtn.style.display = 'block';
     }
 
-    // ── Wire up ─────────────────────────────────────────────────────
-    btnSearch.addEventListener('click', search);
-    elDraftBtn.addEventListener('click', draftProposal);
-    document.getElementById('export-btn').addEventListener('click', exportToWord);
-
-    document.querySelectorAll('#problem, #supplemental').forEach(ta => {
-      ta.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-          e.preventDefault();
-          search();
-        }
-      });
+    // Search button handler
+    btnSearch.addEventListener('click', (e) => {
+      e.preventDefault();
+      search();
     });
 
-    // ── Boot ─────────────────────────────────────────────────────────
+    // Load corpus on page load
     loadCorpus();
+
+    // Initialize quality display
+    updateQualityDisplay();
   </script>
 </body>
 
