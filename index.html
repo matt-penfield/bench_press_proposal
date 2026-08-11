@@ -194,9 +194,17 @@
       transition: width 0.3s ease;
     }
 
-    .quality-fill.basic { background: #f97316; }
-    .quality-fill.good { background: #059669; }
-    .quality-fill.strong { background: #5e6ad2; }
+    .quality-fill.basic {
+      background: #f97316;
+    }
+
+    .quality-fill.good {
+      background: #059669;
+    }
+
+    .quality-fill.strong {
+      background: #5e6ad2;
+    }
 
     .quality-details {
       display: flex;
@@ -655,7 +663,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* Results Section */
@@ -793,6 +803,173 @@
       transition: width 0.3s ease;
     }
 
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 40px 24px;
+      text-align: center;
+      background: #fff;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: pointer;
+    }
+
+    .upload-zone.drag-over {
+      border-color: #5e6ad2;
+      background: #f5f6ff;
+    }
+
+    .upload-zone-icon {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .upload-zone-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .upload-zone-hint {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+
+    .upload-browse-btn {
+      display: inline-block;
+      padding: 8px 18px;
+      background: #fff;
+      border: 1.5px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .upload-browse-btn:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    .doc-recommendations {
+      margin-top: 24px;
+    }
+
+    .doc-rec-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .doc-rec-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .doc-rec-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 100px;
+      font-size: 12px;
+      color: #374151;
+      cursor: default;
+    }
+
+    .uploaded-files {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .uploaded-files:empty { display: none; }
+
+    .uploaded-file-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .file-type-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      letter-spacing: 0.3px;
+    }
+
+    .file-type-badge.pdf  { background: #ef4444; }
+    .file-type-badge.doc  { background: #3b82f6; }
+    .file-type-badge.xls  { background: #10b981; }
+    .file-type-badge.ppt  { background: #f97316; }
+    .file-type-badge.txt  { background: #6b7280; }
+    .file-type-badge.other{ background: #8b5cf6; }
+
+    .uploaded-file-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .uploaded-file-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a2e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .uploaded-file-size {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 1px;
+    }
+
+    .file-remove-btn {
+      background: none;
+      border: none;
+      color: #d1d5db;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 18px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    .file-remove-btn:hover { color: #ef4444; }
+
     /* Responsive */
     @media (max-width: 768px) {
       .wizard-container {
@@ -859,11 +1036,18 @@
             <div class="step-number">3</div>
             <div class="step-label">
               <div class="step-title">Refinement</div>
-              <div class="step-description">Details & files</div>
+              <div class="step-description">Details</div>
             </div>
           </div>
           <div class="step-item" data-step="4">
             <div class="step-number">4</div>
+            <div class="step-label">
+              <div class="step-title">Documents</div>
+              <div class="step-description">Supporting files</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="5">
+            <div class="step-number">5</div>
             <div class="step-label">
               <div class="step-title">Review</div>
               <div class="step-description">Summary</div>
@@ -900,8 +1084,11 @@
                   <span class="impact-badge high">Highest Impact</span>
                 </div>
                 <textarea id="problem" name="problem" rows="6"
-                  placeholder="Describe the client's core challenge, business issue, or strategic goal…" required></textarea>
-                <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;" id="problem-help">Example: A mid-sized retailer is struggling with declining foot traffic due to poor in-store customer experience and needs to modernize their engagement approach.</div>
+                  placeholder="Describe the client's core challenge, business issue, or strategic goal…"
+                  required></textarea>
+                <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;" id="problem-help">Example: A mid-sized
+                  retailer is struggling with declining foot traffic due to poor in-store customer experience and needs
+                  to modernize their engagement approach.</div>
               </div>
             </div>
           </div>
@@ -918,17 +1105,18 @@
                   <span class="impact-badge high">High Impact</span>
                 </div>
                 <div style="position: relative;">
-                <div class="multi-select-container" id="service-area-container">
-                  <input type="text" class="multi-select-input" placeholder="Select service areas…" id="service-area-input">
-                </div>
-                <div class="multi-select-dropdown" id="service-area-dropdown">
-                  <div class="multi-select-option">Strategy</div>
-                  <div class="multi-select-option">Customer Experience</div>
-                  <div class="multi-select-option">Digital Transformation</div>
-                  <div class="multi-select-option">Operations</div>
-                  <div class="multi-select-option">Technology</div>
-                  <div class="multi-select-option">Organizational Change</div>
-                </div>
+                  <div class="multi-select-container" id="service-area-container">
+                    <input type="text" class="multi-select-input" placeholder="Select service areas…"
+                      id="service-area-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="service-area-dropdown">
+                    <div class="multi-select-option">Strategy</div>
+                    <div class="multi-select-option">Customer Experience</div>
+                    <div class="multi-select-option">Digital Transformation</div>
+                    <div class="multi-select-option">Operations</div>
+                    <div class="multi-select-option">Technology</div>
+                    <div class="multi-select-option">Organizational Change</div>
+                  </div>
                 </div>
               </div>
 
@@ -938,18 +1126,19 @@
                   <span class="impact-badge high">High Impact</span>
                 </div>
                 <div style="position: relative;">
-                <div class="multi-select-container" id="deliverables-container">
-                  <input type="text" class="multi-select-input" placeholder="Select deliverables…" id="deliverables-input">
-                </div>
-                <div class="multi-select-dropdown" id="deliverables-dropdown">
-                  <div class="multi-select-option">Roadmap</div>
-                  <div class="multi-select-option">Strategy Document</div>
-                  <div class="multi-select-option">Business Case</div>
-                  <div class="multi-select-option">Journey Map</div>
-                  <div class="multi-select-option">Service Blueprint</div>
-                  <div class="multi-select-option">Implementation Plan</div>
-                  <div class="multi-select-option">Training Materials</div>
-                </div>
+                  <div class="multi-select-container" id="deliverables-container">
+                    <input type="text" class="multi-select-input" placeholder="Select deliverables…"
+                      id="deliverables-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="deliverables-dropdown">
+                    <div class="multi-select-option">Roadmap</div>
+                    <div class="multi-select-option">Strategy Document</div>
+                    <div class="multi-select-option">Business Case</div>
+                    <div class="multi-select-option">Journey Map</div>
+                    <div class="multi-select-option">Service Blueprint</div>
+                    <div class="multi-select-option">Implementation Plan</div>
+                    <div class="multi-select-option">Training Materials</div>
+                  </div>
                 </div>
               </div>
 
@@ -959,18 +1148,19 @@
                   <span class="impact-badge high">High Impact</span>
                 </div>
                 <div style="position: relative;">
-                <div class="multi-select-container" id="outcomes-container">
-                  <input type="text" class="multi-select-input" placeholder="Select business outcomes…" id="outcomes-input">
-                </div>
-                <div class="multi-select-dropdown" id="outcomes-dropdown">
-                  <div class="multi-select-option">Revenue Growth</div>
-                  <div class="multi-select-option">Cost Reduction</div>
-                  <div class="multi-select-option">Customer Satisfaction</div>
-                  <div class="multi-select-option">Market Share</div>
-                  <div class="multi-select-option">Operational Efficiency</div>
-                  <div class="multi-select-option">Employee Engagement</div>
-                  <div class="multi-select-option">Risk Mitigation</div>
-                </div>
+                  <div class="multi-select-container" id="outcomes-container">
+                    <input type="text" class="multi-select-input" placeholder="Select business outcomes…"
+                      id="outcomes-input">
+                  </div>
+                  <div class="multi-select-dropdown" id="outcomes-dropdown">
+                    <div class="multi-select-option">Revenue Growth</div>
+                    <div class="multi-select-option">Cost Reduction</div>
+                    <div class="multi-select-option">Customer Satisfaction</div>
+                    <div class="multi-select-option">Market Share</div>
+                    <div class="multi-select-option">Operational Efficiency</div>
+                    <div class="multi-select-option">Employee Engagement</div>
+                    <div class="multi-select-option">Risk Mitigation</div>
+                  </div>
                 </div>
               </div>
 
@@ -1034,7 +1224,8 @@
                 </div>
                 <div style="position: relative;">
                   <div class="multi-select-container" id="technologies-container">
-                    <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…" id="technologies-input">
+                    <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…"
+                      id="technologies-input">
                   </div>
                   <div class="multi-select-dropdown" id="technologies-dropdown"></div>
                 </div>
@@ -1064,35 +1255,47 @@
                   placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
               </div>
 
-              <div class="form-field">
-                <div class="field-header">
-                  <label>Supporting Documents (Optional)</label>
-                </div>
-                <div class="file-upload-area">
-                  <label class="file-upload-btn">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor"
-                      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M7 1v9M4 4l3-3 3 3" />
-                      <path d="M1 9v3a1 1 0 001 1h10a1 1 0 001-1V9" />
-                    </svg>
-                    Upload files
-                    <input type="file" id="file-input" multiple
-                      accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json" hidden>
-                  </label>
-                  <div class="file-chips" id="file-chips"></div>
-                </div>
-              </div>
             </div>
           </div>
 
-          <!-- Step 4: Review -->
+          <!-- Step 4: Supporting Documents -->
           <div class="form-step" data-step="4">
+            <div class="form-group">
+              <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px;">Supporting documents</h3>
+              <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Upload any files that give context — RFPs, briefs, journey maps, or data. All optional.</p>
+
+              <div class="upload-zone" id="upload-zone">
+                <div class="upload-zone-icon">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6b7280" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 2v11M6 6l4-4 4 4" />
+                    <path d="M2 14v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                  </svg>
+                </div>
+                <div class="upload-zone-title">Drag and drop files here</div>
+                <div class="upload-zone-hint">PDF, Word, Excel, PowerPoint, or plain text (max 10 MB)</div>
+                <label class="upload-browse-btn">
+                  Browse Files
+                  <input type="file" id="file-input" multiple
+                    accept=".txt,.md,.pdf,.doc,.docx,.dotx,.rtf,.csv,.json,.ppt,.pptx,.xls,.xlsx" hidden>
+                </label>
+              </div>
+
+              <div class="doc-recommendations" id="doc-recommendations" style="display:none;">
+                <div class="doc-rec-title">Recommended based on your selections</div>
+                <div class="doc-rec-chips" id="doc-rec-chips"></div>
+              </div>
+
+              <div class="uploaded-files" id="uploaded-files"></div>
+            </div>
+          </div>
+
+          <!-- Step 5: Review -->
+          <div class="form-step" data-step="5">
             <div class="review-section">
               <div>
-                <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px;">Your input
-                  summary</h3>
-                <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before searching
-                  for similar proposals. Make any final adjustments if needed.</p>
+                <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 16px;">Your input summary</h3>
+                <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Review your information before searching for similar proposals. Make any final adjustments if needed.</p>
               </div>
 
               <div class="review-block">
@@ -1140,6 +1343,14 @@
                 <div class="review-item">
                   <div class="review-label">Timeline</div>
                   <div class="review-value" id="review-timeline">Not selected</div>
+                </div>
+              </div>
+
+              <div class="review-block">
+                <div class="review-block-title">Supporting Documents<button class="review-edit-btn" data-go-step="4">Edit</button></div>
+                <div class="review-item">
+                  <div class="review-label">Files uploaded</div>
+                  <div class="review-value" id="review-files">None</div>
                 </div>
               </div>
 
@@ -1240,7 +1451,6 @@
     const elStatusText = document.getElementById('status-text');
     const elProgressFill = document.getElementById('progress-fill');
     const elFileInput = document.getElementById('file-input');
-    const elFileChips = document.getElementById('file-chips');
     const elQualityScore = document.getElementById('quality-score');
     const elQualityFill = document.getElementById('quality-fill');
     const elQualityLabel = document.getElementById('quality-label');
@@ -1446,14 +1656,14 @@
 
       render() {
         const selected = formState[this.formStateKey];
-        const html = selected.map(text => 
+        const html = selected.map(text =>
           `<div class="multi-select-tag">${esc(text)}<button type="button">&times;</button></div>`
         ).join('');
         const tagsHtml = html + `<input type="text" class="multi-select-input" placeholder="Add more…">`;
-        
+
         const tempHtml = this.container.innerHTML;
         this.container.innerHTML = html + `<input type="text" class="multi-select-input" placeholder="Add more…">`;
-        
+
         this.input = this.container.querySelector('.multi-select-input');
         this.input.addEventListener('input', () => this.filterOptions());
         this.input.addEventListener('focus', () => this.dropdown.classList.add('open'));
@@ -1476,26 +1686,98 @@
 
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
-      const files = Array.from(elFileInput.files);
-      for (const file of files) {
-        const text = await file.text();
-        uploadedFiles.push({ name: file.name, content: text });
-      }
+      await addFiles(Array.from(elFileInput.files));
       elFileInput.value = '';
-      renderFileChips();
     });
 
-    function renderFileChips() {
-      elFileChips.innerHTML = uploadedFiles.map((f, i) =>
-        `<span class="file-chip">${esc(f.name)}<button data-idx="${i}">&times;</button></span>`
-      ).join('');
-      elFileChips.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
+    const uploadZone = document.getElementById('upload-zone');
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+    uploadZone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      await addFiles(Array.from(e.dataTransfer.files));
+    });
+
+    async function addFiles(files) {
+      for (const file of files) {
+        if (uploadedFiles.find(f => f.name === file.name)) continue;
+        const text = await file.text().catch(() => '');
+        uploadedFiles.push({ name: file.name, size: file.size, content: text });
+      }
+      renderUploadedFiles();
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function fileTypeBadge(name) {
+      const ext = name.split('.').pop().toLowerCase();
+      if (ext === 'pdf') return ['pdf', 'PDF'];
+      if (['doc','docx','dotx','rtf'].includes(ext)) return ['doc', 'DOC'];
+      if (['xls','xlsx','csv'].includes(ext)) return ['xls', 'XLS'];
+      if (['ppt','pptx'].includes(ext)) return ['ppt', 'PPT'];
+      if (['txt','md'].includes(ext)) return ['txt', 'TXT'];
+      return ['other', ext.toUpperCase().slice(0,4)];
+    }
+
+    function renderUploadedFiles() {
+      const container = document.getElementById('uploaded-files');
+      container.innerHTML = uploadedFiles.map((f, i) => {
+        const [cls, label] = fileTypeBadge(f.name);
+        return `
+          <div class="uploaded-file-card">
+            <div class="file-type-badge ${cls}">${esc(label)}</div>
+            <div class="uploaded-file-info">
+              <div class="uploaded-file-name">${esc(f.name)}</div>
+              <div class="uploaded-file-size">${formatBytes(f.size)}</div>
+            </div>
+            <button class="file-remove-btn" data-idx="${i}" title="Remove">&times;</button>
+          </div>`;
+      }).join('');
+      container.querySelectorAll('.file-remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
           uploadedFiles.splice(parseInt(btn.dataset.idx), 1);
-          renderFileChips();
+          renderUploadedFiles();
         });
       });
+    }
+
+    // ── Document recommendations ─────────────────────────────────────
+    const DOC_RECS = [
+      { label: 'RFP or project brief',          match: s => s.phase === 'Discovery' || s.phase === 'Assessment' },
+      { label: 'Current state assessment',       match: s => s.serviceArea.includes('Strategy') || s.phase === 'Assessment' },
+      { label: 'Stakeholder interview notes',    match: s => s.serviceArea.includes('Customer Experience') || s.deliverables.includes('Journey Map') },
+      { label: 'Customer journey map',           match: s => s.deliverables.includes('Journey Map') || s.serviceArea.includes('Customer Experience') },
+      { label: 'Technology landscape overview',  match: s => s.serviceArea.includes('Digital Transformation') || s.serviceArea.includes('Technology') },
+      { label: 'Process documentation',          match: s => s.serviceArea.includes('Operations') },
+      { label: 'Org chart or RACI',              match: s => s.serviceArea.includes('Organizational Change') },
+      { label: 'Financial model or ROI data',    match: s => s.deliverables.includes('Business Case') || s.outcomes.includes('Revenue Growth') || s.outcomes.includes('Cost Reduction') },
+      { label: 'Current cost structure or P&L',  match: s => s.outcomes.includes('Cost Reduction') },
+      { label: 'Risk register or audit report',  match: s => s.outcomes.includes('Risk Mitigation') },
+      { label: 'Technical specifications',       match: s => s.phase === 'Implementation' || s.deliverables.includes('Implementation Plan') },
+      { label: 'Compliance or regulatory docs',  match: s => s.industry === 'Healthcare' || s.industry === 'Finance' || s.industry === 'Government' },
+      { label: 'Sales or revenue analytics',     match: s => s.industry === 'Retail' || s.outcomes.includes('Revenue Growth') },
+      { label: 'NPS or customer satisfaction data', match: s => s.outcomes.includes('Customer Satisfaction') },
+      { label: 'Employee survey or engagement data', match: s => s.outcomes.includes('Employee Engagement') },
+    ];
+
+    function loadDocRecommendations() {
+      const recs = DOC_RECS.filter(r => r.match(formState));
+      const section = document.getElementById('doc-recommendations');
+      const chips = document.getElementById('doc-rec-chips');
+      if (recs.length === 0) { section.style.display = 'none'; return; }
+      chips.innerHTML = recs.map(r => `
+        <span class="doc-rec-chip">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M2 2h5l3 3v5H2z"/><path d="M7 2v3h3"/>
+          </svg>
+          ${esc(r.label)}
+        </span>`).join('');
+      section.style.display = 'block';
     }
 
     // ── Step Navigation ──────────────────────────────────────────────
@@ -1516,13 +1798,11 @@
 
       // Update buttons
       btnPrev.style.display = step > 1 ? 'block' : 'none';
-      btnNext.style.display = step < 4 ? 'block' : 'none';
-      btnSearch.style.display = step === 4 ? 'block' : 'none';
+      btnNext.style.display = step < 5 ? 'block' : 'none';
+      btnSearch.style.display = step === 5 ? 'block' : 'none';
 
-      // On review step, update summary
-      if (step === 4) {
-        updateReviewStep();
-      }
+      if (step === 4) loadDocRecommendations();
+      if (step === 5) updateReviewStep();
 
       window.scrollTo(0, 0);
     }
@@ -1555,6 +1835,11 @@
       // Timeline
       document.getElementById('review-timeline').textContent = formState.timeline || 'Not selected';
 
+      // Uploaded files
+      document.getElementById('review-files').textContent = uploadedFiles.length > 0
+        ? uploadedFiles.map(f => f.name).join(', ')
+        : 'None';
+
       // Missing recommended fields
       const quality = calculateMatchQuality(formState);
       if (quality.missingRecommendedFields.length > 0) {
@@ -1569,21 +1854,19 @@
     btnNext.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Next clicked, currentStep:', currentStep);
-      if (currentStep < 4) showStep(currentStep + 1);
+      if (currentStep < 5) showStep(currentStep + 1);
     });
 
     btnPrev.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Prev clicked, currentStep:', currentStep);
       if (currentStep > 1) showStep(currentStep - 1);
     });
 
     stepIndicator.querySelectorAll('.step-item').forEach(item => {
       item.addEventListener('click', () => {
         const step = parseInt(item.dataset.step);
-        if (step <= currentStep || step === 4) {
+        if (step <= currentStep || step === 5) {
           showStep(step);
         }
       });
