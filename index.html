@@ -1014,49 +1014,41 @@
     }
 
     /* Responsive */
-    \n @media (max-width: 900px) {
-      \n .wizard-container {
-        \n flex-direction: column;
-        \n gap: 24px;
-        \n
+    @media (max-width: 900px) {
+      .wizard-container {
+        flex-direction: column;
+        gap: 24px;
       }
 
-      \n\n .wizard-sidebar,
-      \n .wizard-quality {
-        \n flex: none;
-        \n width: 100%;
-        \n position: static;
-        \n
+      .wizard-sidebar,
+      .wizard-quality {
+        flex: none;
+        width: 100%;
+        position: static;
       }
 
-      \n\n .wizard-quality {
-        \n order: -1;
-        \n
+      .wizard-quality {
+        order: -1;
       }
 
-      \n\n .step-indicator {
-        \n flex-direction: row;
-        \n gap: 12px;
-        \n justify-content: space-between;
-        \n
+      .step-indicator {
+        flex-direction: row;
+        gap: 12px;
+        justify-content: space-between;
       }
 
-      \n\n .step-item {
-        \n flex: 1;
-        \n flex-direction: column;
-        \n align-items: center;
-        \n text-align: center;
-        \n padding: 12px 8px;
-        \n margin: -8px;
-        \n
+      .step-item {
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 12px 8px;
+        margin: -8px;
       }
 
-      \n\n .step-description {
-        \n display: none;
-        \n
+      .step-description {
+        display: none;
       }
-
-      \n
     }
   </style>
 </head>
@@ -1113,11 +1105,10 @@
         </div>
 
       </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="wizard-content">
-      <form id="wizard-form">
+      <!-- Main Content -->
+      <div class="wizard-content">
+        <form id="wizard-form">
 
         <!-- Step 1: Client Challenge -->
         <div class="form-step active" data-step="1">
