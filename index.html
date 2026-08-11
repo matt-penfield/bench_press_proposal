@@ -793,6 +793,25 @@
         </div>
       </div>
       <button id="search-btn">Find Similar Proposals</button>
+
+      <div class="quality-score-section" id="quality-score-section" style="display:none; margin-top: 20px;">
+        <div class="quality-score-left">
+          <div class="quality-score-label">Match Quality</div>
+          <div class="quality-score-value">
+            <div class="quality-text" id="quality-text">Good</div>
+            <div class="quality-bar">
+              <div class="progress-bar-quality">
+                <div class="fill" id="quality-fill" style="width: 72%;"></div>
+              </div>
+              <div class="quality-percentage" id="quality-percentage">72%</div>
+            </div>
+          </div>
+        </div>
+        <div class="quality-score-right">
+          <div class="quality-next-label">Suggested Next Step</div>
+          <div class="quality-next-text">Add deliverables and business outcomes to improve results.</div>
+        </div>
+      </div>
     </div>
 
     <div class="page-status" id="model-status">
@@ -812,24 +831,6 @@
       <div class="selection-hint" id="selection-hint" style="display:none;">Select up to <strong>3</strong> proposals to
         use as reference for your draft.</div>
       <div id="results-list"></div>
-      <div class="quality-score-section" id="quality-score-section" style="display:none;">
-        <div class="quality-score-left">
-          <div class="quality-score-label">Match Quality</div>
-          <div class="quality-score-value">
-            <div class="quality-text" id="quality-text">Good</div>
-            <div class="quality-bar">
-              <div class="progress-bar-quality">
-                <div class="fill" id="quality-fill" style="width: 72%;"></div>
-              </div>
-              <div class="quality-percentage" id="quality-percentage">72%</div>
-            </div>
-          </div>
-        </div>
-        <div class="quality-score-right">
-          <div class="quality-next-label">Suggested Next Step</div>
-          <div class="quality-next-text">Add deliverables and business outcomes to improve results.</div>
-        </div>
-      </div>
       <button id="draft-btn" style="display:none;" disabled>Draft Proposal from Selected</button>
     </div>
 
