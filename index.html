@@ -1088,6 +1088,26 @@
       background: #f7f9ff;
     }
 
+    .result-match-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .result-match-col {
+      min-width: 0;
+    }
+
+    .result-match-col-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8f98ad;
+      margin: 0 0 10px;
+    }
+
     .result-match-title {
       font-size: 13px;
       font-weight: 700;
@@ -1119,6 +1139,23 @@
       border-radius: 50%;
       background: #dcfce7;
       color: #15803d;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .result-match-alert {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #b91c1c;
       font-size: 13px;
       font-weight: 700;
       line-height: 1;
@@ -1176,6 +1213,12 @@
       margin-bottom: 4px;
     }
 
+    @media (max-width: 900px) {
+      .result-match-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .draft-section {
       margin-top: 32px;
       display: none;
@@ -1193,11 +1236,100 @@
       margin: 16px 0;
       max-height: 600px;
       overflow-y: auto;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+      white-space: normal;
+      overflow-wrap: anywhere;
       font-size: 13px;
       line-height: 1.6;
       color: #4b5563;
+    }
+
+    .draft-doc {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 20px 22px;
+    }
+
+    .draft-doc h3 {
+      margin: 18px 0 8px;
+      font-size: 16px;
+      line-height: 1.3;
+      color: #5e6ad2;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .draft-doc h3:first-child {
+      margin-top: 0;
+    }
+
+    .draft-doc p {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .draft-doc ul,
+    .draft-doc ol {
+      margin: 0 0 12px 20px;
+      padding: 0;
+    }
+
+    .draft-doc li {
+      margin-bottom: 6px;
+      font-size: 15px;
+      color: #4b5563;
+      line-height: 1.55;
+    }
+
+    .draft-roles-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 4px;
+      background: #fff;
+    }
+
+    .draft-roles-table th,
+    .draft-roles-table td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 15px;
+      color: #374151;
+      vertical-align: top;
+    }
+
+    .draft-roles-table th {
+      color: #111827;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .draft-meta {
+      margin-bottom: 8px;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .draft-reference-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .draft-reference-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: #eef0fb;
+      color: #4f62c8;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
     }
 
     .progress-bar {
@@ -1909,7 +2041,7 @@
     <div class="draft-section" id="draft-section">
       <h2>Drafted Proposal</h2>
       <div class="draft-output" id="draft-output"></div>
-      <button id="export-btn" class="btn-primary">Export to Word (.docx)</button>
+      <button id="export-btn" class="btn-primary" style="float:right;">Export to Word (.docx)</button>
     </div>
   </main>
 
@@ -2626,7 +2758,7 @@
         : 'Proposal includes delivery components that align with the requested engagement approach.';
 
       const aiSummary = [
-        `This proposal is relevant because it tackles a similar business challenge: ${problemDetail}`,
+        `The proposal addresses a similar business challenge: ${problemDetail}`,
         `It aligns with ${industryInput ? `${industryMatched ? 'the requested industry focus' : 'many of the requested business patterns'}` : 'the opportunity context'} and targets outcomes like ${toSentence(outcomesText.toLowerCase(), 120)}.`,
         `The approach and deliverables overlap with your request, making it a strong candidate to review for proposal drafting.`
       ].join(' ');
@@ -2681,6 +2813,127 @@
     function hideResultsPage() {
       document.querySelector('.wizard-container').style.display = '';
       document.getElementById('results-page').classList.remove('show');
+    }
+
+    function listOrFallback(items, fallback = 'To be confirmed') {
+      return items && items.length ? items.join(', ') : fallback;
+    }
+
+    function valueOrFallback(value, fallback = 'To be confirmed') {
+      return value && value.trim() ? value.trim() : fallback;
+    }
+
+    function generateDraftFromSelection() {
+      const picked = currentResults.filter(r => selected.has(r.id));
+      if (!picked.length) return;
+
+      const top = picked[0];
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      const summarySeed = splitSentences(top.content || '')[0] || valueOrFallback(formState.problem, 'Business challenge details to be confirmed.');
+      const referenceIntro = picked.length > 1
+        ? `This draft synthesizes patterns from ${picked.length} selected reference proposals, led by ${esc(top.title)}.`
+        : `This draft is informed by the selected reference proposal ${esc(top.title)}.`;
+
+      const deliverables = formState.deliverables.length
+        ? formState.deliverables
+        : ['Discovery and requirements gathering', 'Solution design and implementation planning', 'Knowledge transfer and transition'];
+
+      const outcomes = formState.outcomes.length
+        ? formState.outcomes
+        : ['Improved operational efficiency', 'Higher customer engagement', 'Measurable business impact'];
+
+      const technologies = formState.technologies.length
+        ? formState.technologies
+        : ['Client-approved technology stack'];
+
+      const assumptions = [
+        'Client stakeholders and business users will be available for interviews and feedback cycles.',
+        'Client will review deliverables and respond within an agreed timeline.',
+        'Client will provide required data access, security approvals, and project tooling permissions.'
+      ];
+      if (formState.constraints.trim()) assumptions.push(`Client constraints: ${formState.constraints.trim()}`);
+
+      const proposalTimeline = extractTimelineFromProposal(top.content || '');
+      const timelineText = valueOrFallback(formState.timeline, proposalTimeline || 'Timeline to be finalized during planning.');
+
+      const roleRows = [
+        { role: 'Engagement Lead', responsibility: `Overall delivery leadership, stakeholder alignment, and governance across the ${valueOrFallback(formState.phase, 'engagement lifecycle')}.` },
+        { role: 'Solution Architect', responsibility: `Design the target approach and ensure alignment to ${valueOrFallback(formState.industry, 'industry')} requirements and client constraints.` },
+        { role: 'Delivery Team', responsibility: `Execute prioritized deliverables: ${deliverables.slice(0, 3).join(', ')}.` },
+        { role: 'Data / Technology Lead', responsibility: `Enable implementation using ${technologies.slice(0, 3).join(', ')} and coordinate technical dependencies.` }
+      ];
+
+      const referencesHtml = picked.map(p => {
+        const score = p.displayScore ?? p.score;
+        return `<span class="draft-reference-chip">${esc(p.title)} (score: ${score})</span>`;
+      }).join('');
+
+      const draftHtml = `
+        <div class="draft-doc">
+          <div class="draft-meta">Generated ${esc(dateStr)}</div>
+
+          <h3>Purpose</h3>
+          <p>This document outlines Slalom's proposed approach, team structure, and engagement model for the client need described below.</p>
+
+          <h3>Our Understanding</h3>
+          <p>${esc(valueOrFallback(formState.problem, summarySeed))}</p>
+          <p>${referenceIntro}</p>
+
+          <h3>Slalom Proposed Delivery Approach</h3>
+          <p>Based on the problem statement and selected references, Slalom proposes the following scope:</p>
+          <ul>
+            ${deliverables.map(d => `<li>${esc(d)}</li>`).join('')}
+          </ul>
+
+          <h3>Target Business Outcomes</h3>
+          <ul>
+            ${outcomes.map(o => `<li>${esc(o)}</li>`).join('')}
+          </ul>
+
+          <h3>Slalom Roles &amp; Responsibilities</h3>
+          <table class="draft-roles-table">
+            <thead>
+              <tr><th>Role</th><th>Responsibility</th></tr>
+            </thead>
+            <tbody>
+              ${roleRows.map(r => `<tr><td>${esc(r.role)}</td><td>${esc(r.responsibility)}</td></tr>`).join('')}
+            </tbody>
+          </table>
+
+          <h3>Timeline</h3>
+          <ul>
+            <li>Planned timeline: ${esc(timelineText)}</li>
+            <li>Detailed milestones and sprint cadence will be finalized during kickoff.</li>
+          </ul>
+
+          <h3>Total Estimated Cost</h3>
+          <p>This engagement is structured as a fixed-capacity model. Final cost will be confirmed once scope and team composition are approved.</p>
+          <p><em>[Cost estimate to be developed once scope and team are confirmed]</em></p>
+
+          <h3>Assumptions</h3>
+          <ul>
+            ${assumptions.map(a => `<li>${esc(a)}</li>`).join('')}
+          </ul>
+
+          <h3>Next Steps</h3>
+          <ol>
+            <li>Incorporate client feedback on this proposal.</li>
+            <li>Conduct final review with client sponsors and stakeholders.</li>
+            <li>Upon alignment, generate a formal Work Order.</li>
+            <li>Initiate Legal, Tax, and Finance approval processes.</li>
+            <li>Identify delivery team and begin onboarding.</li>
+            <li>Launch project kickoff and commence engagement.</li>
+          </ol>
+
+          <h3>Reference Proposals Used</h3>
+          <div class="draft-reference-wrap">${referencesHtml}</div>
+        </div>`;
+
+      elDraftOutput.innerHTML = draftHtml;
+      elDraftSection.classList.add('show');
+      elDraftSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     async function search() {
@@ -2783,6 +3036,9 @@
           : splitSentences(r.content || '')[0] || '';
         const details = buildBusinessMatchDetails(r, formState, summaryText);
         const display = r.displayScore ?? r.score;
+        const differencesHtml = details.differences.length
+          ? details.differences.map(d => `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">Difference to Review</div><div class="result-match-text">${esc(d)}</div></div></div>`).join('')
+          : `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">No Major Differences Identified</div><div class="result-match-text">No significant timeline, industry, or scope conflicts were identified in this match.</div></div></div>`;
 
         return `
           <div class="result-card${sel ? ' selected' : ''}" data-id="${esc(r.id)}">
@@ -2803,11 +3059,19 @@
               <div class="result-summary-box"><div class="result-section-heading">AI Match Summary</div><div class="result-summary-text">${esc(details.aiSummary)}</div></div>
               <div class="result-match-box">
                 <div class="result-match-title">Why This Match Was Selected</div>
-                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Business Problem</div><div class="result-match-text">${esc(details.problemDetail)}</div></div></div>
-                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Industry Match</div><div class="result-match-text">${esc(details.industryText)}</div></div></div>
-                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Business Outcomes</div><div class="result-match-text">${esc(details.outcomesText)}</div></div></div>
-                <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Deliverables</div><div class="result-match-text">${esc(details.deliverablesText)}</div></div></div>
-                ${details.differences.length ? `<div class="differences-box"><div class="differences-title">Differences to Consider</div><ul class="differences-list">${details.differences.map(d => `<li>${esc(d)}</li>`).join('')}</ul></div>` : ''}
+                <div class="result-match-columns">
+                  <div class="result-match-col">
+                    <div class="result-match-col-title">Similarities</div>
+                    <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Business Problem</div><div class="result-match-text">${esc(details.problemDetail)}</div></div></div>
+                    <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Industry Match</div><div class="result-match-text">${esc(details.industryText)}</div></div></div>
+                    <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Business Outcomes</div><div class="result-match-text">${esc(details.outcomesText)}</div></div></div>
+                    <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Deliverables</div><div class="result-match-text">${esc(details.deliverablesText)}</div></div></div>
+                  </div>
+                  <div class="result-match-col">
+                    <div class="result-match-col-title">Differences</div>
+                    ${differencesHtml}
+                  </div>
+                </div>
               </div>
             </div>
           </div>`;
@@ -2837,6 +3101,10 @@
 
     document.getElementById('btn-back-to-form').addEventListener('click', () => hideResultsPage());
     document.getElementById('btn-refine').addEventListener('click', () => hideResultsPage());
+    elDraftBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      generateDraftFromSelection();
+    });
     document.addEventListener('click', (e) => {
       if (e.target && e.target.id === 'results-refine-link') {
         e.preventDefault();
