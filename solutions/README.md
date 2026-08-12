@@ -1,6 +1,10 @@
 # solutions/
 
-This folder holds sample and prototype `.docx` work order documents used for testing the Work Order Check feature.
+This folder holds sample and prototype Word documents for the Work Order Check feature and the Proposal Generator.
+
+## Proposal template
+
+`proposal_template.dotx` is the source template for Proposal Generator Word exports. When a user exports a draft, the browser replaces the template body with the generated content and downloads a `.docx` file. Keep the template in this folder and serve the app through HTTP so the export can fetch it.
 
 ## Expected Document Format
 
@@ -20,7 +24,7 @@ Documents should be standard Word (`.docx`) files containing the following secti
 ## Formatting Guidelines
 
 | Requirement | Expected Value |
-|---|---|
+| --- | --- |
 | Body font size | 10–12 pt |
 | Line spacing | 1.0–1.5 |
 | Sentences | No sentence longer than 60 words |

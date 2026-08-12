@@ -1,4 +1,4 @@
-# PRD: Bench Press — Proposal Similarity Matcher
+# PRD: Propel - Proposal Generator
 
 ## Problem
 
@@ -9,40 +9,46 @@ When responding to new client RFPs or problem statements, Slalom consultants and
 - **Slalom consultants / proposal writers** — looking for similar past proposals to inform new responses
 - **Sales / BD team** — quickly identifying relevant past work to reference in client conversations
 
-## MVP Scope
+## Current Scope
 
-A simple web interface that accepts a client problem statement and supplemental context, then returns a ranked list of similar proposals from a local corpus.
+A browser-based five-step wizard that captures client context, returns a ranked list of similar proposals from a local corpus, and produces a structured first draft from three selected references.
 
 ### Input
 
-- **Problem Statement** — freeform text describing the client's core challenge or ask
-- **Supplemental Info** — freeform text with any additional context (industry details, constraints, technologies mentioned, timeline, etc.)
+- **Client Challenge** — required problem statement describing the client's core challenge or ask
+- **Match Context** — service areas, deliverables, business outcomes, and industry
+- **Refinement** — engagement phase, sponsor, technologies, timeline, and constraints
+- **Supporting Documents** — optional files, including office documents, PDFs, spreadsheets, presentations, and text files; readable text is incorporated into the search query
+- **Review** — an editable summary before the search begins
+
+The interface shows a live proposal-match quality score so users can see when more context is recommended.
 
 ### Output
 
 - Ranked list of similar proposals, each showing:
   - **Similarity score** (0–100)
   - **Proposal title / identifier**
-  - **Relevant excerpts** — the passages from the proposal that matched most strongly
+  - **AI match summary**, relevant excerpts, and reasons for the match
+  - **Differences to review** for industry, scope, or timeline
   - **Source reference** — which proposal document the match came from
+- Draft action available when exactly three proposals are selected
+- Structured proposal draft that can be exported as a `.docx` file using the bundled Word template
 
 ## Interface
 
 - Standalone HTML/CSS/JS — no frameworks, no build step
-- Single page with:
-  - Text area for problem statement
-  - Text area for supplemental info
-  - "Find Similar" button
-  - Results area showing ranked matches
+- Proposal Generator with a responsive, five-step form and review step
+- Results page with ranked matches and three-proposal selection
+- Client-side Word export based on `solutions/proposal_template.dotx`
 
 ## Matching Logic
 
-- **Keyword/tag-based matching**, extracted at query time (no pre-tagging of proposals)
+- **Semantic similarity with contextual scoring**
 - Process:
-  1. Extract meaningful keywords/phrases from user input (problem statement + supplemental info)
-  2. For each proposal in the corpus, extract keywords/phrases from its content
-  3. Score similarity based on keyword overlap, weighted by term relevance (e.g., TF-IDF style scoring)
-  4. Rank proposals by score, return top results with excerpts highlighting matched terms
+  1. Embed the collected form values and readable supporting-document text using the same browser-hosted model as the corpus.
+  2. Calculate cosine similarity against each precomputed proposal embedding.
+  3. Combine the semantic result with contextual input matching.
+  4. Rank qualifying results and return up to ten matches with relevant excerpts.
 
 ## Data Model
 
@@ -78,12 +84,11 @@ Proposal {
 
 - **Success weighting** — once proposals have win/loss outcomes attached, bias ranking toward successful proposals
 - **Feedback loop** — let users mark which results were actually useful, refine scoring
-- **Semantic similarity** — upgrade from keyword matching to embeddings/vector search for better conceptual matching
 - **Ingestion pipeline** — automated extraction from PDFs/DOCX with OCR support
 - **Tagging layer** — derive and persist tags (industry, technology, problem type) for faster retrieval
 
 ## Technical Notes
 
-- MVP runs entirely client-side (proposals loaded as JSON)
-- No external dependencies beyond vanilla JS
-- Proposal corpus will be provided as sample data in a subsequent step
+- Runs entirely client-side, with proposals loaded from local JavaScript and embeddings loaded from `embeddings.json`
+- Uses `Xenova/all-MiniLM-L6-v2` in the browser for semantic matching
+- Requires a local HTTP server because the browser fetches the embeddings and Word template
