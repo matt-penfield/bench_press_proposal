@@ -1199,8 +1199,8 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #5e6ad2 0%, #8b5cf6 100%);
-      color: #fff;
+      background: var(--creator-color, #e5e7eb);
+      color: #344054;
       font-size: 9px;
       font-weight: 700;
       line-height: 1;
@@ -2970,10 +2970,28 @@
       'Physical Stores': 'Robin Davis'
     };
 
+    const CREATOR_COLORS = {
+      'Jordan Lee': '#ccfbf1',
+      'Taylor Nguyen': '#fef3c7',
+      'Morgan Patel': '#dbeafe',
+      'Alex Kim': '#ffe4e6',
+      'Sam Rivera': '#ede9fe',
+      'Casey Morgan': '#e0f2fe',
+      'Jamie Chen': '#dcfce7',
+      'Riley Brooks': '#ffedd5',
+      'Avery Wilson': '#cffafe',
+      'Cameron Diaz': '#fae8ff',
+      'Drew Mitchell': '#e2e8f0',
+      'Quinn Harper': '#fef9c3',
+      'Parker Adams': '#fce7f3',
+      'Robin Davis': '#e0e7ff',
+      'Proposal Team': '#f3f4f6'
+    };
+
     function proposalCreator(proposal) {
       const name = PROPOSAL_CREATORS[proposal.bu] || 'Proposal Team';
       const initials = name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
-      return { name, initials };
+      return { name, initials, color: CREATOR_COLORS[name] };
     }
 
     function buildBusinessMatchDetails(result, state, summaryText) {
@@ -3460,7 +3478,7 @@
                   <div class="result-title">${esc(r.title)}</div>
                 </div>
                 <div class="result-source"><span class="result-source-label">View Proposal:</span><a href="solutions/Test%20PDF.pdf" class="proposal-preview-link" aria-label="Preview prototype proposal file ${esc(r.source)}">${esc(r.source)}</a></div>
-                <div class="result-creator"><span class="result-creator-label">Created by:</span><span class="result-creator-avatar" aria-hidden="true">${esc(creator.initials)}</span><span class="result-creator-name">${esc(creator.name)}</span></div>
+                <div class="result-creator"><span class="result-creator-label">Created by:</span><span class="result-creator-avatar" style="--creator-color: ${creator.color}" aria-hidden="true">${esc(creator.initials)}</span><span class="result-creator-name">${esc(creator.name)}</span></div>
               </div>
               <div class="score-group">
                 <div class="score-row"><span class="impact-badge ${scoreClass(display)}">${confidenceLabel(display)}</span></div>
