@@ -1177,13 +1177,38 @@
       text-underline-offset: 2px;
     }
 
-    .score-badge {
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 14px;
+    .result-creator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 7px;
+      margin-left: 34px;
+      color: #667085;
+      font-size: 12px;
+    }
+
+    .result-creator-label {
+      color: #98a0b2;
+      font-weight: 600;
+    }
+
+    .result-creator-avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5e6ad2 0%, #8b5cf6 100%);
+      color: #fff;
+      font-size: 9px;
       font-weight: 700;
-      text-align: center;
-      min-width: 104px;
+      line-height: 1;
+    }
+
+    .result-creator-name {
+      color: #4b5563;
+      font-weight: 500;
     }
 
     .score-group {
@@ -1197,34 +1222,6 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .score-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #6b7280;
-      white-space: nowrap;
-    }
-
-    .match-confidence {
-      font-size: 12px;
-      font-weight: 700;
-      color: #4b5563;
-    }
-
-    .score-high {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .score-medium {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .score-low {
-      background: #fee2e2;
-      color: #991b1b;
     }
 
     .result-summary-box {
@@ -1344,6 +1341,44 @@
       font-size: 14px;
       line-height: 1.45;
       color: #4b5563;
+    }
+
+    .result-recommendation {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #e3e7f6;
+    }
+
+    .result-recommendation-icon {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #e0e7ff;
+      color: #4338ca;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .result-recommendation-title {
+      margin-bottom: 2px;
+      color: #384152;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .result-recommendation-text {
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .ai-match-summary {
@@ -2796,9 +2831,9 @@
     }
 
     function scoreClass(s) {
-      if (s >= 90) return 'score-high';
-      if (s >= 60) return 'score-medium';
-      return 'score-low';
+      if (s >= 90) return 'high';
+      if (s >= 75) return 'medium';
+      return 'low';
     }
 
     function applyPrototypeDisplayScores(results) {
@@ -2918,6 +2953,29 @@
       return 'Weak Match';
     }
 
+    const PROPOSAL_CREATORS = {
+      Advertising: 'Jordan Lee',
+      Retail: 'Taylor Nguyen',
+      'Web Services': 'Morgan Patel',
+      Devices: 'Alex Kim',
+      Entertainment: 'Sam Rivera',
+      'Financial Business Services': 'Casey Morgan',
+      Health: 'Jamie Chen',
+      'Last Mile': 'Riley Brooks',
+      Operations: 'Avery Wilson',
+      Robotics: 'Cameron Diaz',
+      Shared: 'Drew Mitchell',
+      Studios: 'Quinn Harper',
+      Business: 'Parker Adams',
+      'Physical Stores': 'Robin Davis'
+    };
+
+    function proposalCreator(proposal) {
+      const name = PROPOSAL_CREATORS[proposal.bu] || 'Proposal Team';
+      const initials = name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+      return { name, initials };
+    }
+
     function buildBusinessMatchDetails(result, state, summaryText) {
       const proposalText = [result.title, result.source, result.bu, result.content].filter(Boolean).join(' ').toLowerCase();
       const proposalTokens = new Set(tokenize(proposalText));
@@ -2970,13 +3028,33 @@
         });
       }
 
+      const reusableApproach = matchedDeliverables.length
+        ? `${matchedDeliverables.slice(0, 2).join(' and ')} approach`
+        : `${result.bu || 'engagement'} delivery approach`;
+      const recommendationUpdates = [];
+      if (industryInput && !industryMatched) {
+        recommendationUpdates.push(`reframe the industry language and examples for ${industryInput}`);
+      }
+      const missingDeliverables = state.deliverables.filter(item => !matchedDeliverables.includes(item));
+      if (missingDeliverables.length) {
+        recommendationUpdates.push(`add detail for ${missingDeliverables.slice(0, 2).join(' and ')}`);
+      }
+      if (state.timeline && timelineInProposal && phraseCoverage(state.timeline, proposalTokens) < 0.35) {
+        recommendationUpdates.push(`adjust the delivery plan for the ${state.timeline} timeline`);
+      }
+      if (!recommendationUpdates.length) {
+        recommendationUpdates.push('tailor terminology, client examples, and success metrics to the opportunity');
+      }
+      const recommendation = `Use this proposal for its ${reusableApproach}, then ${recommendationUpdates.join('; ')}.`;
+
       return {
         industryText,
         outcomesText,
         deliverablesText,
         problemDetail,
         aiSummary,
-        differences
+        differences,
+        recommendation
       };
     }
 
@@ -3368,6 +3446,7 @@
           : splitSentences(r.content || '')[0] || '';
         const details = buildBusinessMatchDetails(r, formState, summaryText);
         const display = r.displayScore ?? r.score;
+        const creator = proposalCreator(r);
         const differencesHtml = details.differences.length
           ? details.differences.map(d => `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">${esc(d.title)}</div><div class="result-match-text">${esc(d.message)}</div></div></div>`).join('')
           : `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">No Major Differences Identified</div><div class="result-match-text">No significant timeline, industry, or scope conflicts were identified in this match.</div></div></div>`;
@@ -3381,13 +3460,15 @@
                   <div class="result-title">${esc(r.title)}</div>
                 </div>
                 <div class="result-source"><span class="result-source-label">View Proposal:</span><a href="solutions/Test%20PDF.pdf" class="proposal-preview-link" aria-label="Preview prototype proposal file ${esc(r.source)}">${esc(r.source)}</a></div>
+                <div class="result-creator"><span class="result-creator-label">Created by:</span><span class="result-creator-avatar" aria-hidden="true">${esc(creator.initials)}</span><span class="result-creator-name">${esc(creator.name)}</span></div>
               </div>
               <div class="score-group">
-                <div class="score-row"><div class="score-badge ${scoreClass(display)}">${confidenceLabel(display)}</div></div>
+                <div class="score-row"><span class="impact-badge ${scoreClass(display)}">${confidenceLabel(display)}</span></div>
               </div>
             </div>
             <div class="result-body">
               <div class="result-summary-box"><div class="result-section-heading">AI Match Summary</div><div class="result-summary-text">${esc(details.aiSummary)}</div></div>
+              <div class="result-summary-box"><div class="result-section-heading">Use This Proposal For</div><div class="result-summary-text">• Value proposition language<br>• Voice commerce experience strategy<br>• Journey map and strategy document structure<br>• Retail customer experience framing</div></div>
               <div class="result-match-box">
                 <div class="result-match-title">Why This Match Was Selected</div>
                 <div class="result-match-columns">
@@ -3402,6 +3483,10 @@
                     <div class="result-match-col-title">Differences to Review</div>
                     ${differencesHtml}
                   </div>
+                </div>
+                <div class="result-recommendation">
+                  <span class="result-recommendation-icon" aria-hidden="true">i</span>
+                  <div><div class="result-recommendation-title">Recommendation</div><div class="result-recommendation-text">${esc(details.recommendation)}</div></div>
                 </div>
               </div>
             </div>
