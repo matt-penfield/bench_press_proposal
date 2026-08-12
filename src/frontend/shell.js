@@ -42,6 +42,32 @@ const SHELL_CSS = `
     text-decoration: none;
   }
 
+  .header-left { display: flex; align-items: center; gap: 14px; }
+
+  .sidebar-toggle {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .sidebar-toggle:hover,
+  .sidebar-toggle:focus-visible {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .sidebar-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
   .wordmark-icon {
     width: 32px;
     height: 32px;
@@ -62,6 +88,8 @@ const SHELL_CSS = `
     letter-spacing: -0.3px;
   }
 
+  .wordmark-text .wordmark-subtitle { font-weight: 300; color: #000000; }
+
   .wordmark-text span { color: var(--primary); }
 
   .header-right { display: flex; align-items: center; gap: 16px; }
@@ -71,7 +99,7 @@ const SHELL_CSS = `
     align-items: center;
     gap: 8px;
     padding: 6px 12px;
-    border: 1px solid var(--border);
+    border: 0;
     border-radius: 100px;
     background: var(--surface);
     cursor: pointer;
@@ -79,7 +107,7 @@ const SHELL_CSS = `
     transition: border-color 0.15s;
   }
 
-  .profile-btn:hover { border-color: var(--primary); }
+  .profile-btn:hover { color: var(--primary); }
 
   .profile-avatar {
     width: 26px;
@@ -108,6 +136,7 @@ const SHELL_CSS = `
     margin-left: var(--sidebar-w);
     flex: 1;
     min-width: 0;
+    transition: margin-left 0.2s ease;
   }
 
   /* ── Sidebar ─────────────────────────────────────────── */
@@ -124,7 +153,14 @@ const SHELL_CSS = `
     padding: 20px 12px;
     overflow-y: auto;
     z-index: 90;
+    transition: transform 0.2s ease;
   }
+
+  .app-footer { transition: margin-left 0.2s ease; }
+
+  body.shell-sidebar-collapsed .sidebar { transform: translateX(-100%); }
+  body.shell-sidebar-collapsed .shell-content,
+  body.shell-sidebar-collapsed .app-footer { margin-left: 0; }
 
   .nav-section-label {
     font-size: 10px;
@@ -195,7 +231,7 @@ function buildSidebar(active, links) {
     ${item('proposal', links.proposal, 'Proposal Generator',
       '<path d="M2 4h12M2 8h8M2 12h5"/><circle cx="13" cy="11" r="2.5"/><path d="M15 13.5l1.5 1.5"/>')}
     ${item('wo-check', links.woCheck, 'Work Order Check',
-      '<path d="M2 4h12M2 7h8M2 10h6"/><path d="M11 9l1.5 1.5L15 8"/>')}`;
+        '<path d="M2 4h12M2 7h8M2 10h6"/><path d="M11 9l1.5 1.5L15 8"/>')}`;
 }
 
 export function mountShell({ active, links }) {
@@ -210,18 +246,26 @@ export function mountShell({ active, links }) {
   const header = document.createElement('header');
   header.className = 'app-header';
   header.innerHTML = `
-    <a href="${links.home}" class="wordmark">
-      <div class="wordmark-icon">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff"
-             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="6" height="6" rx="1.5"/>
-          <rect x="10" y="2" width="6" height="6" rx="1.5"/>
-          <rect x="2" y="10" width="6" height="6" rx="1.5"/>
-          <path d="M10 13h6M13 10v6"/>
+    <div class="header-left">
+      <button type="button" class="sidebar-toggle" aria-label="Close navigation" aria-expanded="true" title="Toggle navigation">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
-      </div>
-      <span class="wordmark-text">Account Team Helper</span>
-    </a>
+      </button>
+      <a href="${links.home}" class="wordmark">
+        <div class="wordmark-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="6" height="6" rx="1.5"/>
+            <rect x="10" y="2" width="6" height="6" rx="1.5"/>
+            <rect x="2" y="10" width="6" height="6" rx="1.5"/>
+            <path d="M10 13h6M13 10v6"/>
+          </svg>
+        </div>
+        <span class="wordmark-text">Propel <span class="wordmark-subtitle">- Your Account Team Helper</span></span>
+      </a>
+    </div>
     <div class="header-right">
       <a href="#" class="profile-btn">
         <div class="profile-avatar">PT</div>
@@ -238,11 +282,18 @@ export function mountShell({ active, links }) {
   main.parentNode.insertBefore(layout, main);
   layout.querySelector('.shell-content').appendChild(main);
 
+  const sidebarToggle = header.querySelector('.sidebar-toggle');
+  sidebarToggle.addEventListener('click', () => {
+    const collapsed = document.body.classList.toggle('shell-sidebar-collapsed');
+    sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+    sidebarToggle.setAttribute('aria-label', collapsed ? 'Open navigation' : 'Close navigation');
+  });
+
   // Append shared footer
   const footer = document.createElement('footer');
   footer.className = 'app-footer';
   footer.innerHTML = `
-    <p>Account Team Helper v0.2 &nbsp;|&nbsp; <a href="https://github.com/matt-penfield/bench_press_proposal" target="_blank" rel="noopener">GitHub</a> &nbsp;|&nbsp; &copy; 2026 Slalom</p>`;
+    <p>Propel - Your Account Team Helper v0.2 &nbsp;-&nbsp; <a href="https://github.com/matt-penfield/bench_press_proposal" target="_blank" rel="noopener">GitHub</a> &nbsp;-&nbsp; &copy; 2026 Slalom</p>`;
   document.body.appendChild(footer);
 
   document.body.classList.add('shell-mounted');
