@@ -965,6 +965,124 @@
       min-width: 0;
     }
 
+    .results-layout.document-open {
+      display: grid;
+      grid-template-columns: minmax(420px, 0.9fr) minmax(560px, 1.1fr);
+      gap: 24px;
+    }
+
+    main.document-preview-open {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    .results-layout.document-open .results-summary-sidebar {
+      display: none;
+    }
+
+    .proposal-preview-pane {
+      display: none;
+      min-width: 0;
+      position: sticky;
+      top: calc(var(--header-h) + 16px);
+      height: calc(100vh - var(--header-h) - 32px);
+      border: 1px solid #e1e5ee;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .results-layout.document-open .proposal-preview-pane {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .proposal-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 48px;
+      padding: 0 12px 0 16px;
+      border-bottom: 1px solid #e8eaed;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .proposal-preview-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #667085;
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .proposal-preview-close:hover {
+      background: #f2f4f7;
+      color: #1f2438;
+    }
+
+    .proposal-preview-frame {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      background: #f8f9fb;
+    }
+
+    .proposal-preview-document {
+      display: none;
+      flex: 1;
+      overflow: auto;
+      padding: 24px;
+      background: #f8f9fb;
+    }
+
+    .proposal-preview-pane.is-docx .proposal-preview-frame {
+      display: none;
+    }
+
+    .proposal-preview-pane.is-docx .proposal-preview-document {
+      display: block;
+    }
+
+    .proposal-preview-document .docx-wrapper {
+      margin: 0;
+      background: transparent;
+    }
+
+    .proposal-preview-document .docx {
+      margin: 0 auto;
+      box-shadow: 0 2px 10px rgba(31, 36, 56, 0.12);
+    }
+
+    .proposal-preview-message {
+      margin: 0;
+      color: #667085;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1000px) {
+      .results-layout.document-open {
+        grid-template-columns: 1fr;
+      }
+
+      .proposal-preview-pane {
+        position: static;
+        height: 70vh;
+      }
+    }
+
     /* Results Section (legacy, hidden) */
     .results-section {
       display: none;
@@ -2083,6 +2201,15 @@
           </div>
           <div id="results-list"></div>
         </div>
+        <aside class="proposal-preview-pane" id="proposal-preview-pane" aria-label="Proposal preview">
+          <div class="proposal-preview-header">
+            <span id="proposal-preview-title">Proposal preview</span>
+            <button type="button" class="proposal-preview-close" id="proposal-preview-close"
+              aria-label="Close proposal preview" title="Close proposal preview">&times;</button>
+          </div>
+          <iframe class="proposal-preview-frame" id="proposal-preview-frame" title="Prototype proposal PDF"></iframe>
+          <div class="proposal-preview-document" id="proposal-preview-document" aria-live="polite"></div>
+        </aside>
       </div>
     </div>
 
@@ -2099,6 +2226,7 @@
 
   <script src="proposals.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js"></script>
   <script type="module">
     import { mountShell } from './src/frontend/shell.js?v=9';
     mountShell({
@@ -2871,6 +2999,53 @@
     function hideResultsPage() {
       document.querySelector('.wizard-container').style.display = '';
       document.getElementById('results-page').classList.remove('show');
+      closeProposalPreview();
+    }
+
+    function closeProposalPreview() {
+      document.querySelector('.results-layout').classList.remove('document-open');
+      document.querySelector('main').classList.remove('document-preview-open');
+      document.getElementById('proposal-preview-pane').classList.remove('is-docx');
+      document.getElementById('proposal-preview-frame').removeAttribute('src');
+      document.getElementById('proposal-preview-document').replaceChildren();
+    }
+
+    async function openProposalPreview(sourceName) {
+      if (!document.body.classList.contains('shell-sidebar-collapsed')) {
+        document.body.classList.add('shell-sidebar-collapsed');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        sidebarToggle.setAttribute('aria-expanded', 'false');
+        sidebarToggle.setAttribute('aria-label', 'Open navigation');
+      }
+      document.getElementById('proposal-preview-title').textContent = sourceName;
+      document.querySelector('main').classList.add('document-preview-open');
+      const previewPane = document.getElementById('proposal-preview-pane');
+      const previewFrame = document.getElementById('proposal-preview-frame');
+      const previewDocument = document.getElementById('proposal-preview-document');
+      const isDocx = sourceName.toLowerCase().endsWith('.docx');
+
+      if (isDocx) {
+        previewPane.classList.add('is-docx');
+        previewFrame.removeAttribute('src');
+        previewDocument.innerHTML = '<p class="proposal-preview-message">Loading Word document...</p>';
+        try {
+          const response = await fetch('solutions/proposal_template.docx');
+          if (!response.ok) throw new Error('The prototype Word document could not be loaded.');
+          if (!window.docx) throw new Error('The Word document previewer could not be loaded.');
+          previewDocument.replaceChildren();
+          await window.docx.renderAsync(await response.arrayBuffer(), previewDocument, null, {
+            inWrapper: true,
+            ignoreLastRenderedPageBreak: false,
+          });
+        } catch (err) {
+          previewDocument.innerHTML = `<p class="proposal-preview-message">${esc(err.message)}</p>`;
+        }
+      } else {
+        previewPane.classList.remove('is-docx');
+        previewDocument.replaceChildren();
+        previewFrame.src = 'solutions/Test%20PDF.pdf';
+      }
+      document.querySelector('.results-layout').classList.add('document-open');
     }
 
     function listOrFallback(items, fallback = 'To be confirmed') {
@@ -3160,14 +3335,15 @@
         elDraftBtn.disabled = selected.size === 0;
       }
 
-      document.getElementById('results-title').textContent = 'Matching Proposals';
       if (results.length === 0) {
-        elResultsSubtitle.innerHTML = `0 matching proposals found. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.`;
+        document.getElementById('results-title').textContent = '0 matching proposals found';
+        elResultsSubtitle.innerHTML = `<a href="#" id="results-refine-link">Refine your search</a> for more targeted results.`;
         elResultsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;">No similar proposals found.</div>';
         return;
       }
 
-      elResultsSubtitle.innerHTML = `${results.length} matching proposal${results.length === 1 ? '' : 's'} found. Showing best matches first. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.`;
+      document.getElementById('results-title').textContent = `${results.length} matching proposal${results.length === 1 ? '' : 's'} found`;
+      elResultsSubtitle.innerHTML = `Showing best matches first. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.`;
       elSelectionNote.style.display = 'block';
 
       const elSelectionCounter = document.getElementById('selection-counter');
@@ -3194,7 +3370,7 @@
                   <input type="checkbox" class="result-select-toggle" data-id="${esc(r.id)}" aria-label="Select proposal ${esc(r.title)}" ${sel ? 'checked' : ''} />
                   <div class="result-title">${esc(r.title)}</div>
                 </div>
-                <div class="result-source"><span class="result-source-label">View Proposal:</span><a href="#" aria-label="View proposal file ${esc(r.source)}">${esc(r.source)}</a></div>
+                <div class="result-source"><span class="result-source-label">View Proposal:</span><a href="solutions/Test%20PDF.pdf" class="proposal-preview-link" aria-label="Preview prototype proposal file ${esc(r.source)}">${esc(r.source)}</a></div>
               </div>
               <div class="score-group">
                 <div class="score-row"><span class="score-label">Match Score:</span>
@@ -3230,6 +3406,13 @@
         });
       });
 
+      elResultsList.querySelectorAll('.proposal-preview-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          openProposalPreview(link.textContent);
+        });
+      });
+
       elDraftBtn.disabled = selected.size !== 3;
       elDraftBtn.style.display = selected.size === 3 ? 'inline-flex' : 'none';
     }
@@ -3251,6 +3434,7 @@
 
     document.getElementById('btn-back-to-form').addEventListener('click', () => hideResultsPage());
     document.getElementById('btn-refine').addEventListener('click', () => hideResultsPage());
+    document.getElementById('proposal-preview-close').addEventListener('click', closeProposalPreview);
     elDraftBtn.addEventListener('click', (e) => {
       e.preventDefault();
       generateDraftFromSelection();
