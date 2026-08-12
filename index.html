@@ -784,15 +784,35 @@
     }
 
     .results-selection-note {
+      position: sticky;
+      top: calc(var(--header-h) + 12px);
+      z-index: 10;
       margin-top: 14px;
       padding: 22px 24px;
       border: 1px solid #c9d2ff;
       border-radius: 14px;
       background: #f4f6ff;
+      box-shadow: 0 4px 14px rgba(31, 36, 56, 0.08);
       font-size: 18px;
       font-weight: 600;
       color: #1f2438;
       line-height: 1.35;
+    }
+
+    .results-selection-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .results-selection-copy {
+      min-width: 0;
+    }
+
+    .results-selection-action {
+      display: flex;
+      justify-content: flex-end;
     }
 
     .results-selection-counter {
@@ -805,6 +825,17 @@
     .results-selection-note strong {
       color: #5e6ad2;
       font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .results-selection-content {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .results-selection-action {
+        justify-content: flex-start;
+      }
     }
 
     .results-loading {
@@ -1683,7 +1714,8 @@
                 client trying to solve?</h3>
               <div class="form-field">
                 <div class="field-header">
-                  <label for="problem">Problem Statement <span style="color: #dc2626;">*</span></label>
+                  <label for="problem">Problem Statement <span
+                      style="color: #dc2626; font-size: 11px; font-weight: 300;">(required)</span></label>
                   <span class="impact-label">Proposal Match Impact: <span
                       class="impact-badge high">Highest</span></span>
                 </div>
@@ -2001,8 +2033,8 @@
       <div class="wizard-quality">
         <div class="quality-sidebar">
           <div class="quality-header">Proposal Match Quality</div>
-          <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">How much each field improves the accuracy of
-            matching similar past proposals.</div>
+          <div style="font-size: 11px; color: #6b7280; line-height: 1.4;">Each piece of information you provide,
+            improves the accuracy of matching similar past proposals.</div>
           <div style="border: none; border-radius: 8px; padding: 16px; margin-top: 12px; background: #fff;">
             <div class="quality-score-display">
               <div class="quality-score-number" id="quality-score">0</div>
@@ -2037,10 +2069,19 @@
         <div class="results-main">
           <h2 class="results-main-title" id="results-title">Matching Proposals</h2>
           <p class="results-main-subtitle" id="results-subtitle"></p>
+          <div class="results-selection-note" id="selection-note" style="display: none;">
+            <div class="results-selection-content">
+              <div class="results-selection-copy">
+                <div>Select up to <strong>3</strong> proposals</div>
+                <div class="results-selection-counter" id="selection-counter"></div>
+              </div>
+              <div class="results-selection-action">
+                <button id="draft-btn" style="display: none;" class="btn-search" disabled>Draft Proposal from
+                  Selected</button>
+              </div>
+            </div>
+          </div>
           <div id="results-list"></div>
-          <button id="draft-btn" style="display: none; margin-top:16px; float:right;" class="btn-search">Draft Proposal
-            from
-            Selected</button>
         </div>
       </div>
     </div>
@@ -2090,7 +2131,6 @@
       constraints: ''
     };
 
-    // ── DOM refs ─────────────────────────────────────────────────────
     const form = document.getElementById('wizard-form');
     const stepIndicator = document.getElementById('step-indicator');
     const btnPrev = document.getElementById('btn-prev');
@@ -2248,6 +2288,7 @@
       const hasProblemText = !!formState.problem.trim();
       document.getElementById('btn-find').disabled = !hasProblemText;
       document.getElementById('btn-search').disabled = !hasProblemText;
+      btnNext.disabled = !hasProblemText;
       updateQualityDisplay();
     }
 
@@ -2972,52 +3013,69 @@
       return `<w:p>${properties}${wordRun(text, options.bold, options.italic)}</w:p>`;
     }
 
-    function draftToWordXml() {
+    function draftToWordBodyXml() {
       const draft = document.getElementById('draft-output');
       const body = [];
 
       draft.querySelectorAll('.draft-doc > *').forEach(node => {
         if (node.matches('.draft-meta')) {
-          body.push(wordParagraph(node.textContent.trim(), '', { italic: true }));
+          body.push(wordParagraph(node.textContent.trim(), 'Normal', { italic: true }));
         } else if (node.matches('h3')) {
-          body.push(wordParagraph(node.textContent.trim(), 'Heading2'));
+          body.push(wordParagraph(node.textContent.trim(), 'Heading1'));
         } else if (node.matches('p')) {
-          body.push(wordParagraph(node.textContent.trim()));
+          body.push(wordParagraph(node.textContent.trim(), 'Normal'));
         } else if (node.matches('ul, ol')) {
           node.querySelectorAll(':scope > li').forEach(item => {
-            body.push(wordParagraph(item.textContent.trim(), 'ListBullet'));
+            body.push(wordParagraph(`• ${item.textContent.trim()}`, 'ListParagraph'));
           });
         } else if (node.matches('table')) {
           const rows = Array.from(node.querySelectorAll('tr')).map(row => {
-            const cells = Array.from(row.children).map(cell => `<w:tc><w:tcPr><w:tcW w:w="4680" w:type="dxa"/></w:tcPr>${wordParagraph(cell.textContent.trim(), '', { bold: cell.tagName === 'TH' })}</w:tc>`).join('');
+            const cells = Array.from(row.children).map(cell => `<w:tc><w:tcPr><w:tcW w:w="4680" w:type="dxa"/></w:tcPr>${wordParagraph(cell.textContent.trim(), 'Normal', { bold: cell.tagName === 'TH' })}</w:tc>`).join('');
             return `<w:tr>${cells}</w:tr>`;
           }).join('');
           body.push(`<w:tbl><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4"/><w:left w:val="single" w:sz="4"/><w:bottom w:val="single" w:sz="4"/><w:right w:val="single" w:sz="4"/><w:insideH w:val="single" w:sz="4"/><w:insideV w:val="single" w:sz="4"/></w:tblBorders></w:tblPr>${rows}</w:tbl>`);
         }
       });
 
-      return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body.join('')}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>`;
+      return body.join('');
     }
 
     async function exportDraftToWord() {
       const draft = document.getElementById('draft-output');
       if (!draft.querySelector('.draft-doc')) return;
 
-      const zip = new JSZip();
-      zip.file('[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/></Types>`);
-      zip.folder('_rels').file('.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
-      zip.folder('word').file('document.xml', draftToWordXml());
-      zip.folder('word').file('styles.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Aptos" w:hAnsi="Aptos"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="9"/><w:qFormat/><w:pPr><w:keepNext/><w:keepLines/></w:pPr><w:rPr><w:b/><w:sz w:val="28"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="ListBullet"><w:name w:val="List Bullet"/><w:basedOn w:val="Normal"/><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr></w:pPr></w:style></w:styles>`);
-      zip.folder('word').file('numbering.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:abstractNum w:abstractNumId="0"><w:multiLevelType w:val="hybridMultilevel"/><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/><w:lvlJc w:val="left"/><w:pPr><w:ind w:left="720" w:hanging="360"/></w:pPr><w:rPr><w:rFonts w:ascii="Symbol" w:hAnsi="Symbol"/></w:rPr></w:lvl></w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>`);
-      zip.folder('word').folder('_rels').file('document.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/></Relationships>`);
+      const exportButton = document.getElementById('export-btn');
+      exportButton.disabled = true;
+      exportButton.textContent = 'Preparing Word document…';
 
-      const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `bench-press-proposal-${new Date().toISOString().slice(0, 10)}.docx`;
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      try {
+        const templateResponse = await fetch('solutions/proposal_template.dotx');
+        if (!templateResponse.ok) throw new Error('Proposal template could not be loaded.');
+        const zip = await JSZip.loadAsync(await templateResponse.arrayBuffer());
+        const templateDocument = await zip.file('word/document.xml').async('string');
+        const sectionProperties = templateDocument.match(/<w:sectPr[\s\S]*?<\/w:sectPr>/)?.[0] || '';
+        const documentXml = templateDocument.replace(/<w:body>[\s\S]*?<\/w:body>/, `<w:body>${draftToWordBodyXml()}${sectionProperties}</w:body>`);
+        zip.file('word/document.xml', documentXml);
+        const contentTypes = await zip.file('[Content_Types].xml').async('string');
+        zip.file('[Content_Types].xml', contentTypes.replace(
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml'
+        ));
+
+        const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `bench-press-proposal-${new Date().toISOString().slice(0, 10)}.docx`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (err) {
+        console.error(err);
+        alert(`Word export failed: ${err.message}`);
+      } finally {
+        exportButton.disabled = false;
+        exportButton.textContent = 'Export to Word (.docx)';
+      }
     }
 
     async function search() {
@@ -3089,6 +3147,8 @@
     function renderResults(results) {
       const elResultsList = document.getElementById('results-list');
       const elResultsSubtitle = document.getElementById('results-subtitle');
+      const elSelectionNote = document.getElementById('selection-note');
+      elSelectionNote.style.display = 'none';
 
       function toggleSelection(id) {
         if (selected.has(id)) {
@@ -3107,7 +3167,8 @@
         return;
       }
 
-      elResultsSubtitle.innerHTML = `${results.length} matching proposal${results.length === 1 ? '' : 's'} found. Showing best matches first. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.<div class="results-selection-note">Select up to <strong>3</strong> proposals to use as reference for your draft.<div class="results-selection-counter" id="selection-counter"></div></div>`;
+      elResultsSubtitle.innerHTML = `${results.length} matching proposal${results.length === 1 ? '' : 's'} found. Showing best matches first. <a href="#" id="results-refine-link">Refine your search</a> for more targeted results.`;
+      elSelectionNote.style.display = 'block';
 
       const elSelectionCounter = document.getElementById('selection-counter');
       if (elSelectionCounter) {
@@ -3169,8 +3230,8 @@
         });
       });
 
-      elDraftBtn.disabled = selected.size === 0;
-      elDraftBtn.style.display = 'block';
+      elDraftBtn.disabled = selected.size !== 3;
+      elDraftBtn.style.display = selected.size === 3 ? 'inline-flex' : 'none';
     }
 
     // Search button handler
