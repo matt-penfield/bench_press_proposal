@@ -1183,7 +1183,7 @@
       font-size: 14px;
       font-weight: 700;
       text-align: center;
-      min-width: 50px;
+      min-width: 104px;
     }
 
     .score-group {
@@ -2796,8 +2796,8 @@
     }
 
     function scoreClass(s) {
-      if (s >= 55) return 'score-high';
-      if (s >= 35) return 'score-medium';
+      if (s >= 90) return 'score-high';
+      if (s >= 60) return 'score-medium';
       return 'score-low';
     }
 
@@ -2912,9 +2912,10 @@
     }
 
     function confidenceLabel(score) {
-      if (score >= 85) return 'Strong Match';
-      if (score >= 70) return 'Good Match';
-      return 'Moderate Match';
+      if (score >= 90) return 'Strong Match';
+      if (score >= 75) return 'Good Match';
+      if (score >= 60) return 'Partial Match';
+      return 'Weak Match';
     }
 
     function buildBusinessMatchDetails(result, state, summaryText) {
@@ -3382,8 +3383,7 @@
                 <div class="result-source"><span class="result-source-label">View Proposal:</span><a href="solutions/Test%20PDF.pdf" class="proposal-preview-link" aria-label="Preview prototype proposal file ${esc(r.source)}">${esc(r.source)}</a></div>
               </div>
               <div class="score-group">
-                <div class="score-row"><span class="score-label">Match Score:</span>
-                <div class="score-badge ${scoreClass(display)}">${display}</div></div>
+                <div class="score-row"><div class="score-badge ${scoreClass(display)}">${confidenceLabel(display)}</div></div>
               </div>
             </div>
             <div class="result-body">
