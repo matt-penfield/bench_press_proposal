@@ -2951,13 +2951,22 @@
 
       const differences = [];
       if (state.timeline && timelineInProposal && phraseCoverage(state.timeline, proposalTokens) < 0.35) {
-        differences.push(`Timeline differences: opportunity indicates ${state.timeline}, while this proposal references ${timelineInProposal}.`);
+        differences.push({
+          title: 'Timeline Differences',
+          message: `Opportunity indicates ${state.timeline}, while this proposal references ${timelineInProposal}.`
+        });
       }
       if (industryInput && !industryMatched) {
-        differences.push(`Industry differences: opportunity targets ${industryInput}, while this proposal aligns more with ${result.bu || 'a different business area'}.`);
+        differences.push({
+          title: 'Industry Differences',
+          message: `Opportunity targets ${industryInput}, while this proposal aligns more with ${result.bu || 'a different business area'}.`
+        });
       }
       if (state.deliverables.length > 0 && matchedDeliverables.length < Math.max(1, Math.ceil(state.deliverables.length / 2))) {
-        differences.push('Scope differences: some requested deliverables are not explicitly called out in this proposal and may require adaptation.');
+        differences.push({
+          title: 'Scope Differences',
+          message: 'Some requested deliverables are not explicitly called out in this proposal and may require adaptation.'
+        });
       }
 
       return {
@@ -3359,7 +3368,7 @@
         const details = buildBusinessMatchDetails(r, formState, summaryText);
         const display = r.displayScore ?? r.score;
         const differencesHtml = details.differences.length
-          ? details.differences.map(d => `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">Difference to Review</div><div class="result-match-text">${esc(d)}</div></div></div>`).join('')
+          ? details.differences.map(d => `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">${esc(d.title)}</div><div class="result-match-text">${esc(d.message)}</div></div></div>`).join('')
           : `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">No Major Differences Identified</div><div class="result-match-text">No significant timeline, industry, or scope conflicts were identified in this match.</div></div></div>`;
 
         return `
@@ -3390,7 +3399,7 @@
                     <div class="result-match-item"><span class="result-match-check">✓</span><div><div class="result-match-item-title">Similar Deliverables</div><div class="result-match-text">${esc(details.deliverablesText)}</div></div></div>
                   </div>
                   <div class="result-match-col">
-                    <div class="result-match-col-title">Differences</div>
+                    <div class="result-match-col-title">Differences to Review</div>
                     ${differencesHtml}
                   </div>
                 </div>
