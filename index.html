@@ -48,8 +48,8 @@
 
     /* Wizard Container */
     .wizard-container {
-      background: #fff;
-      border: 1px solid #e8eaed;
+      background: #f5f3ff;
+      border: 1px solid #e8e5f5;
       border-radius: 12px;
       padding: 32px;
       display: flex;
@@ -70,6 +70,19 @@
     .wizard-content {
       flex: 1;
       min-width: 0;
+    }
+
+    .wizard-content .form-group {
+      gap: 0;
+    }
+
+    .wizard-content .form-group > h3 {
+      margin-bottom: 16px !important;
+    }
+
+    .wizard-content .form-step[data-step="2"] .form-group,
+    .wizard-content .form-step[data-step="3"] .form-group {
+      gap: 16px;
     }
 
     .wizard-quality {
@@ -163,8 +176,8 @@
 
     /* Match Quality Score Sidebar */
     .quality-sidebar {
-      background: #eff0fc;
-      border: none;
+      background: #fff;
+      border: 1px solid #e8eaed;
       border-radius: 8px;
       padding: 16px;
       display: flex;
@@ -303,9 +316,9 @@
     }
 
     .step-screen-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #6b7280;
+      font-size: 11px;
+      font-weight: 400;
+      color: #9ca3af;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       margin-bottom: 0;
@@ -371,6 +384,24 @@
       transition: border-color 0.15s;
     }
 
+    .character-count-field {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .character-count-field textarea {
+      padding-bottom: 12px;
+    }
+
+    .character-count {
+      align-self: flex-end;
+      margin-top: 4px;
+      color: #d1d5db;
+      font-size: 10px;
+      line-height: 1;
+    }
+
     textarea:focus {
       outline: none;
       border-color: #5e6ad2;
@@ -403,6 +434,7 @@
 
     /* Multi-select Tags */
     .multi-select-container {
+      position: relative;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -422,6 +454,10 @@
       font-size: 15px;
       outline: none;
       padding: 8px 0;
+    }
+
+    .multi-select-count {
+      margin-right: 10px;
     }
 
     .multi-select-tag {
@@ -1903,10 +1939,10 @@
   <main>
     <!-- Privacy & Data Handling Notice -->
     <div class="privacy-banner"
-      style="background: #ecfdf5; padding: 10px 16px; box-sizing: border-box; border-top: 1px solid #d1fae5; margin-top: auto; text-align: center;">
+      style="background: transparent; padding: 10px 16px; box-sizing: border-box; border-top: 0; margin-top: auto; text-align: center;">
       <div style="display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap;">
-        <strong style="color: #065f46; font-size: 11px;">🔒 Privacy First:</strong>
-        <span style="color: #047857; font-size: 11px;">All data processing happens locally on your device—never sent to
+        <strong style="color: #6b7280; font-size: 11px;">🔒 Privacy First:</strong>
+        <span style="color: #6b7280; font-size: 11px;">All data processing happens locally on your device—never sent to
           any server. Files are cleared when you close this page.</span>
       </div>
     </div>
@@ -1979,9 +2015,12 @@
                   <span class="impact-label">Proposal Match Impact: <span
                       class="impact-badge high">Highest</span></span>
                 </div>
-                <textarea id="problem" name="problem" rows="6"
-                  placeholder="Describe the client's core challenge, business issue, or strategic goal…"
-                  required></textarea>
+                <div class="character-count-field">
+                  <textarea id="problem" name="problem" rows="6"
+                    placeholder="Describe the client's core challenge, business issue, or strategic goal…"
+                    maxlength="2000" required></textarea>
+                  <span class="character-count" data-count-for="problem">0 / 2000</span>
+                </div>
                 <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;" id="problem-help">Example: A mid-sized
                   retailer is struggling with declining foot traffic due to poor in-store customer experience and needs
                   to modernize their engagement approach.</div>
@@ -2002,9 +2041,12 @@
                   <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
-                  <div class="multi-select-container" id="service-area-container">
-                    <input type="text" class="multi-select-input" placeholder="Select service areas…"
-                      id="service-area-input">
+                  <div class="character-count-field">
+                    <div class="multi-select-container" id="service-area-container">
+                      <input type="text" class="multi-select-input" placeholder="Select service areas…"
+                        id="service-area-input" maxlength="80">
+                    </div>
+                    <span class="character-count multi-select-count" data-count-for="service-area-input">0 / 80</span>
                   </div>
                   <div class="multi-select-dropdown" id="service-area-dropdown">
                     <div class="multi-select-option">Strategy</div>
@@ -2023,9 +2065,12 @@
                   <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
-                  <div class="multi-select-container" id="deliverables-container">
-                    <input type="text" class="multi-select-input" placeholder="Select deliverables…"
-                      id="deliverables-input">
+                  <div class="character-count-field">
+                    <div class="multi-select-container" id="deliverables-container">
+                      <input type="text" class="multi-select-input" placeholder="Select deliverables…"
+                        id="deliverables-input" maxlength="80">
+                    </div>
+                    <span class="character-count multi-select-count" data-count-for="deliverables-input">0 / 80</span>
                   </div>
                   <div class="multi-select-dropdown" id="deliverables-dropdown">
                     <div class="multi-select-option">Roadmap</div>
@@ -2045,9 +2090,12 @@
                   <span class="impact-label">Proposal Match Impact: <span class="impact-badge high">High</span></span>
                 </div>
                 <div style="position: relative;">
-                  <div class="multi-select-container" id="outcomes-container">
-                    <input type="text" class="multi-select-input" placeholder="Select business outcomes…"
-                      id="outcomes-input">
+                  <div class="character-count-field">
+                    <div class="multi-select-container" id="outcomes-container">
+                      <input type="text" class="multi-select-input" placeholder="Select business outcomes…"
+                        id="outcomes-input" maxlength="80">
+                    </div>
+                    <span class="character-count multi-select-count" data-count-for="outcomes-input">0 / 80</span>
                   </div>
                   <div class="multi-select-dropdown" id="outcomes-dropdown">
                     <div class="multi-select-option">Revenue Growth</div>
@@ -2114,7 +2162,10 @@
                   <span class="impact-label">Proposal Match Impact: <span
                       class="impact-badge medium">Medium</span></span>
                 </div>
-                <input type="text" id="sponsor" name="sponsor" placeholder="e.g., VP of Product, CTO, CFO">
+                <div class="character-count-field">
+                  <input type="text" id="sponsor" name="sponsor" maxlength="120" placeholder="e.g., VP of Product, CTO, CFO">
+                  <span class="character-count" data-count-for="sponsor">0 / 120</span>
+                </div>
               </div>
 
               <div class="form-field">
@@ -2124,9 +2175,12 @@
                       class="impact-badge medium">Medium</span></span>
                 </div>
                 <div style="position: relative;">
-                  <div class="multi-select-container" id="technologies-container">
-                    <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…"
-                      id="technologies-input">
+                  <div class="character-count-field">
+                    <div class="multi-select-container" id="technologies-container">
+                      <input type="text" class="multi-select-input" placeholder="Type and press Enter to add…"
+                        id="technologies-input" maxlength="80">
+                    </div>
+                    <span class="character-count multi-select-count" data-count-for="technologies-input">0 / 80</span>
                   </div>
                   <div class="multi-select-dropdown" id="technologies-dropdown"></div>
                 </div>
@@ -2152,8 +2206,11 @@
                   <label for="constraints">Constraints & Considerations</label>
                   <span class="impact-label">Proposal Match Impact: <span class="impact-badge low">Lower</span></span>
                 </div>
-                <textarea id="constraints" name="constraints" rows="3"
-                  placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
+                <div class="character-count-field">
+                  <textarea id="constraints" name="constraints" rows="3"
+                    maxlength="1000" placeholder="Budget limitations, regulatory requirements, timeline constraints, etc."></textarea>
+                  <span class="character-count" data-count-for="constraints">0 / 1000</span>
+                </div>
               </div>
 
             </div>
@@ -2390,6 +2447,12 @@
     let activeRationaleId = null;
     let showAllResults = false;
     const RESULTS_PREVIEW_COUNT = 3;
+    const INPUT_LIMITS = {
+      problem: 2000,
+      sponsor: 120,
+      constraints: 1000,
+      technology: 80
+    };
     let uploadedFiles = [];
     let currentStep = 1;
 
@@ -2429,6 +2492,15 @@
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
+    }
+
+    function bindCharacterCount(input, counter, maxLength) {
+      input.maxLength = maxLength;
+      const update = () => {
+        counter.textContent = `${input.value.length} / ${maxLength}`;
+      };
+      input.addEventListener('input', update);
+      update();
     }
 
     // ── Calculate Match Quality ──────────────────────────────────────
@@ -2554,12 +2626,12 @@
 
     // ── Form state management ────────────────────────────────────────
     function updateFormState() {
-      formState.problem = document.getElementById('problem').value;
+      formState.problem = document.getElementById('problem').value.slice(0, INPUT_LIMITS.problem);
       formState.industry = document.getElementById('industry').value;
       formState.phase = document.getElementById('phase').value;
-      formState.sponsor = document.getElementById('sponsor').value;
+      formState.sponsor = document.getElementById('sponsor').value.slice(0, INPUT_LIMITS.sponsor);
       formState.timeline = document.getElementById('timeline').value;
-      formState.constraints = document.getElementById('constraints').value;
+      formState.constraints = document.getElementById('constraints').value.slice(0, INPUT_LIMITS.constraints);
       const hasProblemText = !!formState.problem.trim();
       document.getElementById('btn-find').disabled = !hasProblemText;
       document.getElementById('btn-search').disabled = !hasProblemText;
@@ -2578,11 +2650,14 @@
 
     // ── Multi-select Component ───────────────────────────────────────
     class MultiSelect {
-      constructor(containerId, inputId, dropdownId, formStateKey) {
+      constructor(containerId, inputId, dropdownId, formStateKey, maxLength = null) {
         this.container = document.getElementById(containerId);
         this.input = document.getElementById(inputId);
         this.dropdown = document.getElementById(dropdownId);
         this.formStateKey = formStateKey;
+        this.maxLength = maxLength;
+        this.counter = this.container.parentElement.querySelector(`[data-count-for="${inputId}"]`);
+        if (this.maxLength && this.counter) bindCharacterCount(this.input, this.counter, this.maxLength);
         this.options = this.dropdown
           ? Array.from(this.dropdown.querySelectorAll('.multi-select-option')).map(opt => opt.textContent)
           : [];
@@ -2619,6 +2694,7 @@
       }
 
       selectOption(text) {
+        if (this.maxLength) text = text.slice(0, this.maxLength);
         const selected = formState[this.formStateKey];
         if (!selected.includes(text)) {
           selected.push(text);
@@ -2640,12 +2716,11 @@
         const html = selected.map(text =>
           `<div class="multi-select-tag">${esc(text)}<button type="button">&times;</button></div>`
         ).join('');
-        const tagsHtml = html + `<input type="text" class="multi-select-input" placeholder="Add more…">`;
-
-        const tempHtml = this.container.innerHTML;
         this.container.innerHTML = html + `<input type="text" class="multi-select-input" placeholder="Add more…">`;
 
         this.input = this.container.querySelector('.multi-select-input');
+        this.counter = this.container.parentElement.querySelector('.multi-select-count');
+        if (this.maxLength && this.counter) bindCharacterCount(this.input, this.counter, this.maxLength);
         this.input.addEventListener('input', () => this.filterOptions());
         this.input.addEventListener('focus', () => this.dropdown.classList.add('open'));
 
@@ -2660,10 +2735,13 @@
     }
 
     // Initialize multi-selects
-    new MultiSelect('service-area-container', 'service-area-input', 'service-area-dropdown', 'serviceArea');
-    new MultiSelect('deliverables-container', 'deliverables-input', 'deliverables-dropdown', 'deliverables');
-    new MultiSelect('outcomes-container', 'outcomes-input', 'outcomes-dropdown', 'outcomes');
-    new MultiSelect('technologies-container', 'technologies-input', 'technologies-dropdown', 'technologies');
+    bindCharacterCount(document.getElementById('problem'), document.querySelector('[data-count-for="problem"]'), INPUT_LIMITS.problem);
+    bindCharacterCount(document.getElementById('sponsor'), document.querySelector('[data-count-for="sponsor"]'), INPUT_LIMITS.sponsor);
+    bindCharacterCount(document.getElementById('constraints'), document.querySelector('[data-count-for="constraints"]'), INPUT_LIMITS.constraints);
+    new MultiSelect('service-area-container', 'service-area-input', 'service-area-dropdown', 'serviceArea', 80);
+    new MultiSelect('deliverables-container', 'deliverables-input', 'deliverables-dropdown', 'deliverables', 80);
+    new MultiSelect('outcomes-container', 'outcomes-input', 'outcomes-dropdown', 'outcomes', 80);
+    new MultiSelect('technologies-container', 'technologies-input', 'technologies-dropdown', 'technologies', INPUT_LIMITS.technology);
 
     // ── File upload handling ─────────────────────────────────────────
     elFileInput.addEventListener('change', async () => {
