@@ -136,6 +136,7 @@ const SHELL_CSS = `
     margin-left: var(--sidebar-w);
     flex: 1;
     min-width: 0;
+    background: #fff;
     display: flex;
     flex-direction: column;
     transition: margin-left 0.2s ease;
@@ -249,7 +250,7 @@ export function mountShell({ active, links }) {
   header.className = 'app-header';
   header.innerHTML = `
     <div class="header-left">
-      <button type="button" class="sidebar-toggle" aria-label="Close navigation" aria-expanded="true" title="Toggle navigation">
+      <button type="button" class="sidebar-toggle" aria-label="Open navigation" aria-expanded="false" title="Toggle navigation">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round" aria-hidden="true">
           <path d="M4 6h16M4 12h16M4 18h16"/>
@@ -301,5 +302,5 @@ export function mountShell({ active, links }) {
     <p>Propel - Your Account Team Helper v0.2 &nbsp;-&nbsp; <a href="https://github.com/matt-penfield/bench_press_proposal" target="_blank" rel="noopener">GitHub</a> &nbsp;-&nbsp; &copy; 2026 Slalom</p>`;
   document.body.appendChild(footer);
 
-  document.body.classList.add('shell-mounted');
+  document.body.classList.add('shell-mounted', 'shell-sidebar-collapsed');
 }
