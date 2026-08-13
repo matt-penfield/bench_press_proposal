@@ -788,6 +788,7 @@
       top: calc(var(--header-h) + 12px);
       z-index: 10;
       margin-top: 14px;
+      margin-bottom: 20px;
       padding: 22px 24px;
       border: 1px solid #c9d2ff;
       border-radius: 14px;
@@ -807,6 +808,10 @@
     }
 
     .results-selection-copy {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
       min-width: 0;
     }
 
@@ -816,8 +821,7 @@
     }
 
     .results-selection-counter {
-      margin-top: 10px;
-      font-size: 13px;
+      font-size: 18px;
       font-weight: 600;
       color: #5e6ad2;
     }
@@ -1165,6 +1169,58 @@
       margin-left: 34px;
     }
 
+    .result-body.collapsed {
+      display: none;
+    }
+
+    .result-preview-line {
+      margin-top: 10px;
+      margin-left: 34px;
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .result-details-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      margin-left: 34px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #5e6ad2;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .result-details-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .results-show-all-row {
+      display: flex;
+      justify-content: center;
+      margin: 4px 0 16px;
+    }
+
+    .results-show-all-btn {
+      padding: 8px 16px;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      background: #fff;
+      color: #5e6ad2;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .results-show-all-btn:hover {
+      background: #f7f9ff;
+    }
+
     .result-source-label {
       color: #98a0b2;
       font-weight: 600;
@@ -1427,11 +1483,18 @@
 
     .draft-section {
       margin-top: 32px;
+      margin-bottom: 32px;
       display: none;
     }
 
     .draft-section.show {
       display: block;
+    }
+
+    .draft-section::after {
+      content: '';
+      display: block;
+      clear: both;
     }
 
     .draft-output {
@@ -2255,7 +2318,7 @@
     <div class="draft-section" id="draft-section">
       <h2>Drafted Proposal</h2>
       <div class="draft-output" id="draft-output"></div>
-      <button id="export-btn" class="btn-primary" style="float:right;">Export to Word (.docx)</button>
+      <button id="export-btn" class="btn-primary" style="float:right; margin-bottom: 24px;">Export to Word (.docx)</button>
     </div>
   </main>
 
@@ -2278,6 +2341,9 @@
     const corpus = [];
     let currentResults = [];
     let selected = new Set();
+    let expandedResultIds = new Set();
+    let showAllResults = false;
+    const RESULTS_PREVIEW_COUNT = 3;
     let uploadedFiles = [];
     let currentStep = 1;
 
@@ -3065,10 +3131,22 @@
       }
       const recommendation = `Use this proposal for its ${reusableApproach}, then ${recommendationUpdates.join('; ')}.`;
 
+      const useForBullets = [
+        `${industryText.split(' (')[0]} value proposition language`,
+        matchedDeliverables.length
+          ? `${matchedDeliverables.slice(0, 2).join(' and ')} approach and structure`
+          : `${result.bu || 'engagement'} delivery approach and structure`,
+        matchedOutcomes.length
+          ? `Business case framing for ${matchedOutcomes.slice(0, 2).join(' and ').toLowerCase()}`
+          : 'Business case and outcome framing',
+        `${result.title} document structure and section flow`
+      ];
+
       return {
         industryText,
         outcomesText,
         deliverablesText,
+        useForBullets,
         problemDetail,
         aiSummary,
         differences,
@@ -3417,6 +3495,8 @@
 
         currentResults = results;
         selected = new Set();
+        expandedResultIds = new Set();
+        showAllResults = false;
 
         renderResults(results);
       } catch (err) {
@@ -3457,14 +3537,18 @@
         elSelectionCounter.textContent = `${selected.size} of 3 selected`;
       }
 
-      elResultsList.innerHTML = results.map(r => {
+      const visibleResults = showAllResults ? results : results.slice(0, RESULTS_PREVIEW_COUNT);
+
+      elResultsList.innerHTML = visibleResults.map(r => {
         const sel = selected.has(r.id);
+        const expanded = expandedResultIds.has(r.id);
         const summaryText = (r.excerpts && r.excerpts.length)
           ? r.excerpts[0]
           : splitSentences(r.content || '')[0] || '';
         const details = buildBusinessMatchDetails(r, formState, summaryText);
         const display = r.displayScore ?? r.score;
         const creator = proposalCreator(r);
+        const previewLine = toSentence(details.problemDetail, 140);
         const differencesHtml = details.differences.length
           ? details.differences.map(d => `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">${esc(d.title)}</div><div class="result-match-text">${esc(d.message)}</div></div></div>`).join('')
           : `<div class="result-match-item"><span class="result-match-alert">!</span><div><div class="result-match-item-title">No Major Differences Identified</div><div class="result-match-text">No significant timeline, industry, or scope conflicts were identified in this match.</div></div></div>`;
@@ -3484,9 +3568,11 @@
                 <div class="score-row"><span class="impact-badge ${scoreClass(display)}">${confidenceLabel(display)}</span></div>
               </div>
             </div>
-            <div class="result-body">
+            <div class="result-preview-line">${esc(previewLine)}</div>
+            <button type="button" class="result-details-toggle" data-id="${esc(r.id)}" aria-expanded="${expanded}">${expanded ? '▾ Hide details' : '▸ View details'}</button>
+            <div class="result-body${expanded ? '' : ' collapsed'}">
               <div class="result-summary-box"><div class="result-section-heading">AI Match Summary</div><div class="result-summary-text">${esc(details.aiSummary)}</div></div>
-              <div class="result-summary-box"><div class="result-section-heading">Use This Proposal For</div><div class="result-summary-text">• Value proposition language<br>• Voice commerce experience strategy<br>• Journey map and strategy document structure<br>• Retail customer experience framing</div></div>
+              <div class="result-summary-box"><div class="result-section-heading">Use This Proposal For</div><div class="result-summary-text">${details.useForBullets.map(b => `• ${esc(b)}`).join('<br>')}</div></div>
               <div class="result-match-box">
                 <div class="result-match-title">Why This Match Was Selected</div>
                 <div class="result-match-columns">
@@ -3509,7 +3595,10 @@
               </div>
             </div>
           </div>`;
-      }).join('');
+      }).join('') + (results.length > RESULTS_PREVIEW_COUNT ? `
+        <div class="results-show-all-row">
+          <button type="button" class="results-show-all-btn" id="results-show-all-btn">${showAllResults ? `Show top ${RESULTS_PREVIEW_COUNT}` : `Show all ${results.length} results`}</button>
+        </div>` : '');
 
       elResultsList.querySelectorAll('.result-select-toggle').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -3524,6 +3613,23 @@
           openProposalPreview(link.textContent);
         });
       });
+
+      elResultsList.querySelectorAll('.result-details-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.id;
+          if (expandedResultIds.has(id)) expandedResultIds.delete(id);
+          else expandedResultIds.add(id);
+          renderResults(results);
+        });
+      });
+
+      const showAllBtn = document.getElementById('results-show-all-btn');
+      if (showAllBtn) {
+        showAllBtn.addEventListener('click', () => {
+          showAllResults = !showAllResults;
+          renderResults(results);
+        });
+      }
 
       elDraftBtn.disabled = selected.size !== 3;
       elDraftBtn.style.display = selected.size === 3 ? 'inline-flex' : 'none';
