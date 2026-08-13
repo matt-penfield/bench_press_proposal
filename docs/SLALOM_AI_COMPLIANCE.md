@@ -5,6 +5,8 @@
 **Policy Version**: 2.2 (October 2025)  
 **Status**: ⚠️ PARTIAL COMPLIANCE - Gaps Identified
 
+**Current implementation status**: The local-processing notice, AI-assisted draft disclosure, and input length limits are implemented. The remaining gaps in this audit, including file validation, client consent tracking, retention controls, and enterprise authorization, are not supplied by the browser-only prototype.
+
 ---
 
 ## Executive Summary

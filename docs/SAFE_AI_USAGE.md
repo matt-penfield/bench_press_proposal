@@ -3,6 +3,8 @@
 **Last Updated**: 2026-08-13  
 **Status**: Prototype (Client-Side Only) ⚠️ Action Required Before Production
 
+> **Current implementation note:** The app now includes input length limits, a local-processing privacy notice, and an AI-assisted draft disclosure. File size/type validation, client-consent tracking, retention workflows, and enterprise access controls are still not implemented in the prototype; the gap descriptions below remain relevant for production delivery.
+
 ---
 
 ## 1. Input Validation & Constraints

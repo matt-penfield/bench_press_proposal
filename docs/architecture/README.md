@@ -2,6 +2,8 @@
 
 This folder contains system architecture and design artifacts for the Bench Press Proposal Tool.
 
+The shipped application is a browser-only prototype. `system-architecture.md` describes that current state first, then maps it to a future enterprise architecture. The remaining architecture documents describe target-state controls and should not be read as features currently deployed in this repository.
+
 ## Files
 
 - `system-architecture.md`: High-level system architecture and design notes.

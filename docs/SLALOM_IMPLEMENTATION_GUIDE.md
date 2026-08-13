@@ -3,16 +3,18 @@
 **For Bench Press Proposal Tool**  
 **Updated**: 2026-08-13
 
+> **Current status:** The launch items in this guide are implemented: the privacy notice is rendered in the shell, generated drafts include an AI-assisted matching disclosure, and input length limits are enforced. The code snippets below are retained as implementation reference; verify them against the current source before reuse. Client consent tracking, formal retention controls, and enterprise authorization remain delivery work.
+
 ---
 
 ## Quick Summary
 
-Your app is **mostly compliant**, but needs **3 critical additions** before client delivery:
+Your app is **mostly compliant** for a client-side prototype. The three launch transparency additions described below are now implemented; remaining production requirements are documented as follow-up work:
 
 | Item | Status | Priority | Time | When |
 | ------ | -------- | ---------- | ------ | ------ |
-| Add privacy banner | ❌ Missing | 🔴 Critical | 15 min | Before any use |
-| Add AI disclosure footer to exports | ❌ Missing | 🔴 Critical | 10 min | Before any use |
+| Add privacy banner | ✅ Implemented | 🔴 Critical | Complete | Before client use |
+| Add AI disclosure footer to exports | ✅ Implemented | 🔴 Critical | Complete | Before client use |
 | Document model licensing | ❌ Missing | 🔴 Critical | 15 min | Before any use |
 | Add client consent SOW template | ❌ Missing | 🔴 Critical | 30 min | Before client delivery |
 | Uploaded files warning | ❌ Missing | 🟠 High | 10 min | Before sharing tool |
@@ -553,12 +555,12 @@ Before launching, verify:
 
 Refer to:
 - Full compliance audit: `docs/SLALOM_AI_COMPLIANCE.md`
-- Implementation details: `docs/IMPLEMENTATION_PRIORITY.md`
+- Archived implementation checklist: `archive/docs/IMPLEMENTATION_PRIORITY.md`
 - Safe AI practices: `docs/SAFE_AI_USAGE.md`
-- Slalom policy: Attached PDF (AI Acceptable Use Policy v2.2)
+- Slalom policy: AI Acceptable Use Policy v2.2 (October 2025)
 
 ---
 
 **Prepared**: 2026-08-13  
-**Status**: Ready for implementation  
+**Status**: Current prototype implementation documented; production follow-up remains
 **Estimated Total Time**: 2.5 hours

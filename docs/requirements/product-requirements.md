@@ -54,10 +54,12 @@ The interface shows a live proposal-match quality score so users can see when mo
 
 ### Proposal Corpus
 
-Proposals will be provided in mixed formats (PDFs, Word docs, plain text). The system needs to:
-- Store proposal content in a searchable format (likely normalized to plain text)
-- Maintain metadata: title/identifier, source file reference
-- Support adding new proposals to the corpus
+The current prototype stores a curated proposal corpus as JavaScript data in `proposals.js` and stores matching vectors in `embeddings.json`. Adding or changing proposals is a source-data operation followed by regeneration of the embeddings; there is no runtime ingestion UI.
+
+Each entry maintains:
+- A stable ID, title, business unit, and source reference
+- Normalized proposal content used for token matching and draft context
+- A precomputed 384-dimensional embedding generated with `Xenova/all-MiniLM-L6-v2`
 
 ### Schema (conceptual)
 
@@ -67,7 +69,7 @@ Proposal {
   title: string
   source: string        // original filename/path
   content: string       // full text content
-  format: string        // original format (pdf, docx, txt, etc.)
+  format: string        // source format or corpus classification
 }
 ```
 
@@ -84,7 +86,7 @@ Proposal {
 
 - **Success weighting** — once proposals have win/loss outcomes attached, bias ranking toward successful proposals
 - **Feedback loop** — let users mark which results were actually useful, refine scoring
-- **Ingestion pipeline** — automated extraction from PDFs/DOCX with OCR support
+- **Ingestion pipeline** — automated extraction from PDFs/DOCX with OCR support; not part of the current prototype
 - **Tagging layer** — derive and persist tags (industry, technology, problem type) for faster retrieval
 
 ## Technical Notes

@@ -91,17 +91,17 @@ Validation runs client-side after the user selects a document. Checks execute an
 ### Formatting Checks
 
 | ID | Check | Pass Condition |
-|---|---|---|
+| --- | --- | --- |
 | FMT-01 | Font Size | Body text is predominantly 10–12 pt. Flags paragraphs outside this range. |
 | FMT-02 | Line Spacing | Body paragraphs use 1.0–1.5 line spacing. |
 | FMT-03 | Spelling & Grammar | No spelling errors detected (browser spellcheck heuristic + dictionary word-list cross-check). Grammar: sentence length heuristic (no sentence > 60 words). |
 
-> **Prototype note:** mammoth.js exposes limited style metadata. Font-size and spacing checks will use best-effort extraction from the raw XML within the `.docx` zip. If metadata is unavailable for a check, the row renders as "Unable to verify — check manually" (warning state, not failure).
+> **Implementation note:** Mammoth exposes limited style metadata. Font-size and spacing checks use best-effort extraction from the raw XML within the `.docx` zip. If metadata is unavailable, the row renders as "Unable to verify — check manually" (warning state, not failure).
 
 ### Content Checks
 
 | ID | Check | Pass Condition |
-|---|---|---|
+| --- | --- | --- |
 | SEC-01 | Required Sections Present | Every section name in the admin config list is found as a heading in the document (case-insensitive match). |
 | CON-01 | Solution Overview / Architecture Diagram | Document contains at least one embedded image **or** a heading matching "Solution Architecture", "Architecture Diagram", or "Solution Overview". |
 | CON-02 | AI Benefits | A heading or prominent paragraph containing "AI benefit" / "artificial intelligence benefit" / "AI advantage" is present. |
@@ -134,7 +134,7 @@ A `solutions/` directory is created at the project root. It serves as the drop l
 All UI must follow the existing visual language of `index.html`:
 
 | Token | Value |
-|---|---|
+| --- | --- |
 | Primary colour | `#5e6ad2` |
 | Page background | `#f8f9fb` |
 | Card background | `#fff` |
@@ -156,7 +156,7 @@ No external CSS frameworks. No build step. Vanilla HTML/CSS/JS only.
 ## Technical Approach
 
 | Concern | Approach |
-|---|---|
+| --- | --- |
 | `.docx` parsing | `mammoth.js` via CDN (`https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js`) — converts `.docx` to HTML + extracts messages |
 | Section detection | Parse `<h1>`–`<h3>` tags in mammoth HTML output; match against admin config list |
 | Image detection | Check mammoth messages for embedded images; fallback to `<img>` tags in output HTML |
