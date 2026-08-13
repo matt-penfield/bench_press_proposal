@@ -23,7 +23,9 @@
     main {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 32px 24px 0 24px;
+      position: relative;
+      z-index: 1;
     }
 
     .page-header {
@@ -1899,6 +1901,16 @@
 
 <body>
   <main>
+    <!-- Privacy & Data Handling Notice -->
+    <div class="privacy-banner"
+      style="background: #ecfdf5; padding: 10px 16px; box-sizing: border-box; border-top: 1px solid #d1fae5; margin-top: auto; text-align: center;">
+      <div style="display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <strong style="color: #065f46; font-size: 11px;">🔒 Privacy First:</strong>
+        <span style="color: #047857; font-size: 11px;">All data processing happens locally on your device—never sent to
+          any server. Files are cleared when you close this page.</span>
+      </div>
+    </div>
+
     <div class="page-header">
       <h1>Proposal Generator</h1>
       <p><strong>Find the most relevant past proposals and generate a stronger first draft in minutes.</strong> The more
@@ -3381,6 +3393,10 @@
 
       const draftHtml = `
         <div class="draft-doc">
+          <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 12px; margin-bottom: 16px; border-radius: 6px; font-size: 13px; color: #92400e;">
+            <strong>⚠️ Generated with AI-Assisted Proposal Matching</strong>
+            <p style="margin: 6px 0 0 0;">This draft was created using Slalom's Propel tool with AI-assisted proposal matching. Review all content, recommendations, and citations before presenting to clients or stakeholders.</p>
+          </div>
           <div class="draft-meta">Generated ${esc(dateStr)}</div>
 
           <h3>Purpose</h3>

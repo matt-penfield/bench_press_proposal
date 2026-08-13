@@ -136,6 +136,8 @@ const SHELL_CSS = `
     margin-left: var(--sidebar-w);
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
     transition: margin-left 0.2s ease;
   }
 
@@ -280,7 +282,10 @@ export function mountShell({ active, links }) {
   layout.className = 'shell-layout';
   layout.innerHTML = `<nav class="sidebar">${buildSidebar(active, links)}</nav><div class="shell-content"></div>`;
   main.parentNode.insertBefore(layout, main);
-  layout.querySelector('.shell-content').appendChild(main);
+  const shellContent = layout.querySelector('.shell-content');
+  shellContent.appendChild(main);
+  const privacyBanner = main.querySelector('.privacy-banner');
+  if (privacyBanner) shellContent.appendChild(privacyBanner);
 
   const sidebarToggle = header.querySelector('.sidebar-toggle');
   sidebarToggle.addEventListener('click', () => {
